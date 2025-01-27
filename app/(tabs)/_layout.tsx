@@ -2,6 +2,7 @@ import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link, Tabs } from "expo-router";
 import { Pressable, VirtualizedList } from "react-native";
+import * as Haptics from "expo-haptics";
 
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
@@ -26,6 +27,11 @@ export default function TabLayout() {
 				// to prevent a hydration error in React Navigation v6.
 				headerShown: useClientOnlyValue(false, true),
 			}}
+			screenListeners={{
+				tabPress: () => {
+					Haptics.selectionAsync();
+				},
+			}}
 		>
 			<Tabs.Screen
 				name="index"
@@ -33,6 +39,24 @@ export default function TabLayout() {
 					title: "Home",
 					tabBarIcon: ({ color }) => (
 						<TabBarIcon name="home" color={color} />
+					),
+				}}
+			/>
+			<Tabs.Screen
+				name="calendar"
+				options={{
+					title: "Calendar",
+					tabBarIcon: ({ color }) => (
+						<TabBarIcon name="calendar" color={color} />
+					),
+				}}
+			/>
+			<Tabs.Screen
+				name="chat"
+				options={{
+					title: "Chat",
+					tabBarIcon: ({ color }) => (
+						<TabBarIcon name="comments" color={color} />
 					),
 					headerRight: () => (
 						<Link href="/modal" asChild>
@@ -52,24 +76,6 @@ export default function TabLayout() {
 								)}
 							</Pressable>
 						</Link>
-					),
-				}}
-			/>
-			<Tabs.Screen
-				name="calendar"
-				options={{
-					title: "Calendar",
-					tabBarIcon: ({ color }) => (
-						<TabBarIcon name="calendar" color={color} />
-					),
-				}}
-			/>
-			<Tabs.Screen
-				name="chat"
-				options={{
-					title: "Chat",
-					tabBarIcon: ({ color }) => (
-						<TabBarIcon name="comments" color={color} />
 					),
 				}}
 			/>
