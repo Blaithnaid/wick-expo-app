@@ -12,7 +12,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 
-import { useColorScheme } from "@/components/useColorScheme";
+import { useColorScheme } from "@/hooks/useColorScheme";
 
 export {
 	// Catch any errors thrown by the Layout component.
@@ -28,6 +28,9 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+	const colorScheme1 = useColorScheme();
+	console.log("colorScheme in RootLayout: " + colorScheme1);
+
 	const [loaded, error] = useFonts({
 		SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
 		...FontAwesome.font,
@@ -52,24 +55,20 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-	const colorScheme = useColorScheme();
+	const colorScheme = useColorScheme().colorScheme;
+	console.log("colorScheme in RootLayoutNav: " + colorScheme);
 
 	return (
-		<GluestackUIProvider mode="system">
-			<ThemeProvider
-				value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-			>
-				<Stack>
-					<Stack.Screen
-						name="(tabs)"
-						options={{ headerShown: false }}
-					/>
-					<Stack.Screen
-						name="modal"
-						options={{ presentation: "modal" }}
-					/>
-				</Stack>
-			</ThemeProvider>
-		</GluestackUIProvider>
+		<ThemeProvider
+			value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+		>
+			<Stack>
+				<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+				<Stack.Screen
+					name="modal"
+					options={{ presentation: "modal" }}
+				/>
+			</Stack>
+		</ThemeProvider>
 	);
 }

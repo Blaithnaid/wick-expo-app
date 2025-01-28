@@ -7,17 +7,17 @@ import {
 	Platform,
 	SafeAreaView,
 } from "react-native";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import { Text, View } from "@/components/Themed";
-import { useColorScheme } from "@/components/useColorScheme";
+// import { useColorScheme } from "@/components/useColorScheme";
 import { useState } from "react";
 
 function ChatBubble({ text, isAi }: { text: string; isAi: boolean }) {
-	const colorScheme = useColorScheme() ?? "light";
+	// const colorScheme = useColorScheme() ?? "light";
 
-	useEffect(() => {
-		console.log("Current color scheme:", colorScheme);
-	});
+	// useEffect(() => {
+	// 	console.log("Current color scheme:", colorScheme);
+	// });
 
 	return (
 		<View style={isAi ? styles.aiBubble : styles.userBubble}>
