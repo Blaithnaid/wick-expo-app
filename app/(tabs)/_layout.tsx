@@ -1,7 +1,8 @@
 import React from "react";
+import { useEffect } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link, Tabs } from "expo-router";
-import { Pressable, VirtualizedList } from "react-native";
+import { Pressable, VirtualizedList, Appearance } from "react-native";
 import * as Haptics from "expo-haptics";
 
 import Colors from "@/constants/Colors";
@@ -18,6 +19,10 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
 	const colorScheme = useColorScheme();
+
+	useEffect(() => {
+		console.log("Layout color scheme:", colorScheme);
+	});
 
 	return (
 		<Tabs

@@ -13,7 +13,7 @@ import { useColorScheme } from "@/components/useColorScheme";
 import { useState } from "react";
 
 function ChatBubble({ text, isAi }: { text: string; isAi: boolean }) {
-	const colorScheme = useColorScheme();
+	const colorScheme = useColorScheme() ?? "light";
 
 	useEffect(() => {
 		console.log("Current color scheme:", colorScheme);
