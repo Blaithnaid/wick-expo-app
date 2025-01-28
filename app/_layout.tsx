@@ -28,9 +28,6 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-	const colorScheme1 = useColorScheme();
-	console.log("colorScheme in RootLayout: " + colorScheme1);
-
 	const [loaded, error] = useFonts({
 		SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
 		...FontAwesome.font,

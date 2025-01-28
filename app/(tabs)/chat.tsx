@@ -9,15 +9,11 @@ import {
 } from "react-native";
 // import { useEffect } from "react";
 import { Text, View } from "@/components/Themed";
-// import { useColorScheme } from "@/components/useColorScheme";
+import { useColorScheme } from "@/hooks/useColorScheme";
 import { useState } from "react";
 
 function ChatBubble({ text, isAi }: { text: string; isAi: boolean }) {
-	// const colorScheme = useColorScheme() ?? "light";
-
-	// useEffect(() => {
-	// 	console.log("Current color scheme:", colorScheme);
-	// });
+	const colorScheme = useColorScheme();
 
 	return (
 		<View style={isAi ? styles.aiBubble : styles.userBubble}>
@@ -120,7 +116,7 @@ const styles = StyleSheet.create({
 		borderColor: "#ddd",
 	},
 	aiBubble: {
-		backgroundColor: "#f0f0f0",
+		backgroundColor: "#7870EB",
 		padding: 10,
 		borderRadius: 10,
 		margin: 5,
@@ -128,7 +124,7 @@ const styles = StyleSheet.create({
 		alignSelf: "flex-start",
 	},
 	userBubble: {
-		backgroundColor: "#007AFF",
+		backgroundColor: "gray",
 		padding: 10,
 		borderRadius: 10,
 		margin: 5,
