@@ -1,14 +1,11 @@
 import {
-	Appearance,
 	StyleSheet,
 	TextInput,
 	ScrollView,
 	KeyboardAvoidingView,
 	Platform,
-	SafeAreaView,
 } from "react-native";
-// import { useEffect } from "react";
-import { Text, View } from "@/components/Themed";
+import { Text, View, SafeAreaView } from "@/components/Themed";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useState } from "react";
 
@@ -27,8 +24,8 @@ export default function ChatScreen() {
 	const [messages, setMessages] = useState<
 		Array<{ text: string; isAi: boolean }>
 	>([
-		{ text: "Hello! How can I help you today?", isAi: true },
-		{ text: "I have a question about React Native", isAi: false },
+		// { text: "Hello! How can I help you today?", isAi: true },
+		// { text: "I have a question about React Native", isAi: false },
 	]);
 
 	const handleSend = () => {
@@ -39,20 +36,20 @@ export default function ChatScreen() {
 	};
 
 	return (
-		<SafeAreaView style={styles.container}>
+		<SafeAreaView className="flex-1">
 			<KeyboardAvoidingView
+				className="flex-1"
 				behavior={Platform.OS === "ios" ? "padding" : "height"}
-				style={styles.keyboardAvoidingView}
 				keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
 			>
 				{messages.length === 0 ? (
-					<View style={styles.emptyStateContainer}>
-						<Text style={styles.emptyStateText}>
-							Send a message to start chatting with AI
+					<View className="flex-1 items-center justify-center px-5">
+						<Text className="text-xl text-center w-2/3 text-red-500">
+							Send a message to start chatting with Wickbot!
 						</Text>
 					</View>
 				) : (
-					<ScrollView style={styles.chatContainer}>
+					<ScrollView className="flex-1 w-full py-1">
 						{messages.map((msg, index) => (
 							<ChatBubble
 								key={index}
@@ -63,14 +60,15 @@ export default function ChatScreen() {
 					</ScrollView>
 				)}
 
-				<View style={styles.inputContainer}>
+				<View className="items-center justify-center border-2 border-[#212631] py-3 px-2">
 					<TextInput
-						style={styles.input}
+						className="rounded-xl px-3.5 py-5 w-full bg-gray-700 border border-gray-600 text-white"
 						value={message}
 						onChangeText={setMessage}
 						placeholder="Type a message..."
 						onSubmitEditing={handleSend}
 						returnKeyType="send"
+						inputMode="text"
 					/>
 				</View>
 			</KeyboardAvoidingView>
@@ -79,42 +77,6 @@ export default function ChatScreen() {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
-	keyboardAvoidingView: {
-		flex: 1,
-	},
-	chatContainer: {
-		flex: 1,
-		width: "100%",
-		paddingHorizontal: 10,
-	},
-	emptyStateContainer: {
-		flex: 1,
-		alignItems: "center",
-		justifyContent: "center",
-		paddingHorizontal: 20,
-	},
-	emptyStateText: {
-		fontSize: 16,
-		textAlign: "center",
-		color: "#666",
-	},
-	inputContainer: {
-		borderTopWidth: 1,
-		borderTopColor: "#eee",
-		paddingVertical: 16, // Changed from padding: 10 to ensure consistent vertical spacing
-		paddingHorizontal: 10,
-	},
-	input: {
-		backgroundColor: "#fff",
-		borderRadius: 20,
-		paddingHorizontal: 15,
-		paddingVertical: 8,
-		borderWidth: 1,
-		borderColor: "#ddd",
-	},
 	aiBubble: {
 		backgroundColor: "#7870EB",
 		padding: 10,
