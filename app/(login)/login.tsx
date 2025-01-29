@@ -1,5 +1,3 @@
-import { StyleSheet } from "react-native";
-
 import EditScreenInfo from "@/components/EditScreenInfo";
 import { Text, View } from "@/components/Themed";
 
@@ -8,7 +6,7 @@ export default function Login() {
 		<View className="flex-1 items-center justify-center">
 			<Text className="text-xl font-bold">Login</Text>
 			<View
-				style={styles.separator}
+				className="my-8 h-px w-[80%]"
 				lightColor="#eee"
 				darkColor="rgba(255,255,255,0.1)"
 			/>
@@ -16,15 +14,3 @@ export default function Login() {
 		</View>
 	);
 }
-
-const styles = StyleSheet.create({
-	title: {
-		fontSize: 20,
-		fontWeight: "bold",
-	},
-	separator: {
-		marginVertical: 30,
-		height: 1,
-		width: "80%",
-	},
-});
