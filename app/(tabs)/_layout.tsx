@@ -1,8 +1,7 @@
 import React from "react";
-import { useEffect } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link, Tabs } from "expo-router";
-import { Pressable, Appearance } from "react-native";
+import { Pressable } from "react-native";
 import * as Haptics from "expo-haptics";
 
 import Colors from "@/constants/Colors";

@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
+import Colors from "@/constants/Colors";
 
 export {
 	// Catch any errors thrown by the Layout component.
@@ -63,7 +64,15 @@ function RootLayoutNav() {
 				<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 				<Stack.Screen
 					name="modal"
-					options={{ presentation: "modal" }}
+					options={{
+						presentation: "modal",
+						headerTitle: "Wickbot Info", // Change the header text
+						headerStyle: {
+							backgroundColor:
+								Colors[colorScheme ?? "light"].headerBackground,
+						},
+						headerTintColor: Colors[colorScheme ?? "light"].text,
+					}}
 				/>
 			</Stack>
 		</ThemeProvider>
