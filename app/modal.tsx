@@ -6,7 +6,7 @@ import Markdown from "react-native-markdown-display";
 
 export default function ModalScreen() {
 	const modalText = `
-## Your Social Media Assistant!
+## Your social media assistant!
 
 Get help managing your social media presence with WickBot, your AI-powered assistant.
 
@@ -41,7 +41,7 @@ Get help managing your social media presence with WickBot, your AI-powered assis
 3. Feel free to ask for refinements
 4. Save helpful responses for future reference
 
-## Remember
+### Remember:
 WickBot is your creative assistant, not a replacement for human judgment. Use its suggestions as inspiration and adapt them to match your unique brand voice.
 
 *Note: WickBot cannot post directly to social media or access real-time analytics.*
@@ -56,6 +56,18 @@ WickBot is your creative assistant, not a replacement for human judgment. Use it
 					style={{
 						body: {
 							color: colorScheme === "dark" ? "white" : "black",
+						},
+						heading3: {
+							// marginTop:
+						},
+						heading4: {
+							marginBottom: 5,
+						},
+						bullet_list: {
+							marginBottom: 10,
+						},
+						ordered_list: {
+							marginBottom: 10,
 						},
 					}}
 				>
