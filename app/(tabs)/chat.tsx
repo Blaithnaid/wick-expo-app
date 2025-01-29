@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Text, View, SafeAreaView } from "@/components/Themed";
 import { useState } from "react";
+import { useColorScheme } from "@/hooks/useColorScheme";
 import FontAwesome from "@expo/vector-icons/FontAwesome6";
 
 function ChatBubble({ text, isAi }: { text: string; isAi: boolean }) {
@@ -48,12 +49,17 @@ export default function ChatScreen() {
 							<FontAwesome
 								name="robot"
 								size="80"
-								className="dark:color-white color-black"
+								color={
+									useColorScheme().colorScheme === "dark"
+										? "white"
+										: "black"
+								}
 							/>
 							<View
-								darkColor="#a1a1a1"
-								className="h-0.5 w-2/3 bg-gray-400 rounded-lg mb-5 mt-7"
-							></View>
+								className="my-8 h-px w-[80%]"
+								lightColor="#eee"
+								darkColor="rgba(255,255,255,0.1)"
+							/>
 							<Text className="text-xl text-center w-2/3">
 								Send a message to start chatting with Wickbot!
 							</Text>
