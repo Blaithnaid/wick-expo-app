@@ -1,45 +1,41 @@
 import { StatusBar } from "expo-status-bar";
 import { Platform } from "react-native";
 import { ScrollView, View } from "@/components/Themed";
+import { useColorScheme } from "@/hooks/useColorScheme";
 import Markdown from "react-native-markdown-display";
 
 export default function ModalScreen() {
 	const modalText = `
-# WickBot
-Your Social Media Assistant
+## Your Social Media Assistant!
 
 Get help managing your social media presence with WickBot, your AI-powered assistant.
 
-## Key Features
-
-### Content Creation
+#### Content Creation
 - Generate engaging captions and post ideas
 - Suggest relevant hashtags and trending topics
 - Create content calendars and posting schedules
 - Brainstorm campaign themes and content series
 
-### Engagement Support
+#### Engagement Support
 - Draft responses to follower comments
 - Create polls and interactive content
 - Suggest ways to boost post engagement
 - Help manage community interactions
 
-### Strategy & Optimization
+#### Strategy & Optimization
 - Recommend optimal posting times
 - Suggest content improvements
 - Help format posts for different platforms
 - Provide growth strategy suggestions
 
-## Example Prompts
+#### Here are some example prompts:
+- "Help me write a caption for this photo"
+- "What hashtags should I use for my fitness post?"
+- "Give me content ideas for next week"
+- "How can I improve my engagement?"
+- "Draft a response to this customer comment"
 
-"Help me write a caption for this photo"
-"What hashtags should I use for my fitness post?"
-"Give me content ideas for next week"
-"How can I improve my engagement?"
-"Draft a response to this customer comment"
-
-## Tips for Best Results
-
+#### And here are some tips for Best Results!
 1. Be specific about what you need
 2. Provide context about your brand and audience
 3. Feel free to ask for refinements
@@ -51,10 +47,18 @@ WickBot is your creative assistant, not a replacement for human judgment. Use it
 *Note: WickBot cannot post directly to social media or access real-time analytics.*
 	`;
 
+	const colorScheme = useColorScheme().colorScheme;
+
 	return (
 		<ScrollView>
-			<View className="flex-1 items-left text-left justify-center px-5 text-white">
-				<Markdown style={{ body: { color: "white" } }}>
+			<View className="flex-1 items-left text-left justify-center px-5 pt-4 text-black dark:text-white">
+				<Markdown
+					style={{
+						body: {
+							color: colorScheme === "dark" ? "white" : "black",
+						},
+					}}
+				>
 					{modalText}
 				</Markdown>
 			</View>
