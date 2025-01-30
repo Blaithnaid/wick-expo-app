@@ -15,6 +15,8 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import Colors from "@/constants/Colors";
 
+import { auth } from "@/services/firebaseService";
+
 export {
 	// Catch any errors thrown by the Layout component.
 	ErrorBoundary,

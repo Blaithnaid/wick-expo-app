@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { Platform } from "react-native";
-import { ScrollView, View } from "@/components/Themed";
+import { ScrollView, ThemedView } from "@/components/Themed";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import Markdown from "react-native-markdown-display";
 
@@ -51,7 +51,7 @@ WickBot is your creative assistant, not a replacement for human judgment. Use it
 
 	return (
 		<ScrollView>
-			<View className="flex-1 items-left text-left justify-center px-5 pt-4 text-black dark:text-white">
+			<ThemedView className="flex-1 items-left text-left justify-center px-5 pt-4 text-black dark:text-white">
 				<Markdown
 					style={{
 						body: {
@@ -73,8 +73,7 @@ WickBot is your creative assistant, not a replacement for human judgment. Use it
 				>
 					{modalText}
 				</Markdown>
-			</View>
-			<StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+			</ThemedView>
 		</ScrollView>
 	);
 }
