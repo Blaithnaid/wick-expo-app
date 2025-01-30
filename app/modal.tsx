@@ -1,4 +1,3 @@
-import { StatusBar } from "expo-status-bar";
 import { Platform } from "react-native";
 import { ScrollView, ThemedView } from "@/components/Themed";
 import { useColorScheme } from "@/hooks/useColorScheme";
