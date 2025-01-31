@@ -1,5 +1,4 @@
 import {
-	StyleSheet,
 	TextInput,
 	ScrollView,
 	KeyboardAvoidingView,
@@ -14,17 +13,24 @@ import { useState, useEffect, useRef } from "react";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import FontAwesome from "@expo/vector-icons/FontAwesome6";
 import chatWithGemini from "@/services/aiAPI";
+import { LoadingDots } from "@/components/LoadingDots";
 
 function ChatBubble({ text, isAi }: { text: string; isAi: boolean }) {
 	return (
 		<View
-			className={`p-3 rounded-lg mx-3 my-2 max-w-[80%] flex justify-center align-center text-left ${
+			className={`p-3 rounded-lg mx-3 my-2 max-w-[80%] flex justify-center items-center min-h-12 text-left ${
 				isAi
 					? "bg-lavender-300 dark:bg-lavender-500 self-start"
 					: "dark:bg-gray-500 bg-gray-600 self-end"
 			}`}
 		>
-			<Text className="text-black dark:text-white">{text}</Text>
+			{!text ? (
+				<LoadingDots interval={300} size={8} />
+			) : (
+				<Text className="text-black dark:text-white text-lg">
+					{text}
+				</Text>
+			)}
 		</View>
 	);
 }
@@ -50,10 +56,11 @@ export default function ChatScreen() {
 
 		const userMessage = { text: message, isAi: false };
 		setMessages((prev) => [...prev, userMessage]);
+		setMessages((prev) => [...prev, { text: "", isAi: true }]);
 
 		const response = await chatWithGemini(message);
-		let aiMessage = { text: response, isAi: true };
-		setMessages((prev) => [...prev, aiMessage]);
+		let aiMessage = { text: response.trim(), isAi: true };
+		setMessages((prev) => [...prev.slice(0, -1), aiMessage]);
 
 		setMessage("");
 	};
@@ -75,6 +82,9 @@ export default function ChatScreen() {
 						<View className="mt-4 mb-3 h-[2px] rounded-full w-[55%] bg-slate-400" />
 						<Text className="text-xl text-center w-2/3 color:black dark:color-white">
 							Send a message to start chatting with Wickbot!
+						</Text>
+						<Text className="text-lg text-center w-3/4 mt-4 color:black dark:color-gray-300">
+							Click the icon in the top right to get some tips!
 						</Text>
 					</View>
 				) : (
@@ -118,22 +128,3 @@ export default function ChatScreen() {
 		</SafeAreaView>
 	);
 }
-
-const styles = StyleSheet.create({
-	aiBubble: {
-		backgroundColor: "#7870EB",
-		padding: 10,
-		borderRadius: 10,
-		margin: 5,
-		maxWidth: "80%",
-		alignSelf: "flex-start",
-	},
-	userBubble: {
-		backgroundColor: "gray",
-		padding: 10,
-		borderRadius: 10,
-		margin: 5,
-		maxWidth: "80%",
-		alignSelf: "flex-end",
-	},
-});
