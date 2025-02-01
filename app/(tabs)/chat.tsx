@@ -7,37 +7,18 @@ import {
 	View,
 	SafeAreaView,
 	Text,
+	TouchableWithoutFeedback,
 } from "react-native";
 import { ThemedView } from "@/components/Themed";
 import { useState, useEffect, useRef } from "react";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import FontAwesome from "@expo/vector-icons/FontAwesome6";
 import chatWithGemini from "@/services/aiAPI";
-import { LoadingDots } from "@/components/LoadingDots";
-
-function ChatBubble({ text, isAi }: { text: string; isAi: boolean }) {
-	return (
-		<View
-			className={`p-3 rounded-lg mx-3 my-2 max-w-[80%] flex justify-center items-center min-h-12 text-left ${
-				isAi
-					? "bg-lavender-300 dark:bg-lavender-500 self-start"
-					: "dark:bg-gray-500 bg-gray-600 self-end"
-			}`}
-		>
-			{!text ? (
-				<LoadingDots interval={300} size={8} />
-			) : (
-				<Text className="text-black dark:text-white text-lg">
-					{text}
-				</Text>
-			)}
-		</View>
-	);
-}
+import ChatBubble from "@/components/ChatBubble";
 
 export default function ChatScreen() {
 	const [message, setMessage] = useState("");
-	const [messages, setMessages] = useState<{ text: string; isAi: boolean }[]>(
+	const [messages, setMessages] = useState<{ text: string; role: string }[]>(
 		[]
 	);
 
@@ -54,12 +35,12 @@ export default function ChatScreen() {
 	const handleSend = async () => {
 		if (message.trim() === "") return;
 
-		const userMessage = { text: message, isAi: false };
+		const userMessage = { text: message, role: "user" };
 		setMessages((prev) => [...prev, userMessage]);
-		setMessages((prev) => [...prev, { text: "", isAi: true }]);
+		setMessages((prev) => [...prev, { text: "", role: "model" }]);
 
-		const response = await chatWithGemini(message);
-		let aiMessage = { text: response.trim(), isAi: true };
+		const response = await chatWithGemini(messages, message);
+		let aiMessage = { text: response.trim(), role: "model" };
 		setMessages((prev) => [...prev.slice(0, -1), aiMessage]);
 
 		setMessage("");
@@ -73,20 +54,27 @@ export default function ChatScreen() {
 				keyboardVerticalOffset={Platform.OS === "ios" ? 98 : 0}
 			>
 				{messages.length === 0 ? (
-					<View className="flex-1 items-center justify-center px-5 flex">
-						<FontAwesome
-							name="robot"
-							size={80}
-							color={colorScheme === "dark" ? "white" : "black"}
-						/>
-						<View className="mt-4 mb-3 h-[2px] rounded-full w-[55%] bg-slate-400" />
-						<Text className="text-xl text-center w-2/3 color:black dark:color-white">
-							Send a message to start chatting with Wickbot!
-						</Text>
-						<Text className="text-lg text-center w-3/4 mt-4 color:black dark:color-gray-300">
-							Click the icon in the top right to get some tips!
-						</Text>
-					</View>
+					<TouchableWithoutFeedback
+						onPress={() => Keyboard.dismiss()}
+					>
+						<View className="flex-1 items-center justify-center px-5 flex">
+							<FontAwesome
+								name="robot"
+								size={80}
+								color={
+									colorScheme === "dark" ? "white" : "black"
+								}
+							/>
+							<View className="mt-4 mb-3 h-[2px] rounded-full w-[55%] bg-slate-400" />
+							<Text className="text-xl text-center w-2/3 color:black dark:color-white">
+								Send a message to start chatting with Wickbot!
+							</Text>
+							<Text className="text-lg text-center w-3/4 mt-4 color:black dark:color-gray-300">
+								Click the icon in the top right to get some
+								tips!
+							</Text>
+						</View>
+					</TouchableWithoutFeedback>
 				) : (
 					<ScrollView
 						ref={scrollViewRef}
@@ -106,7 +94,7 @@ export default function ChatScreen() {
 							<ChatBubble
 								key={index}
 								text={msg.text}
-								isAi={msg.isAi}
+								role={msg.role}
 							/>
 						))}
 					</ScrollView>
