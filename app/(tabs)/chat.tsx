@@ -13,7 +13,7 @@ import { ThemedView } from "@/components/Themed";
 import { useState, useEffect, useRef } from "react";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import FontAwesome from "@expo/vector-icons/FontAwesome6";
-import chatWithGemini from "@/services/aiAPI";
+import { sendMessage } from "@/services/aiService";
 import ChatBubble from "@/components/ChatBubble";
 
 export default function ChatScreen() {
@@ -39,8 +39,8 @@ export default function ChatScreen() {
 		setMessages((prev) => [...prev, userMessage]);
 		setMessages((prev) => [...prev, { text: "", role: "model" }]);
 
-		const response = await chatWithGemini(messages, message);
-		let aiMessage = { text: response.trim(), role: "model" };
+		const response = await sendMessage(message, messages);
+		let aiMessage = { text: (response as string).trim(), role: "model" };
 		setMessages((prev) => [...prev.slice(0, -1), aiMessage]);
 
 		setMessage("");
