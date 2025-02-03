@@ -1,12 +1,11 @@
-import { StatusBar } from "expo-status-bar";
 import { Platform } from "react-native";
-import { ScrollView, View } from "@/components/Themed";
+import { ScrollView, ThemedView } from "@/components/Themed";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import Markdown from "react-native-markdown-display";
 
 export default function ModalScreen() {
 	const modalText = `
-## Your Social Media Assistant!
+## Your social media assistant!
 
 Get help managing your social media presence with WickBot, your AI-powered assistant.
 
@@ -41,7 +40,7 @@ Get help managing your social media presence with WickBot, your AI-powered assis
 3. Feel free to ask for refinements
 4. Save helpful responses for future reference
 
-## Remember
+### Remember:
 WickBot is your creative assistant, not a replacement for human judgment. Use its suggestions as inspiration and adapt them to match your unique brand voice.
 
 *Note: WickBot cannot post directly to social media or access real-time analytics.*
@@ -51,18 +50,29 @@ WickBot is your creative assistant, not a replacement for human judgment. Use it
 
 	return (
 		<ScrollView>
-			<View className="flex-1 items-left text-left justify-center px-5 pt-4 text-black dark:text-white">
+			<ThemedView className="flex-1 items-left text-left justify-center px-5 pt-4 text-black dark:text-white">
 				<Markdown
 					style={{
 						body: {
 							color: colorScheme === "dark" ? "white" : "black",
 						},
+						heading3: {
+							// marginTop:
+						},
+						heading4: {
+							marginBottom: 5,
+						},
+						bullet_list: {
+							marginBottom: 10,
+						},
+						ordered_list: {
+							marginBottom: 10,
+						},
 					}}
 				>
 					{modalText}
 				</Markdown>
-			</View>
-			<StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+			</ThemedView>
 		</ScrollView>
 	);
 }

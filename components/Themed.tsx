@@ -37,19 +37,20 @@ export function useThemeColor(
 
 export function Text(props: TextProps) {
 	const { style, lightColor, darkColor, ...otherProps } = props;
-	const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
-
-	return <DefaultText style={[{ color }, style]} {...otherProps} />;
+	return (
+		<DefaultText
+			className="color-black dark:color-white"
+			style={style}
+			{...otherProps}
+		/>
+	);
 }
 
-export function View(props: ViewProps) {
+export function ThemedView(props: ViewProps) {
 	const { style, lightColor, darkColor, ...otherProps } = props;
-	const backgroundColor = useThemeColor(
-		{ light: lightColor, dark: darkColor },
-		"background"
+	return (
+		<DefaultView className="bg-white dark:bg-pink-500" {...otherProps} />
 	);
-
-	return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
 }
 
 export function SafeAreaView(props: ViewProps) {
@@ -61,6 +62,7 @@ export function SafeAreaView(props: ViewProps) {
 
 	return (
 		<DefaultSafeAreaView
+			className="bg-white dark:bg-pink-500"
 			style={[{ backgroundColor }, style]}
 			{...otherProps}
 		/>
