@@ -1,162 +1,249 @@
-import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
-import { FirebaseApp, initializeApp } from "firebase/app";
 import {
-	Auth,
-	connectAuthEmulator,
-	getAuth,
-	getReactNativePersistence,
-	initializeAuth,
+	createUserWithEmailAndPassword,
+	onAuthStateChanged,
+	signInWithEmailAndPassword,
+	signOut,
+	User,
 } from "firebase/auth";
 import {
-	connectFirestoreEmulator,
-	Firestore,
-	getFirestore,
+	doc,
+	DocumentData,
+	onSnapshot,
+	serverTimestamp,
+	setDoc,
 } from "firebase/firestore";
-import {
-	connectStorageEmulator,
-	FirebaseStorage,
-	getStorage,
-} from "firebase/storage";
 import { createContext, useContext, useEffect, useState } from "react";
 
-import myFirebaseConfig from "./firebaseConfig.json";
-import { Platform } from "react-native";
+import { useFirebaseContext } from "./FirebaseProvider";
 
-const myApp = initializeApp(myFirebaseConfig);
-
-const myFS = getFirestore(myApp);
-const myStorage = getStorage(myApp);
-
-let myAuth: Auth;
-if (Platform.OS === "web") {
-	myAuth = getAuth(myApp);
-} else {
-	myAuth = initializeAuth(myApp, {
-		persistence: getReactNativePersistence(ReactNativeAsyncStorage),
-	});
+export interface IAuthContext {
+	authErrorMessages?: string[];
+	authLoading: boolean;
+	profile?: DocumentData;
+	user: User | null;
+	login: (email: string, password: string) => Promise<boolean>;
+	logout: () => Promise<boolean>;
+	register: (
+		email: string,
+		password: string,
+		displayName?: string
+	) => Promise<boolean>;
 }
 
-export const FirebaseContext = createContext<IFirebaseContext>(
-	{} as IFirebaseContext
-);
+export const AuthContext = createContext<IAuthContext>({} as IAuthContext);
+
+const PROFILE_COLLECTION = "users"; // name of the FS collection of user profile docs
 
 interface IProps {
 	children: React.ReactNode;
 }
 
-export const FirebaseProvider = (props: IProps) => {
+export const AuthProvider = (props: IProps) => {
 	const { children } = props;
 
-	if (
-		!myFirebaseConfig?.projectId ||
-		myFirebaseConfig.projectId.includes(">> YOUR_PROJECT")
-	) {
-		console.error(
-			"Invalid Firebase configuration in src/providers/firebaseConfig.json"
-		);
-	}
+	const [user, setUser] = useState<User | null>(null);
+	const [profile, setProfile] = useState<DocumentData>();
+	const [authLoading, setAuthLoading] = useState(true);
+	const [authErrorMessages, setAuthErrorMessages] = useState<string[]>();
 
-	const [firebaseInitializing, setFirebaseInitializing] = useState(true);
-	const [usingEmulators, setUsingEmulators] = useState(false);
-	const [emulatorsConfig, setEmulatorsConfig] =
-		useState<Record<string, string | number>>();
+	const { myAuth, myFS } = useFirebaseContext();
 
+	// hook into Firebase Authentication
 	useEffect(() => {
-		const shouldUseEmulator = false; // or true :)
+		if (myAuth) {
+			let unsubscribe = onAuthStateChanged(myAuth, (user) => {
+				setUser(user);
+				setAuthLoading(false);
+			});
 
-		if (shouldUseEmulator && myAuth && myFS && myStorage) {
-			let mapEmulators = {} as Record<string, string | number>;
+			return unsubscribe;
+		}
+	}, [myAuth]);
 
-			let FS_HOST = "localhost";
-			let FS_PORT = 5002;
-
-			if (FS_HOST && FS_PORT) {
-				connectFirestoreEmulator(myFS, FS_HOST, FS_PORT);
-				console.log(`firestore().useEmulator(${FS_HOST}, ${FS_PORT})`);
-				mapEmulators.FS_HOST = FS_HOST;
-				mapEmulators.FS_PORT = FS_PORT;
-			}
-
-			let AUTH_HOST = "localhost";
-			let AUTH_PORT = 9099; // or whatever you set the port to in firebase.json
-			if (AUTH_HOST && AUTH_PORT) {
-				let AUTH_URL = `http://${AUTH_HOST}:${AUTH_PORT}`;
-				console.log(
-					`connectAuthEmulator(${AUTH_URL}, {disableWarnings: true})`
-				);
-				//    warns you not to use any real credentials -- we don't need that noise :)
-				connectAuthEmulator(myAuth, AUTH_URL, {
-					disableWarnings: true,
-				});
-
-				mapEmulators.AUTH_HOST = AUTH_HOST;
-				mapEmulators.AUTH_PORT = AUTH_PORT;
-				mapEmulators.AUTH_URL = AUTH_URL;
-			}
-
-			let STORAGE_HOST = "localhost";
-			let STORAGE_PORT = 5004; // or whatever you have it set to in firebase.json
-			if (STORAGE_HOST && STORAGE_PORT) {
-				console.log(
-					`connectStorageEmulator(${STORAGE_HOST}, ${STORAGE_PORT})`
-				);
-				connectStorageEmulator(myStorage, STORAGE_HOST, STORAGE_PORT);
-
-				mapEmulators.STORAGE_HOST = STORAGE_HOST;
-				mapEmulators.STORAGE_PORT = STORAGE_PORT;
-			}
-
-			setUsingEmulators(true);
-			setEmulatorsConfig(mapEmulators);
-
-			console.log(
-				"FIREBASE STARTUP: using Firebase emulator:",
-				JSON.stringify(mapEmulators, null, 2)
+	// listen to the user profile (FS User doc)
+	useEffect(() => {
+		const listenToUserDoc = (uid: string) => {
+			let docRef = doc(myFS, PROFILE_COLLECTION, uid);
+			return onSnapshot(
+				docRef,
+				(docSnap) => {
+					let profileData = docSnap.data();
+					console.log(
+						"<AuthProvider>: got user profile:",
+						profileData,
+						docSnap
+					);
+					if (!profileData) {
+						setAuthErrorMessages([
+							`No profile doc found in Firestore at: ${docRef.path}`,
+						]);
+					}
+					setProfile(profileData);
+				},
+				(firestoreErr) => {
+					console.error(
+						`<AuthProvider>: onSnapshot() callback failed with: ${firestoreErr.message}`,
+						firestoreErr
+					);
+					setAuthErrorMessages([
+						firestoreErr.message,
+						"Have you initialized your Firestore database?",
+					]);
+				}
 			);
+		};
+
+		if (user?.uid) {
+			const unsubscribeFn = listenToUserDoc(user.uid);
+
+			return unsubscribeFn;
+		} else if (!user) {
+			setAuthLoading(true);
+			setProfile(undefined);
+			setAuthErrorMessages(undefined);
+		}
+	}, [user, setProfile, myFS]);
+
+	/**
+	 *
+	 * @param email email address and "login ID" for the new account
+	 * @param password password to use for the new account
+	 * @param displayName optional display name for the new account
+	 * @returns `true` if the account is created, `false` otherwise
+	 */
+	const registerFunction = async (
+		email: string,
+		password: string,
+		displayName: string = ""
+	): Promise<boolean> => {
+		let userCredential;
+		try {
+			userCredential = await createUserWithEmailAndPassword(
+				myAuth,
+				email,
+				password
+			);
+		} catch (ex) {
+			const msg = Object.hasOwnProperty.call(ex, "message")
+				? (ex as Record<string, string>).message
+				: JSON.stringify(ex);
+			console.error(
+				`<AuthProvider>: registerFunction() failed with: ${msg}`
+			);
+			setAuthErrorMessages([
+				msg,
+				"Did you enable the Email Provider in Firebase Auth?",
+			]);
+			return false;
 		}
 
-		setFirebaseInitializing(false);
-	}, [myAuth, myFS, myStorage]);
+		try {
+			let user = userCredential.user;
 
-	if (firebaseInitializing) {
+			let userDocRef = doc(myFS, "users", user.uid);
+			let userDocData = {
+				uid: user.uid,
+				email: email,
+				displayName: displayName,
+				dateCreated: serverTimestamp(),
+			};
+
+			await setDoc(userDocRef, userDocData);
+			return true;
+		} catch (ex) {
+			const msg = Object.hasOwnProperty.call(ex, "message")
+				? (ex as Record<string, string>).message
+				: JSON.stringify(ex);
+			console.error(
+				`<AuthProvider>: registerFunction() failed with: ${msg}`
+			);
+			setAuthErrorMessages([
+				msg,
+				"Did you enable the Firestore Database in your Firebase project?",
+			]);
+			return false;
+		}
+	};
+
+	const loginFunction = async (email: string, password: string) => {
+		try {
+			let userCredential = await signInWithEmailAndPassword(
+				myAuth,
+				email,
+				password
+			);
+
+			let user = userCredential.user;
+			if (!user?.uid) {
+				let msg = `No UID found after signIn!`;
+				console.error(msg);
+			}
+			if (user) {
+				console.log(
+					`Logged in as uid(${user.uid}) email(${user.email})`
+				);
+			}
+			setUser(user);
+			return true;
+		} catch (ex) {
+			const msg = Object.hasOwnProperty.call(ex, "message")
+				? (ex as Record<string, string>).message
+				: JSON.stringify(ex);
+			console.error(
+				`<AuthProvider>: Login failure for email(${email}: ${msg})`
+			);
+			setAuthErrorMessages([msg]);
+			return false;
+		}
+	};
+
+	const logoutFunction = async () => {
+		try {
+			setUser(null); // shut down the listeners
+			await signOut(myAuth);
+			console.log("Signed Out");
+			return true;
+		} catch (ex) {
+			const msg = Object.hasOwnProperty.call(ex, "message")
+				? (ex as Record<string, string>).message
+				: JSON.stringify(ex);
+			console.error(msg);
+			setAuthErrorMessages([msg]);
+			return false;
+		}
+	};
+
+	if (authLoading) {
 		return null;
 	}
 
 	const theValues = {
-		emulatorsConfig,
-		myApp,
-		myAuth,
-		myFS,
-		myStorage,
-		usingEmulators,
-	} as IFirebaseContext;
+		authErrorMessages,
+		authLoading,
+		profile,
+		user,
+		login: loginFunction,
+		logout: logoutFunction,
+		register: registerFunction,
+	};
 
 	return (
-		<FirebaseContext.Provider value={theValues}>
+		<AuthContext.Provider value={theValues}>
 			{children}
-		</FirebaseContext.Provider>
+		</AuthContext.Provider>
 	);
 };
 
-export interface IFirebaseContext {
-	myApp: FirebaseApp;
-	myAuth: Auth;
-	myFS: Firestore;
-	myStorage: FirebaseStorage;
-	usingEmulators: boolean;
-	emulatorsConfig: object;
-}
-
 /**
- * A hook that returns the FirebaseContext's values.
+ * A hook that returns the AuthContext's values.
  */
-export const useFirebaseContext = () => {
+export const useAuthContext = () => {
 	// get the context
-	const context = useContext(FirebaseContext);
+	const context = useContext(AuthContext);
 
 	// if `undefined`, throw an error
 	if (context === undefined) {
-		throw new Error("useFirebaseContext was used outside of its Provider");
+		throw new Error("useAuthContext was used outside of its Provider");
 	}
 
 	return context;
