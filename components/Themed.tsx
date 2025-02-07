@@ -35,46 +35,49 @@ export function useThemeColor(
 	}
 }
 
+//
 export function Text(props: TextProps) {
-	const { style, lightColor, darkColor, ...otherProps } = props;
+	const { className, ...otherProps } = props;
 	return (
-		<DefaultText className="color-black dark:color-white" {...otherProps} />
+		<DefaultText
+			className={`text-black dark:text-white ${
+				className ? className + " " : ""
+			}`}
+			{...otherProps}
+		/>
 	);
 }
 
 export function TView(props: ViewProps) {
-	const { style, lightColor, darkColor, ...otherProps } = props;
+	const { className, ...otherProps } = props;
 	return (
-		<DefaultView className="bg-white dark:bg-oxford-500" {...otherProps} />
+		<DefaultView
+			className={`bg-white dark:bg-oxford-500 ${
+				className ? className + " " : ""
+			}`}
+		/>
 	);
 }
 
 export function SafeAreaView(props: ViewProps) {
-	const { style, lightColor, darkColor, ...otherProps } = props;
-	const backgroundColor = useThemeColor(
-		{ light: lightColor, dark: darkColor },
-		"background"
-	);
-
+	const { className, ...otherProps } = props;
 	return (
 		<DefaultSafeAreaView
-			className="bg-white dark:bg-pink-500"
-			style={[{ backgroundColor }, style]}
+			className={`bg-white dark:bg-oxford-500 ${
+				className ? className + " " : ""
+			}`}
 			{...otherProps}
 		/>
 	);
 }
 
 export function ScrollView(props: ViewProps) {
-	const { style, lightColor, darkColor, ...otherProps } = props;
-	const backgroundColor = useThemeColor(
-		{ light: lightColor, dark: darkColor },
-		"background"
-	);
-
+	const { className, ...otherProps } = props;
 	return (
 		<DefaultScrollView
-			style={[{ backgroundColor }, style]}
+			className={`bg-white dark:bg-oxford-500 ${
+				className ? className + " " : ""
+			}`}
 			{...otherProps}
 		/>
 	);
