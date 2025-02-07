@@ -9,7 +9,7 @@ import {
 	Text,
 	TouchableWithoutFeedback,
 } from "react-native";
-import { ThemedView } from "@/components/Themed";
+import { TView } from "@/components/Themed";
 import { useState, useEffect, useRef } from "react";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import FontAwesome from "@expo/vector-icons/FontAwesome6";
@@ -85,7 +85,7 @@ export default function ChatScreen() {
 						}
 						keyboardDismissMode="on-drag"
 					>
-						<ThemedView
+						<TView
 							className="mt-8 mb-6 h-px w-[90%] self-center dark:bg-oxford-300 bg-oxford-200"
 							lightColor="#eee"
 							darkColor="rgba(255,255,255,0.1)"
@@ -100,7 +100,7 @@ export default function ChatScreen() {
 					</ScrollView>
 				)}
 
-				<ThemedView className="items-center justify-center py-3 px-2">
+				<TView className="items-center justify-center py-3 px-2">
 					<TextInput
 						className="rounded-2xl px-3.5 py-5 w-full bg-gray-400 dark:bg-gray-700 border border-gray-600 text-black dark:text-white"
 						value={message}
@@ -111,7 +111,7 @@ export default function ChatScreen() {
 						returnKeyType="send"
 						inputMode="text"
 					/>
-				</ThemedView>
+				</TView>
 			</KeyboardAvoidingView>
 		</SafeAreaView>
 	);

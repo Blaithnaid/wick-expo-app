@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import { Text, ThemedView } from "@/components/Themed";
+import { Text, TView } from "@/components/Themed";
 
 export default function HomeScreen() {
 	return (

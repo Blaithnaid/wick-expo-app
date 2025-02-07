@@ -38,18 +38,14 @@ export function useThemeColor(
 export function Text(props: TextProps) {
 	const { style, lightColor, darkColor, ...otherProps } = props;
 	return (
-		<DefaultText
-			className="color-black dark:color-white"
-			style={style}
-			{...otherProps}
-		/>
+		<DefaultText className="color-black dark:color-white" {...otherProps} />
 	);
 }
 
-export function ThemedView(props: ViewProps) {
+export function TView(props: ViewProps) {
 	const { style, lightColor, darkColor, ...otherProps } = props;
 	return (
-		<DefaultView className="bg-white dark:bg-pink-500" {...otherProps} />
+		<DefaultView className="bg-white dark:bg-oxford-500" {...otherProps} />
 	);
 }
 
