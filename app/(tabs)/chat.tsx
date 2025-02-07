@@ -4,12 +4,9 @@ import {
 	KeyboardAvoidingView,
 	Platform,
 	Keyboard,
-	View,
-	SafeAreaView,
-	Text,
 	TouchableWithoutFeedback,
 } from "react-native";
-import { TView } from "@/components/Themed";
+import { Text, View, SafeAreaView } from "@/components/Themed";
 import { useState, useEffect, useRef } from "react";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import FontAwesome from "@expo/vector-icons/FontAwesome6";
@@ -47,7 +44,7 @@ export default function ChatScreen() {
 	};
 
 	return (
-		<SafeAreaView className="flex-1 dark:bg-oxford-500 bg-slate-200">
+		<SafeAreaView className="flex-1">
 			<KeyboardAvoidingView
 				className="flex-1"
 				behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -66,10 +63,10 @@ export default function ChatScreen() {
 								}
 							/>
 							<View className="mt-4 mb-3 h-[2px] rounded-full w-[55%] bg-slate-400" />
-							<Text className="text-xl text-center w-2/3 color:black dark:color-white">
+							<Text className="text-xl text-center w-2/3">
 								Send a message to start chatting with Wickbot!
 							</Text>
-							<Text className="text-lg text-center w-3/4 mt-4 color:black dark:color-gray-300">
+							<Text className="text-lg text-center w-3/4 mt-4">
 								Click the icon in the top right to get some
 								tips!
 							</Text>
@@ -85,7 +82,7 @@ export default function ChatScreen() {
 						}
 						keyboardDismissMode="on-drag"
 					>
-						<TView
+						<View
 							className="mt-8 mb-6 h-px w-[90%] self-center dark:bg-oxford-300 bg-oxford-200"
 							lightColor="#eee"
 							darkColor="rgba(255,255,255,0.1)"
@@ -100,7 +97,7 @@ export default function ChatScreen() {
 					</ScrollView>
 				)}
 
-				<TView className="items-center justify-center py-3 px-2">
+				<View className="items-center justify-center py-3 px-2">
 					<TextInput
 						className="rounded-2xl px-3.5 py-5 w-full bg-gray-400 dark:bg-gray-700 border border-gray-600 text-black dark:text-white"
 						value={message}
@@ -111,7 +108,7 @@ export default function ChatScreen() {
 						returnKeyType="send"
 						inputMode="text"
 					/>
-				</TView>
+				</View>
 			</KeyboardAvoidingView>
 		</SafeAreaView>
 	);

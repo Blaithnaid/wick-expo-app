@@ -48,13 +48,14 @@ export function Text(props: TextProps) {
 	);
 }
 
-export function TView(props: ViewProps) {
+export function View(props: ViewProps) {
 	const { className, ...otherProps } = props;
 	return (
 		<DefaultView
 			className={`bg-white dark:bg-oxford-500 ${
 				className ? className + " " : ""
 			}`}
+			{...otherProps}
 		/>
 	);
 }
