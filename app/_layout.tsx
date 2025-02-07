@@ -13,6 +13,8 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 
+import { FirebaseProvider } from "@/services/FirebaseProvider";
+import { AuthProvider } from "@/services/AuthProvider";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import Colors from "@/constants/Colors";
 
@@ -58,25 +60,43 @@ function RootLayoutNav() {
 	console.log("colorScheme in RootLayoutNav: " + colorScheme);
 
 	return (
-		<ThemeProvider
-			value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-		>
-			<Stack>
-				<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-				<Stack.Screen
-					name="modal"
-					options={{
-						presentation: "modal",
-						headerTitle: "Wickbot Info", // Change the header text
-						headerStyle: {
-							backgroundColor:
-								Colors[colorScheme ?? "light"].headerBackground,
-						},
-						headerTintColor: Colors[colorScheme ?? "light"].text,
-					}}
-				/>
-			</Stack>
-			<StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-		</ThemeProvider>
+		<FirebaseProvider>
+			<AuthProvider>
+				<ThemeProvider
+					value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+				>
+					<Stack>
+						<Stack.Screen
+							name="(tabs)"
+							options={{ headerShown: false }}
+						/>
+						<Stack.Screen
+							name="modal"
+							options={{
+								presentation: "modal",
+								headerTitle: "Wickbot Info", // Change the header text
+								headerStyle: {
+									backgroundColor:
+										Colors[colorScheme ?? "light"]
+											.headerBackground,
+								},
+								headerTintColor:
+									Colors[colorScheme ?? "light"].text,
+							}}
+						/>
+						<Stack.Screen
+							name="(auth)"
+							options={{
+								headerShown: false,
+								animation: "slide_from_bottom",
+							}}
+						/>
+					</Stack>
+					<StatusBar
+						style={colorScheme === "dark" ? "light" : "dark"}
+					/>
+				</ThemeProvider>
+			</AuthProvider>
+		</FirebaseProvider>
 	);
 }
