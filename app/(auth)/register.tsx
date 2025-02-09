@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Text, View, SafeAreaView } from "@/components/Themed";
+import { router } from "expo-router";
 import {
 	FormControl,
 	FormControlError,
@@ -13,24 +15,19 @@ import { Pressable } from "react-native";
 import { Input, InputField } from "@/components/ui/input";
 import { Button, ButtonText } from "@/components/ui/button";
 import { AlertCircleIcon } from "@/components/ui/icon";
-import { SafeAreaView, Text, View } from "@/components/Themed";
 
-export default function Login() {
-	const emailregex =
-		/^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
-	const [email, setEmail] = useState("");
+export default function Signup() {
 	const [isEmailInvalid, setIsEmailInvalid] = useState(false);
-	const validateEmail = (email: string) => {
-		if (!emailregex.test(email)) {
-			setIsEmailInvalid(true);
+	const [isPasswordInvalid, setIsPasswordInvalid] = useState(false);
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const handleSubmit = () => {
+		if (password.length < 6) {
+			setIsPasswordInvalid(true);
 		} else {
-			setIsEmailInvalid(false);
+			setIsPasswordInvalid(false);
 		}
 	};
-
-	const [password, setPassword] = useState("");
-	const [confirmPassword, setConfirmPassword] = useState("");
-	const [isPasswordInvalid, setIsPasswordInvalid] = useState(false);
 	return (
 		<SafeAreaView className="flex-1 px-4">
 			<View className="flex-1 justify-between">
@@ -50,7 +47,6 @@ export default function Login() {
 							size={"md"}
 						>
 							<InputField
-								className="text-black dark:text-white"
 								type="text"
 								value={email}
 								onChangeText={(text) => setEmail(text)}
@@ -96,9 +92,7 @@ export default function Login() {
 					<Button
 						className="w-fit bg-iguana-500 self-end mt-4"
 						size="md"
-						onPress={() => {
-							console.log("Submit button pressed");
-						}}
+						onPress={handleSubmit}
 					>
 						<ButtonText className="text-black dark:text-white">
 							Submit
@@ -108,11 +102,11 @@ export default function Login() {
 				<View className="flex-row justify-evenly mb-4">
 					<Pressable
 						onPress={() => {
-							console.log("Forgot password pressed");
+							router.push("/(auth)/login");
 						}}
 					>
-						<Text className="pb-2 text-center underline">
-							Forgot your password?
+						<Text className="pb-2 text-center underline active:text-oxford-300">
+							Already have an account?
 						</Text>
 					</Pressable>
 				</View>
