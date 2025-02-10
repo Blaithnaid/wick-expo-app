@@ -38,24 +38,53 @@ export default function SettingsScreen() {
 				</View>
 				<View className="pl-2 bg-transparent dark:bg-transparent">
 					<Text className="text-xl text-black dark:text-white">
-						{auth.user ? auth.user.displayName : "Create account"}
+						{auth.profile
+							? auth.profile.displayName
+							: "Create account"}
 					</Text>
 					<Text className="text-md text-black dark:text-slate-300">
-						{auth.user ? null : "Tap here to sign up or log in!"}
+						{auth.profile
+							? auth.profile.email
+							: "Tap here to sign up or log in!"}
 					</Text>
 				</View>
 			</Pressable>
-			{/* {auth.user ? ( */}
-			<Pressable
-				className="border-y border-collapse border-oxford-300 bg-oxford-400 p-3 w-[95%] flex flex-row items-center mt-4"
-				android_ripple={{ color: "gray" }}
-				onPress={() => auth.logout()}
-			>
-				<Text className="text-black text-xl dark:text-white my-1">
-					Log out
-				</Text>
-			</Pressable>
-			{/* ) : null} */}
+			<View className="mt-4 w-full items-center">
+				{auth.profile ? (
+					<Pressable
+						className="bg-oxford-400 p-3 w-[95%] flex flex-row items-start border-t border-oxford-300"
+						android_ripple={{ color: "gray" }}
+						onPress={() => auth.logout()}
+					>
+						<Text className="text-black text-xl dark:text-white my-1">
+							Log out
+						</Text>
+						<FontAwesome
+							name="chevron-right"
+							size={16}
+							color={"#ffffff"}
+							className="ml-auto pt-2.5"
+						/>
+					</Pressable>
+				) : null}
+				<Pressable
+					className="bg-oxford-400 p-3 w-[95%] flex flex-row items-start border-y border-oxford-300"
+					android_ripple={{ color: "gray" }}
+					onPress={() =>
+						console.log("Current profile name: ", auth.profile)
+					}
+				>
+					<Text className="text-black text-xl dark:text-white my-1">
+						Debug user info
+					</Text>
+					<FontAwesome
+						name="chevron-right"
+						size={16}
+						color={"#ffffff"}
+						className="ml-auto pt-2.5"
+					/>
+				</Pressable>
+			</View>
 		</View>
 	);
 }
