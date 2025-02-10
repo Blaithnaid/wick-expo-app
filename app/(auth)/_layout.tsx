@@ -40,17 +40,16 @@ export default function AuthLayout() {
 				options={{
 					headerTitle: "Register",
 					headerShown: true,
-					animation: "slide_from_right",
 					headerLeft: () => (
 						<View className="flex-row">
 							<Pressable
 								onPress={() => {
 									router.dismiss();
-									console.log("Register screen dismissed");
 								}}
-								className="color-iguana-400 active:color-iguana-500"
 							>
-								<Text>Cancel</Text>
+								<Text className="text-iguana-400 dark:text-iguana-400">
+									Cancel
+								</Text>
 							</Pressable>
 						</View>
 					),
