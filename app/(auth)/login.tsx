@@ -35,7 +35,7 @@ export default function Login() {
 	const handleSubmit = async () => {
 		const login = await auth.login(email, password);
 		if (login === true) {
-			router.dismiss;
+			router.dismissTo("/settings");
 		} else {
 			setLoginError(true);
 		}
@@ -132,7 +132,7 @@ export default function Login() {
 				<View className="flex-row justify-evenly mb-4">
 					<Pressable
 						onPress={() => {
-							console.log("Forgot password pressed");
+							router.push("/(auth)/forgotpassword");
 						}}
 					>
 						<Text className="pb-2 text-center underline">

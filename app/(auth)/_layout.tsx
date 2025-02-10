@@ -55,6 +55,22 @@ export default function AuthLayout() {
 					),
 				}}
 			/>
+			<Stack.Screen
+				name="forgotpassword"
+				options={{
+					headerTitle: "Forgot Password",
+					headerShown: true,
+					headerLeft: () => (
+						<View className="flex-row">
+							<Pressable onPress={() => router.back()}>
+								<Text className="color-iguana-400 dark:color-iguana-400">
+									Back
+								</Text>
+							</Pressable>
+						</View>
+					),
+				}}
+			/>
 		</Stack>
 	);
 }
