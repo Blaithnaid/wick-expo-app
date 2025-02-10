@@ -1,6 +1,7 @@
 import { View, Text } from "@/components/Themed";
 import { router } from "expo-router";
 import { Pressable } from "react-native";
+import { Divider } from "@/components/ui/divider";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useAuthContext } from "@/services/AuthProvider";
 import { Image } from "expo-image";
@@ -15,7 +16,13 @@ export default function SettingsScreen() {
 			<Pressable
 				className="bg-oxford-300 p-4 w-[95%] rounded-2xl flex flex-row items-center"
 				android_ripple={{ color: "gray" }}
-				onPress={() => router.push("/(auth)/register")}
+				onPress={() => {
+					if (!auth.profile) {
+						router.push("/(auth)/register");
+					} else {
+						router.push("/profile");
+					}
+				}}
 			>
 				<View className="bg-transparent overflow-hidden rounded-full size-16 flex items-center justify-center">
 					{auth.user ? (
@@ -68,7 +75,7 @@ export default function SettingsScreen() {
 					</Pressable>
 				) : null}
 				<Pressable
-					className="bg-oxford-400 p-3 w-[95%] flex flex-row items-start border-y border-oxford-300"
+					className="bg-oxford-400 p-3 w-full flex flex-row items-start border-y border-oxford-300"
 					android_ripple={{ color: "gray" }}
 					onPress={() =>
 						console.log("Current profile name: ", auth.profile)
