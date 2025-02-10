@@ -15,7 +15,6 @@ export default function SettingsScreen() {
 			<Pressable
 				className="bg-oxford-300 p-4 w-[95%] rounded-2xl flex flex-row items-center"
 				android_ripple={{ color: "gray" }}
-				// ios equivalent of android_ripple
 				onPress={() => router.push("/(auth)/register")}
 			>
 				<View className="bg-transparent overflow-hidden rounded-full size-16 flex items-center justify-center">
@@ -46,6 +45,17 @@ export default function SettingsScreen() {
 					</Text>
 				</View>
 			</Pressable>
+			{/* {auth.user ? ( */}
+			<Pressable
+				className="border-y border-collapse border-oxford-300 bg-oxford-400 p-3 w-[95%] flex flex-row items-center mt-4"
+				android_ripple={{ color: "gray" }}
+				onPress={() => auth.logout()}
+			>
+				<Text className="text-black text-xl dark:text-white my-1">
+					Log out
+				</Text>
+			</Pressable>
+			{/* ) : null} */}
 		</View>
 	);
 }
