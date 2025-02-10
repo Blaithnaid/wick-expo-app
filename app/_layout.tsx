@@ -91,6 +91,21 @@ function RootLayoutNav() {
 								animation: "slide_from_bottom",
 							}}
 						/>
+						<Stack.Screen
+							name="profile"
+							options={{
+								presentation: "modal",
+								headerTitle: "Your Profile",
+								headerStyle: {
+									backgroundColor:
+										Colors[colorScheme ?? "light"]
+											.headerBackground,
+								},
+								headerTintColor:
+									Colors[colorScheme ?? "light"].text,
+								animation: "slide_from_bottom",
+							}}
+						/>
 					</Stack>
 					<StatusBar
 						style={colorScheme === "dark" ? "light" : "dark"}
