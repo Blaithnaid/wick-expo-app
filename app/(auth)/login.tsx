@@ -10,27 +10,37 @@ import {
 	FormControlHelperText,
 } from "@/components/ui/form-control";
 import { Pressable } from "react-native";
+import { router } from "expo-router";
 import { Input, InputField } from "@/components/ui/input";
 import { Button, ButtonText } from "@/components/ui/button";
 import { AlertCircleIcon } from "@/components/ui/icon";
 import { SafeAreaView, Text, View } from "@/components/Themed";
+import { useAuthContext } from "@/services/AuthProvider";
 
 export default function Login() {
-	const emailregex =
-		/^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
+	const auth = useAuthContext();
+
 	const [email, setEmail] = useState("");
 	const [isEmailInvalid, setIsEmailInvalid] = useState(false);
-	const validateEmail = (email: string) => {
-		if (!emailregex.test(email)) {
-			setIsEmailInvalid(true);
+
+	const [password, setPassword] = useState("");
+	const [isPasswordInvalid, setIsPasswordInvalid] = useState(false);
+
+	const [isLoggingIn, setIsLoggingIn] = useState(false);
+	const [loginError, setLoginError] = useState(false);
+
+	const emailregex =
+		/^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
+
+	const handleSubmit = async () => {
+		const login = await auth.login(email, password);
+		if (login === true) {
+			router.dismiss;
 		} else {
-			setIsEmailInvalid(false);
+			setLoginError(true);
 		}
 	};
 
-	const [password, setPassword] = useState("");
-	const [confirmPassword, setConfirmPassword] = useState("");
-	const [isPasswordInvalid, setIsPasswordInvalid] = useState(false);
 	return (
 		<SafeAreaView className="flex-1 px-4">
 			<View className="flex-1 justify-between">
@@ -53,7 +63,14 @@ export default function Login() {
 								className="text-black dark:text-white"
 								type="text"
 								value={email}
-								onChangeText={(text) => setEmail(text)}
+								onChangeText={(text) => {
+									setEmail(text);
+									if (!emailregex.test(email)) {
+										setIsEmailInvalid(true);
+									} else {
+										setIsEmailInvalid(false);
+									}
+								}}
 							/>
 						</Input>
 						<FormControlError>
@@ -97,13 +114,20 @@ export default function Login() {
 						className="w-fit bg-iguana-500 self-end mt-4"
 						size="md"
 						onPress={() => {
-							console.log("Submit button pressed");
+							handleSubmit();
 						}}
 					>
 						<ButtonText className="text-black dark:text-white">
 							Submit
 						</ButtonText>
 					</Button>
+					{loginError ? (
+						<View className="w-1/2 mt-8 self-center rounded-2xl p-4 bg-slate-800 dark:bg-slate-600 border-2 border-red-800 dark:border-red-800">
+							<Text className="text-center">
+								Login failed. Please try again.
+							</Text>
+						</View>
+					) : null}
 				</View>
 				<View className="flex-row justify-evenly mb-4">
 					<Pressable
