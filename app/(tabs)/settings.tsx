@@ -59,7 +59,7 @@ export default function SettingsScreen() {
 			<View className="mt-4 w-full items-center">
 				{auth.profile ? (
 					<Pressable
-						className="bg-oxford-400 p-3 w-[95%] flex flex-row items-start border-t border-oxford-300"
+						className="bg-oxford-400 p-3 w-full flex flex-row items-start border-t border-oxford-300"
 						android_ripple={{ color: "gray" }}
 						onPress={() => auth.logout()}
 					>
