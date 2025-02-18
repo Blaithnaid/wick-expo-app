@@ -6,11 +6,12 @@ import {
 	Keyboard,
 	TouchableWithoutFeedback,
 } from "react-native";
+import { httpsCallable } from "firebase/functions";
+import { useFirebaseContext } from "@/services/FirebaseProvider";
 import { Text, View, SafeAreaView } from "@/components/Themed";
 import { useState, useEffect, useRef } from "react";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import FontAwesome from "@expo/vector-icons/FontAwesome6";
-import { sendMessage } from "@/services/aiService";
 import ChatBubble from "@/components/ChatBubble";
 
 export default function ChatScreen() {
@@ -18,6 +19,25 @@ export default function ChatScreen() {
 	const [messages, setMessages] = useState<{ text: string; role: string }[]>(
 		[]
 	);
+
+	const functions = useFirebaseContext().myFunctions;
+	const chatWithGemini = httpsCallable(functions, "chatWithGemini");
+
+	const sendMessage = async (
+		message: string,
+		prevMessages: { text: string; role: string }[]
+	) => {
+		try {
+			const result = await chatWithGemini({
+				prevMessages: prevMessages,
+				userMessage: message,
+			});
+
+			return result.data;
+		} catch (error) {
+			console.error("Error calling function:", error);
+		}
+	};
 
 	const scrollViewRef = useRef<ScrollView>(null);
 	const colorScheme = useColorScheme().colorScheme;

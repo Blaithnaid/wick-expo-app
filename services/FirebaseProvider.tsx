@@ -31,6 +31,7 @@ const myApp = initializeApp(myFirebaseConfig);
 
 const myFS = getFirestore(myApp);
 const myStorage = getStorage(myApp);
+const myFunctions = getFunctions(myApp);
 
 let myAuth: Auth;
 if (Platform.OS === "web") {
@@ -69,7 +70,7 @@ export const FirebaseProvider = (props: IProps) => {
 	useEffect(() => {
 		const shouldUseEmulator = false; // or true :)
 
-		if (shouldUseEmulator && myAuth && myFS && myStorage) {
+		if (shouldUseEmulator && myAuth && myFS && myStorage && myFunctions) {
 			let mapEmulators = {} as Record<string, string | number>;
 
 			let FS_HOST = "localhost";
@@ -111,6 +112,22 @@ export const FirebaseProvider = (props: IProps) => {
 				mapEmulators.STORAGE_PORT = STORAGE_PORT;
 			}
 
+			let FUNCTIONS_HOST = "localhost";
+			let FUNCTIONS_PORT = 5001;
+
+			if (FUNCTIONS_HOST && FUNCTIONS_PORT) {
+				connectFunctionsEmulator(
+					myFunctions,
+					FUNCTIONS_HOST,
+					FUNCTIONS_PORT
+				);
+				console.log(
+					`functions().useEmulator(${FUNCTIONS_HOST}, ${FUNCTIONS_PORT})`
+				);
+				mapEmulators.FUNCTIONS_HOST = FUNCTIONS_HOST;
+				mapEmulators.FUNCTIONS_PORT = FUNCTIONS_PORT;
+			}
+
 			setUsingEmulators(true);
 			setEmulatorsConfig(mapEmulators);
 
@@ -121,7 +138,7 @@ export const FirebaseProvider = (props: IProps) => {
 		}
 
 		setFirebaseInitializing(false);
-	}, [myAuth, myFS, myStorage]);
+	}, [myAuth, myFS, myStorage, myFunctions]);
 
 	if (firebaseInitializing) {
 		return null;
@@ -133,6 +150,7 @@ export const FirebaseProvider = (props: IProps) => {
 		myAuth,
 		myFS,
 		myStorage,
+		myFunctions,
 		usingEmulators,
 	} as IFirebaseContext;
 
@@ -148,6 +166,7 @@ export interface IFirebaseContext {
 	myAuth: Auth;
 	myFS: Firestore;
 	myStorage: FirebaseStorage;
+	myFunctions: Functions;
 	usingEmulators: boolean;
 	emulatorsConfig: object;
 }

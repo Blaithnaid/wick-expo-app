@@ -9,8 +9,6 @@ import {
 	FormControlHelper,
 	FormControlHelperText,
 } from "@/components/ui/form-control";
-import { Pressable } from "react-native";
-import { router } from "expo-router";
 import { Input, InputField } from "@/components/ui/input";
 import { Button, ButtonText } from "@/components/ui/button";
 import { useColorScheme } from "@/hooks/useColorScheme";
