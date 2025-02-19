@@ -1,5 +1,4 @@
-import { Platform } from "react-native";
-import { ScrollView, ThemedView } from "@/components/Themed";
+import { ScrollView, View } from "@/components/Themed";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import Markdown from "react-native-markdown-display";
 
@@ -50,7 +49,7 @@ WickBot is your creative assistant, not a replacement for human judgment. Use it
 
 	return (
 		<ScrollView>
-			<ThemedView className="flex-1 items-left text-left justify-center px-5 pt-4 text-black dark:text-white">
+			<View className="flex-1 items-left text-left justify-center px-5 pt-4 text-black dark:text-white">
 				<Markdown
 					style={{
 						body: {
@@ -72,7 +71,7 @@ WickBot is your creative assistant, not a replacement for human judgment. Use it
 				>
 					{modalText}
 				</Markdown>
-			</ThemedView>
+			</View>
 		</ScrollView>
 	);
 }

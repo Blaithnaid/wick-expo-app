@@ -1,7 +1,7 @@
 import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link, Tabs } from "expo-router";
-import { Pressable } from "react-native";
+import { Pressable, Platform } from "react-native";
 import * as Haptics from "expo-haptics";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -36,6 +36,7 @@ export default function TabLayout() {
 			}}
 			screenListeners={{
 				tabPress: () => {
+					if (Platform.OS === "web") return;
 					Haptics.selectionAsync();
 				},
 			}}
