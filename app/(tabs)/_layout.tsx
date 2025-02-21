@@ -88,6 +88,15 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
+				name="igprofile"
+				options={{
+					title: "Profile",
+					tabBarIcon: ({ color }) => (
+						<TabBarIcon name="user" color={color} />
+					),
+				}}
+			/>
+			<Tabs.Screen
 				name="settings"
 				options={{
 					title: "Settings",
