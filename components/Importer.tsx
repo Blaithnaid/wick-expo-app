@@ -1,6 +1,7 @@
-import RNFS from 'expo-file-system';
-import * as Zip from 'expo-zip';
-// import DocumentPicker from 'react-native-document-picker';
+import { useState } from 'react';
+import { View } from '@/components/Themed';
+import * as FileSystem from 'expo-file-system';
+import * as DocumentPicker from 'expo-document-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { InstagramProfile, InstagramPost, ImportStatus } from "@/constants/Instagram";
 
@@ -117,7 +118,7 @@ export class InstagramArchiveHandler {
 }
 
 // Usage in a component:
-const ImportScreen: React.FC = () => {
+export default function ImportScreen() {
   const [importing, setImporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
