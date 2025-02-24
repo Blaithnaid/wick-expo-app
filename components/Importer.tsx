@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { View } from '@/components/Themed';
+import { Text, View } from '@/components/Themed';
 import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Button } from '@/components/ui/button'
 import { InstagramProfile, InstagramPost, ImportStatus } from "@/constants/Instagram";
 
 interface ImportResult {
@@ -13,24 +14,25 @@ interface ImportResult {
 
 export class InstagramArchiveHandler {
   private tempDir: string;
-  
+
   constructor() {
     // Create a unique temp directory for this import
-    this.tempDir = `${RNFS.TemporaryDirectoryPath}/instagram_import_${Date.now()}`;
+    this.tempDir = `${FileSystem.cacheDirectory}/instagram_import_${Date.now()}`;
   }
 
   async importArchive(): Promise<ImportResult> {
     try {
       // Let user pick the Instagram archive
-      const file = await DocumentPicker.pickSingle({
-        type: [DocumentPicker.types.zip],
+      const file = await DocumentPicker.getDocumentAsync({
+        copyToCacheDirectory: true,
+        type: ['application/zip']
       });
 
       // Create temp directory if it doesn't exist
-      await RNFS.mkdir(this.tempDir);
+      await FileSystem.makeDirectoryAsync(this.tempDir);
 
       // Extract the archive
-      await zip.unzip(file.uri, this.tempDir);
+      // await zip.unzip(file.uri, this.tempDir);
 
       // Find and parse relevant JSON files
       const profile = await this.parseProfileData();
@@ -43,9 +45,9 @@ export class InstagramArchiveHandler {
       return { success: true, profile };
     } catch (error) {
       console.error('Import failed:', error);
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error during import' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error during import'
       };
     } finally {
       // Clean up temp files
@@ -60,12 +62,13 @@ export class InstagramArchiveHandler {
       const postsPath = `${this.tempDir}/content/posts_1.json`;
 
       // Read and parse profile data
-      const profileJson = await RNFS.readFile(profilePath);
-      const postsJson = await RNFS.readFile(postsPath);
+      const profileJson = await FileSystem.readAsStringAsync(profilePath);
+      const postsJson = await FileSystem.readAsStringAsync(postsPath);
 
       const profileData = JSON.parse(profileJson);
       const postsData = JSON.parse(postsJson);
 
+      console.log('Profile data:', profileData);
       // Transform into our app's format
       return {
         username: profileData.username,
@@ -134,19 +137,24 @@ export default function ImportScreen() {
     }
 
     setImporting(false);
-    
+
     if (result.success && result.profile) {
       // Navigate to profile view or update UI
     }
   };
 
   return (
-    <View className="flex-1 p-4">
-      <Button 
+    <View className="flex justify-center items-center w-full h-full p-4">
+      <View>
+        <Text>Hello!</Text>
+      </View>
+      <Button
+        className="bg-iguana-500 w-fit px-6 py-2"
         onPress={handleImport}
         disabled={importing}
-        title={importing ? "Importing..." : "Import Instagram Archive"}
-      />
+      >
+        {importing ? "Importing..." : "Import from Instagram"}
+      </Button>
       {error && (
         <Text className="text-red-500 mt-2">{error}</Text>
       )}
