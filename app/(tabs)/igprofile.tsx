@@ -26,7 +26,7 @@ export default function IgProfileScreen() {
         <Text className="text-xl text-center w-2/3">
           You are not signed in!
         </Text>
-        <Text className="text-lg text-center w-3/4 mt-4">
+        <Text className="text-lg text-red-400 text-center w-3/4 mt-4">
           Head over to <View className="text-bold">Settings</View> and create an account, or sign back in!
         </Text>
         <Text className="text-lg text-center w-3/4 mt-2">
