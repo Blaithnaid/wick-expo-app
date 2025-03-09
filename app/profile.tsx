@@ -1,65 +1,136 @@
+import React from "react";
 import { useState } from "react";
-import {
-	FormControl,
-	FormControlError,
-	FormControlErrorText,
-	FormControlErrorIcon,
-	FormControlLabel,
-	FormControlLabelText,
-	FormControlHelper,
-	FormControlHelperText,
-} from "@/components/ui/form-control";
-import { Pressable } from "react-native";
-import { router } from "expo-router";
-import { Input, InputField } from "@/components/ui/input";
-import { Button, ButtonText } from "@/components/ui/button";
-import { AlertCircleIcon } from "@/components/ui/icon";
-import { SafeAreaView, Text, View } from "@/components/Themed";
+import { SafeAreaView, ScrollView, View, Text } from "@/components/Themed"
 import { useAuthContext } from "@/services/AuthProvider";
+import { useFirebaseContext } from "@/services/FirebaseProvider";
+import { Button } from "@/components/ui/button";
+import { Input, InputField } from "@/components/ui/input";
 import { Image } from "expo-image";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { sendPasswordResetEmail } from "firebase/auth";
 
-export default function Login() {
-	const auth = useAuthContext();
+export default function ProfileSettings() {
+  const auth = useAuthContext();
+  const firebase = useFirebaseContext();
+  const profile = auth.profile;
 
-	const emailregex =
-		/^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
+  const [didSubmit, setDidSubmit] = useState(false);
 
-	return (
-		<SafeAreaView className="flex-1 px-4">
-			<View className="flex-row justify-center items-center">
-				<View className="bg-transparent overflow-hidden rounded-full size-16 flex items-center justify-center">
-					{auth.user ? (
-						<Image
-							source={{ uri: auth.user.photoURL }}
-							style={{
-								width: 64,
-								height: 64,
-								borderRadius: 64,
-							}}
-						/>
-					) : (
-						<FontAwesome
-							name="user"
-							size={64}
-							color={"#ffffff"}
-							className="rounded-full"
-						/>
-					)}
-				</View>
-				<View className="pl-2 bg-transparent dark:bg-transparent">
-					<Text className="text-xl text-black dark:text-white">
-						{auth.profile
-							? auth.profile.displayName
-							: "Create account"}
-					</Text>
-					<Text className="text-md text-black dark:text-slate-300">
-						{auth.profile
-							? auth.profile.email
-							: "Tap here to sign up or log in!"}
-					</Text>
-				</View>
-			</View>
-		</SafeAreaView>
-	);
+  const handlePasswordReset = async () => {
+    const reset = await sendPasswordResetEmail(firebase.myAuth, profile?.email);
+    setDidSubmit(true);
+  }
+
+  if (!auth.profile) {
+    return (
+      <SafeAreaView className="flex-1 bg-white">
+        <Text className="text-red-500 text-center mt-5">
+          No profile information available.
+        </Text>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView className="flex-1 bg-white">
+      <ScrollView className="px-12 pt-10">
+        <View className="mb-6">
+          {/* profile picture */}
+          <View className="bg-slate-900 dark:bg-slate-900 overflow-hidden rounded-full size-32 flex items-center justify-center self-center">
+            {auth.user?.photoURL ? (
+              <Image
+                source={{ uri: "https://picsum.photos/300/300" }}
+                style={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: 64,
+                }}
+              />
+            ) : (
+              <FontAwesome
+                name="user"
+                size={90}
+                color={"#ffffff"}
+                className="rounded-full"
+              />
+            )}
+          </View>
+          <Text className="text-lg font-bold m-6">
+            Welcome to your profile, {auth.profile.displayName}!
+          </Text>
+          <View className="mb-4">
+            <Text className="text-md text-gray-700 font-bold mb-1">
+              Username
+            </Text>
+            <Input variant="outline" size="md">
+              <InputField
+                className="dark:text-gray-200"
+                value={auth.profile.displayName}
+                editable={false}
+              />
+              <FontAwesome
+                name="key"
+                size={20}
+                color={"#ffffff"}
+                className="rounded-full mr-3"
+              />
+            </Input>
+          </View>
+          <View className="mb-4">
+            <Text className="text-md text-gray-700 font-bold mb-1">
+              Full Name
+            </Text>
+            <Input variant="outline" size="md">
+              <InputField
+                className="dark:text-gray-200"
+                value={auth.profile.fullName}
+                editable={false}
+              />
+              <FontAwesome
+                name="key"
+                size={20}
+                color={"#ffffff"}
+                className="rounded-full mr-3"
+              />
+            </Input>
+          </View>
+          <View className="mb-4">
+            <Text className="text-md text-gray-700 dark:text-gray-200 font-bold mb-1">
+              Email
+            </Text>
+            <Input variant="outline" size="md">
+              <InputField
+                className="dark:text-gray-200"
+                value={auth.profile.email}
+                editable={false}
+              />
+              <FontAwesome
+                name="envelope"
+                size={20}
+                color={"#ffffff"}
+                className="rounded-full mr-3"
+              />
+            </Input>
+          </View>
+        </View>
+        <Button
+          className="bg-blue-500 py-3 rounded"
+          onPress={() => {
+            handlePasswordReset();
+          }
+          }
+        >
+          <Text>Reset Password</Text>
+        </Button>
+        <Button
+          className="bg-blue-500 py-3 rounded"
+          onPress={() => {
+            /* Add navigation or edit functionality */
+          }}
+        >
+          <Text>Edit Profile</Text>
+        </Button>
+      </ScrollView>
+    </SafeAreaView>
+  );
 }
