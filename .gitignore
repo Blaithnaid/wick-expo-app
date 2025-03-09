@@ -37,3 +37,7 @@ yarn-error.*
 
 # ios build
 ios/
+
+# example files for importing ig profiles
+test.json
+test.zip
