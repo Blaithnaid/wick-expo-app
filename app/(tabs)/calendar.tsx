@@ -54,21 +54,24 @@ export default class AgendaScreen extends Component<State> {
       }, 1000);
   };
 
-  renderDay = (day: { getDay: () => string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; }) => {
+
+  renderDay = (day: { getDay: () => string | number | boolean  
+	 }) => {
     if (day) {
       return <Text style={styles.customDay}>{day.getDay()}</Text>;
     }
     return <View style={styles.dayItem}/>;
-  };
+  }; // how the day is displayed in the calendar
+
 
   renderItem = (reservation: AgendaEntry, isFirst: boolean) => {
-    const fontSize = isFirst ? 16 : 14;
-    const color = isFirst ? 'black' : '#43515c';
+    const fontSize = isFirst ? 16 : 14; // font size for the text
+    const color = isFirst ? 'black' : '#43515c'; // color of the text based on whether it is first or not
 
     return (
       <TouchableOpacity
         
-        style={[styles.item, {height: reservation.height}]}
+        style={[styles.item, {height: reservation.height}]} // applies style
         onPress={() => Alert.alert(reservation.name)}
       >
         <Text style={{fontSize, color}}>{reservation.name}</Text>
@@ -76,25 +79,28 @@ export default class AgendaScreen extends Component<State> {
     );
   };
 
+  // to display a msg when there are no tasks for a specific date
   renderEmptyDate = () => {
     return (
-      <View style={styles.emptyDate}>
-        <Text>This is empty date!</Text>
+      <View style={styles.emptyDate}> 
+        <Text>This is empty date</Text>
       </View>
     );
   };
 
+  // to know if agenda needs to be re rendered
   rowHasChanged = (r1: AgendaEntry, r2: AgendaEntry) => {
-    return r1.name !== r2.name;
+    return r1.name !== r2.name; // if the name of the task is different, it will be re rendered
   };
 
+  // converts timestamps to strings
   timeToString(time: number) {
     const date = new Date(time);
     return date.toISOString().split('T')[0];
   }
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({ // styles for the components 
   item: {
     backgroundColor: 'white',
     flex: 1,
