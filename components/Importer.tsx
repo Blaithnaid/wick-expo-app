@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { Text, View, ScrollView } from '@/components/Themed';
-import * as FileSystem from 'expo-file-system';
-import * as DocumentPicker from 'expo-document-picker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import { Text, View, ScrollView } from "@/components/Themed";
+import * as FileSystem from "expo-file-system";
+import * as DocumentPicker from "expo-document-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Button } from "@/components/ui/button";
 import { InstagramProfile, InstagramPost } from "@/constants/Instagram";
-import * as ZipArchive from 'react-native-zip-archive';
+import * as ZipArchive from "react-native-zip-archive";
 
 interface ImportResult {
   success: boolean;
@@ -19,7 +19,8 @@ export class InstagramArchiveHandler {
 
   constructor() {
     // Create a unique temp directory for this import
-    this.tempDir = `${FileSystem.cacheDirectory}instagram_import_${Date.now()}`;
+    this.tempDir = `${FileSystem.cacheDirectory
+      }instagram_import_${Date.now()}`;
   }
 
   async importArchive(): Promise<ImportResult> {
@@ -27,11 +28,11 @@ export class InstagramArchiveHandler {
       // Let user pick the Instagram archive
       const result = await DocumentPicker.getDocumentAsync({
         copyToCacheDirectory: true,
-        type: ['application/zip']
+        type: ["application/zip"],
       });
 
       if (result.canceled) {
-        return { success: false, error: 'File selection canceled' };
+        return { success: false, error: "File selection canceled" };
       }
 
       const file = result.assets[0];
@@ -39,7 +40,9 @@ export class InstagramArchiveHandler {
       // Create temp directory if it doesn't exist
       const dirInfo = await FileSystem.getInfoAsync(this.tempDir);
       if (!dirInfo.exists) {
-        await FileSystem.makeDirectoryAsync(this.tempDir, { intermediates: true });
+        await FileSystem.makeDirectoryAsync(this.tempDir, {
+          intermediates: true,
+        });
       }
 
       console.log(`Extracting ${file.name} to ${this.tempDir}`);
@@ -56,10 +59,13 @@ export class InstagramArchiveHandler {
 
       return { success: true, profile };
     } catch (error) {
-      console.error('Import failed:', error);
+      console.error("Import failed:", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error during import'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Unknown error during import",
       };
     } finally {
       // Clean up temp files
@@ -72,11 +78,11 @@ export class InstagramArchiveHandler {
       // Let user pick a test archive
       const result = await DocumentPicker.getDocumentAsync({
         copyToCacheDirectory: true,
-        type: ['application/zip']
+        type: ["application/zip"],
       });
 
       if (result.canceled) {
-        return { success: false, error: 'File selection canceled' };
+        return { success: false, error: "File selection canceled" };
       }
 
       const file = result.assets[0];
@@ -85,7 +91,9 @@ export class InstagramArchiveHandler {
       // Create temp directory if it doesn't exist
       const dirInfo = await FileSystem.getInfoAsync(this.tempDir);
       if (!dirInfo.exists) {
-        await FileSystem.makeDirectoryAsync(this.tempDir, { intermediates: true });
+        await FileSystem.makeDirectoryAsync(this.tempDir, {
+          intermediates: true,
+        });
       }
 
       // Extract the archive
@@ -93,31 +101,56 @@ export class InstagramArchiveHandler {
       await ZipArchive.unzip(file.uri, this.tempDir);
 
       // List files in the directory to debug
-      const files = await FileSystem.readDirectoryAsync(this.tempDir);
-      console.log('Files in extracted directory:', files);
+      // Recursively list all JSON files to see what we're working with
+      const jsonFiles = await this.findJsonFiles(this.tempDir);
+      console.log("JSON files found:", jsonFiles);
 
-      // Try to read test.json from the archive
-      const testJsonPath = `${this.tempDir}/test.json`;
+      // Try to read a sample profile file from the archive
+      const profilePath = `${this.tempDir}/personal_information/personal_information/personal_information.json`;
+      const profileExists = await FileSystem.getInfoAsync(profilePath);
 
-      const testJsonExists = await FileSystem.getInfoAsync(testJsonPath);
-      if (!testJsonExists.exists) {
-        return { success: false, error: 'test.json not found in archive' };
+      if (profileExists.exists) {
+        const profileContent = await FileSystem.readAsStringAsync(profilePath);
+        const profileData = JSON.parse(profileContent);
+        console.log("Found profile data:", JSON.stringify(profileData, null, 2));
+
+        return {
+          success: true,
+          debugData: {
+            profileData,
+            foundJsonFiles: jsonFiles
+          },
+        };
+      } else {
+        // Try to find any JSON file to debug
+        if (jsonFiles.length > 0) {
+          const sampleJsonPath = jsonFiles[0];
+          const sampleContent = await FileSystem.readAsStringAsync(sampleJsonPath);
+          const sampleData = JSON.parse(sampleContent);
+
+          return {
+            success: true,
+            debugData: {
+              samplePath: sampleJsonPath,
+              sampleData,
+              foundJsonFiles: jsonFiles
+            },
+          };
+        }
+
+        return {
+          success: false,
+          error: "No JSON files found in archive",
+        };
       }
-
-      const testJsonContent = await FileSystem.readAsStringAsync(testJsonPath);
-      const testData = JSON.parse(testJsonContent);
-
-      console.log('Debug test.json data:', testData);
-
-      return {
-        success: true,
-        debugData: testData
-      };
     } catch (error) {
-      console.error('Debug import failed:', error);
+      console.error("Debug import failed:", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error during debug import'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Unknown error during debug import",
       };
     } finally {
       // Clean up temp files
@@ -125,56 +158,120 @@ export class InstagramArchiveHandler {
     }
   }
 
+  private async findJsonFiles(directory: string): Promise<string[]> {
+    try {
+      const result: string[] = [];
+      const entries = await FileSystem.readDirectoryAsync(directory);
+
+      for (const entry of entries) {
+        const entryPath = `${directory}/${entry}`;
+        const info = await FileSystem.getInfoAsync(entryPath);
+
+        if (info.isDirectory) {
+          const subDirFiles = await this.findJsonFiles(entryPath);
+          result.push(...subDirFiles);
+        } else if (entry.endsWith('.json')) {
+          result.push(entryPath);
+        }
+      }
+
+      return result;
+    } catch (error) {
+      console.error("Error finding JSON files:", error);
+      return [];
+    }
+  }
+
   private async parseProfileData(): Promise<InstagramProfile | undefined> {
     try {
-      // Common paths in Instagram export (actual paths may vary)
-      const profilePath = `${this.tempDir}/content/profile.json`;
-      const postsPath = `${this.tempDir}/content/posts_1.json`;
+      // Updated paths based on the actual Instagram export structure
+      const profileInfoPath = `${this.tempDir}/personal_information/personal_information/instagram_profile_information.json`;
+      const postsPath = `${this.tempDir}/your_instagram_activity/media/posts_1.json`;
+      const followersPath = `${this.tempDir}/connections/followers_and_following/followers_1.json`;
+      const followingPath = `${this.tempDir}/connections/followers_and_following/following.json`;
 
       // Check if files exist
-      const profileExists = await FileSystem.getInfoAsync(profilePath);
+      const profileInfoExists = await FileSystem.getInfoAsync(profileInfoPath);
       const postsExists = await FileSystem.getInfoAsync(postsPath);
 
-      if (!profileExists.exists || !postsExists.exists) {
-        throw new Error('Required Instagram data files not found in archive');
+      if (!profileInfoExists.exists) {
+        throw new Error("Required Instagram profile information not found in archive");
       }
 
       // Read and parse profile data
-      const profileJson = await FileSystem.readAsStringAsync(profilePath);
-      const postsJson = await FileSystem.readAsStringAsync(postsPath);
+      const profileInfoJson = await FileSystem.readAsStringAsync(profileInfoPath);
+      const profileInfo = JSON.parse(profileInfoJson);
 
-      const profileData = JSON.parse(profileJson);
-      const postsData = JSON.parse(postsJson);
+      // Optional files
+      let posts: InstagramPost[] = [];
+      let followersCount = 0;
+      let followingCount = 0;
 
-      // Transform into our app's format
-      return {
-        username: profileData.username,
-        fullName: profileData.full_name,
-        biography: profileData.biography,
-        profilePicUrl: profileData.profile_pic_url,
-        mediaCount: profileData.media_count,
-        followersCount: profileData.followers_count,
-        followingCount: profileData.following_count,
-        posts: this.transformPosts(postsData)
-      };
+      if (postsExists.exists) {
+        const postsJson = await FileSystem.readAsStringAsync(postsPath);
+        const postsData = JSON.parse(postsJson);
+        posts = this.transformPosts(postsData);
+      }
+
+      // Try to get followers/following counts
+      try {
+        const followersExists = await FileSystem.getInfoAsync(followersPath);
+        const followingExists = await FileSystem.getInfoAsync(followingPath);
+
+        if (followersExists.exists) {
+          const followersJson = await FileSystem.readAsStringAsync(followersPath);
+          const followersData = JSON.parse(followersJson);
+          followersCount = Array.isArray(followersData) ? followersData.length : 0;
+        }
+
+        if (followingExists.exists) {
+          const followingJson = await FileSystem.readAsStringAsync(followingPath);
+          const followingData = JSON.parse(followingJson);
+          followingCount = Array.isArray(followingData) ? followingData.length : 0;
+        }
+      } catch (error) {
+        console.warn("Error parsing followers/following data:", error);
+        // Continue with the import even if this part fails
+      }
+
+      // Transform into our app's format using the new structure
+      if (profileInfo.profile_user && profileInfo.profile_user.length > 0) {
+        const profileUser = profileInfo.profile_user[0];
+        const stringMap = profileUser.string_map_data || {};
+        const mediaMap = profileUser.media_map_data || {};
+
+        // Extract profile picture URL if available
+        let profilePicUrl = "";
+        if (mediaMap["Profile Photo"]) {
+          const picPath = mediaMap["Profile Photo"].uri;
+          if (picPath) {
+            profilePicUrl = `${this.tempDir}/${picPath}`;
+          }
+        }
+
+        return {
+          username: stringMap.Username?.value || "",
+          fullName: stringMap.Name?.value || "",
+          biography: stringMap.Bio?.value || "",
+          profilePicUrl,
+          mediaCount: posts.length,
+          followersCount,
+          followingCount,
+          posts,
+        };
+      }
+
+      throw new Error("Invalid profile format in the archive");
     } catch (error) {
-      console.error('Error parsing profile data:', error);
-      throw new Error('Failed to parse Instagram data');
+      console.error("Error parsing profile data:", error);
+      throw new Error("Failed to parse Instagram data");
     }
   }
 
   private transformPosts(postsData: any): InstagramPost[] {
-    // This is a stub - adjust based on actual Instagram export format
-    return postsData.map((post: any) => ({
-      id: post.id,
-      timestamp: post.timestamp,
-      mediaType: post.media_type?.toLowerCase() || 'unknown',
-      mediaUrl: post.media_url,
-      thumbnailUrl: post.thumbnail_url || post.media_url,
-      caption: post.caption,
-      likes: post.like_count,
-      comments: post.comment_count
-    }));
+    // Will need to be updated once we see the posts_1.json structure
+    // For now, just return an empty array to be updated later
+    return [];
   }
 
   private async storeProfile(profile: InstagramProfile): Promise<void> {
@@ -189,10 +286,12 @@ export class InstagramArchiveHandler {
     try {
       const dirInfo = await FileSystem.getInfoAsync(this.tempDir);
       if (dirInfo.exists) {
-        await FileSystem.deleteAsync(this.tempDir, { idempotent: true });
+        await FileSystem.deleteAsync(this.tempDir, {
+          idempotent: true,
+        });
       }
     } catch (error) {
-      console.error('Cleanup failed:', error);
+      console.error("Cleanup failed:", error);
     }
   }
 }
@@ -212,13 +311,13 @@ export default function ImportScreen() {
     const result = await importer.importArchive();
 
     if (!result.success) {
-      setError(result.error || 'Import failed');
+      setError(result.error || "Import failed");
     }
 
     setImporting(false);
 
     if (result.success && result.profile) {
-      console.log('Import successful:', result.profile.username);
+      console.log("Import successful:", result.profile.username);
       // Navigate to profile view or update UI
     }
   };
@@ -232,7 +331,7 @@ export default function ImportScreen() {
     const result = await importer.debugImport();
 
     if (!result.success) {
-      setError(result.error || 'Debug import failed');
+      setError(result.error || "Debug import failed");
     } else if (result.debugData) {
       setDebugData(result.debugData);
     }
@@ -243,7 +342,9 @@ export default function ImportScreen() {
   return (
     <ScrollView className="flex-1">
       <View className="flex justify-center items-center w-full p-4 mb-8">
-        <Text className="text-xl font-bold mb-4">Instagram Archive Importer</Text>
+        <Text className="text-xl font-bold mb-4">
+          Instagram Archive Importer Debug Menu
+        </Text>
 
         <Button
           className="bg-iguana-500 w-fit px-6 py-2 mb-4"
@@ -261,13 +362,11 @@ export default function ImportScreen() {
           disabled={importing}
         >
           <Text>
-            {importing ? "Testing..." : "Debug Import (test.json)"}
+            {importing ? "Testing..." : "Debug Import"}
           </Text>
         </Button>
 
-        {error && (
-          <Text className="text-red-500 mt-4">{error}</Text>
-        )}
+        {error && <Text className="text-red-500 mt-4">{error}</Text>}
 
         {debugData && (
           <View className="mt-4 p-4 bg-gray-100 rounded w-full">
