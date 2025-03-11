@@ -198,7 +198,7 @@ export class InstagramArchiveHandler {
 			const postsExists = await FileSystem.getInfoAsync(postsPath);
 			const followersExists = await FileSystem.getInfoAsync(followersPath);
 			const followingExists = await FileSystem.getInfoAsync(followingPath);
-			// catch if any of the paths we need are missing
+			// error if any of the paths we need are missing
 			if (
 				!profileInfoExists.exists ||
 				!postsExists.exists ||
@@ -210,12 +210,12 @@ export class InstagramArchiveHandler {
 				);
 			}
 
-			// Read and parse profile data
+			// read and parse profile data
 			const profileInfoJson =
 				await FileSystem.readAsStringAsync(profileInfoPath);
 			const profileInfo = JSON.parse(profileInfoJson);
 
-			// Optional files
+			// optional files
 			let posts: InstagramPost[] = [];
 			let followersCount = 0;
 			let followingCount = 0;
@@ -224,33 +224,6 @@ export class InstagramArchiveHandler {
 				const postsJson = await FileSystem.readAsStringAsync(postsPath);
 				const postsData = JSON.parse(postsJson);
 				posts = this.transformPosts(postsData);
-			}
-
-			// Try to get followers/following counts
-			try {
-				const followersExists = await FileSystem.getInfoAsync(followersPath);
-				const followingExists = await FileSystem.getInfoAsync(followingPath);
-
-				if (followersExists.exists) {
-					const followersJson =
-						await FileSystem.readAsStringAsync(followersPath);
-					const followersData = JSON.parse(followersJson);
-					followersCount = Array.isArray(followersData)
-						? followersData.length
-						: 0;
-				}
-
-				if (followingExists.exists) {
-					const followingJson =
-						await FileSystem.readAsStringAsync(followingPath);
-					const followingData = JSON.parse(followingJson);
-					followingCount = Array.isArray(followingData)
-						? followingData.length
-						: 0;
-				}
-			} catch (error) {
-				console.warn("Error parsing followers/following data:", error);
-				// Continue with the import even if this part fails
 			}
 
 			// Transform into our app's format using the new structure
@@ -273,9 +246,8 @@ export class InstagramArchiveHandler {
 					fullName: stringMap.Name?.value || "",
 					biography: stringMap.Bio?.value || "",
 					profilePicUrl,
-					mediaCount: posts.length,
-					followersCount,
-					followingCount,
+					followers,
+					following,
 					posts,
 				};
 			}
