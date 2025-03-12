@@ -38,8 +38,8 @@ function HeaderLeftButton() {
 					name="arrows-h"
 					size={25}
 					color={Colors[colorScheme ?? "light"].text}
+					className="mr-4"
 					style={{
-						marginLeft: 15,
 						opacity: pressed ? 0.5 : 1,
 					}}
 				/>
@@ -124,11 +124,11 @@ export default function TabLayout() {
 									size={24}
 									color={colorScheme ? "white" : "black"}
 								/>
-								<Text className="ml-2.5">Instagram Profile</Text>
+								<Text className="text-lg ml-2.5">Instagram Profile</Text>
 							</View>
 						),
 						tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
-						headerLeft: () => <HeaderLeftButton />,
+						headerRight: () => <HeaderLeftButton />,
 					}}
 				/>
 				<Tabs.Screen
