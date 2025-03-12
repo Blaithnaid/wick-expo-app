@@ -1,6 +1,7 @@
 import { ScrollView, Text, View } from "@/components/Themed";
 import { Button } from "@/components/ui/button";
 import { InstagramPost, InstagramProfile } from "@/constants/Instagram";
+import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
@@ -188,19 +189,20 @@ export class InstagramArchiveHandler {
 	private async parseProfileData(): Promise<InstagramProfile | undefined> {
 		try {
 			// Updated paths based on the actual Instagram export structure
-			const profileInfoPath = `${this.tempDir}/personal_information/personal_information/personal_information.json`;
+			const personalInfoPath = `${this.tempDir}/personal_information/personal_information/personal_information.json`;
 			const postsPath = `${this.tempDir}/your_instagram_activity/media/posts_1.json`;
 			const followersPath = `${this.tempDir}/connections/followers_and_following/followers_1.json`;
 			const followingPath = `${this.tempDir}/connections/followers_and_following/following.json`;
 
 			// check if files exist
-			const profileInfoExists = await FileSystem.getInfoAsync(profileInfoPath);
+			const personalInfoExists =
+				await FileSystem.getInfoAsync(personalInfoPath);
 			const postsExists = await FileSystem.getInfoAsync(postsPath);
 			const followersExists = await FileSystem.getInfoAsync(followersPath);
 			const followingExists = await FileSystem.getInfoAsync(followingPath);
 			// error if any of the paths we need are missing
 			if (
-				!profileInfoExists.exists ||
+				!personalInfoExists.exists ||
 				!postsExists.exists ||
 				!followersExists.exists ||
 				!followingExists.exists
@@ -211,15 +213,26 @@ export class InstagramArchiveHandler {
 			}
 
 			// read and parse profile data
-			const profileInfoJson =
-				await FileSystem.readAsStringAsync(profileInfoPath);
-			const profileInfo = JSON.parse(profileInfoJson);
+			const personalInfoJson = await FileSystem.readAsStringAsync(
+				personalInfoPath,
+				{
+					encoding: FileSystem.EncodingType.UTF8,
+				},
+			);
+			const personalInfo = JSON.parse(personalInfoJson);
 
-			// optional files
+			// Parse followers
+			const followersJson = await FileSystem.readAsStringAsync(followersPath);
+			const followersData = JSON.parse(followersJson);
+			const followers = this.transformFollowers(followersData);
+
+			// Parse following
+			const followingJson = await FileSystem.readAsStringAsync(followingPath);
+			const followingData = JSON.parse(followingJson);
+			const following = this.transformFollowing(followingData);
+
+			// Parse posts
 			let posts: InstagramPost[] = [];
-			let followersCount = 0;
-			let followingCount = 0;
-
 			if (postsExists.exists) {
 				const postsJson = await FileSystem.readAsStringAsync(postsPath);
 				const postsData = JSON.parse(postsJson);
@@ -227,8 +240,8 @@ export class InstagramArchiveHandler {
 			}
 
 			// Transform into our app's format using the new structure
-			if (profileInfo.profile_user && profileInfo.profile_user.length > 0) {
-				const profileUser = profileInfo.profile_user[0];
+			if (personalInfo.profile_user && personalInfo.profile_user.length > 0) {
+				const profileUser = personalInfo.profile_user[0];
 				const stringMap = profileUser.string_map_data || {};
 				const mediaMap = profileUser.media_map_data || {};
 
@@ -238,13 +251,37 @@ export class InstagramArchiveHandler {
 					const picPath = mediaMap["Profile Photo"].uri;
 					if (picPath) {
 						profilePicUrl = `${this.tempDir}/${picPath}`;
+						// Handle profile picture
+						// Copy to a permanent location if needed
+						const permanentDir = `${FileSystem.documentDirectory}profile_pics/`;
+						const dirExists = await FileSystem.getInfoAsync(permanentDir);
+						if (!dirExists.exists) {
+							await FileSystem.makeDirectoryAsync(permanentDir, {
+								intermediates: true,
+							});
+						}
+
+						const fileName = `profile_${stringMap.Username?.value || "user"}_${Date.now()}.jpg`;
+						const newPath = `${permanentDir}${fileName}`;
+
+						try {
+							await FileSystem.copyAsync({
+								from: profilePicUrl,
+								to: newPath,
+							});
+							// Update the path to the permanent location
+							profilePicUrl = newPath;
+						} catch (error) {
+							console.error("Failed to copy profile picture:", error);
+							// If copy fails, keep the temporary path but log the error
+						}
 					}
 				}
 
 				return {
-					username: stringMap.Username?.value || "",
-					fullName: stringMap.Name?.value || "",
-					biography: stringMap.Bio?.value || "",
+					username: this.fixDoubleEncodedEmoji(stringMap.Username?.value),
+					fullName: this.fixDoubleEncodedEmoji(stringMap.Name?.value) || "",
+					biography: this.fixDoubleEncodedEmoji(stringMap.Bio?.value) || "",
 					profilePicUrl,
 					followers,
 					following,
@@ -259,10 +296,114 @@ export class InstagramArchiveHandler {
 		}
 	}
 
+	private fixDoubleEncodedEmoji(text: string): string {
+		try {
+			// First, convert the string to what JavaScript thinks are the raw bytes
+			const bytes = [];
+			for (let i = 0; i < text.length; i++) {
+				bytes.push(text.charCodeAt(i));
+			}
+
+			// Then interpret those bytes as UTF-8
+			return new TextDecoder("utf-8").decode(new Uint8Array(bytes));
+		} catch (e) {
+			console.warn("Error fixing double-encoded emoji:", e);
+			return text;
+		}
+	}
+	private transformFollowers(
+		followersData: any[],
+	): { name: string; profileUrl: string }[] {
+		const followers: { name: string; profileUrl: string }[] = [];
+
+		if (!Array.isArray(followersData)) {
+			console.warn("Followers data is not an array:", followersData);
+			return followers;
+		}
+
+		for (const follower of followersData) {
+			if (follower.string_list_data && follower.string_list_data.length > 0) {
+				const data = follower.string_list_data[0];
+				followers.push({
+					name: data.value || "",
+					profileUrl: data.href || "",
+				});
+			}
+		}
+
+		return followers;
+	}
+
+	private transformFollowing(
+		followingData: any,
+	): { name: string; profileUrl: string }[] {
+		const following: { name: string; profileUrl: string }[] = [];
+
+		if (
+			!followingData.relationships_following ||
+			!Array.isArray(followingData.relationships_following)
+		) {
+			console.warn("Following data format is unexpected:", followingData);
+			return following;
+		}
+
+		for (const relation of followingData.relationships_following) {
+			if (relation.string_list_data && relation.string_list_data.length > 0) {
+				const data = relation.string_list_data[0];
+				following.push({
+					name: data.value || "",
+					profileUrl: data.href || "",
+				});
+			}
+		}
+
+		return following;
+	}
+
 	private transformPosts(postsData: any): InstagramPost[] {
-		// will need to be updated once we see the posts_1.json structure
-		// for now, just return an empty array to be updated later
-		return [];
+		const posts: InstagramPost[] = [];
+
+		// Check if postsData has the expected structure
+		if (!postsData || !Array.isArray(postsData)) {
+			console.warn("Posts data format is unexpected:", postsData);
+			return posts;
+		}
+
+		// Assuming the structure is similar to other Instagram exports
+		// This would need adjustment when the actual structure is confirmed
+		for (const post of postsData) {
+			try {
+				const mediaUrls: string[] = [];
+
+				// Extract media URLs if available
+				if (post.media && Array.isArray(post.media)) {
+					for (const media of post.media) {
+						if (media.uri) {
+							// Convert relative paths to absolute
+							const mediaPath = `${this.tempDir}/${media.uri}`;
+							mediaUrls.push(mediaPath);
+						}
+					}
+				}
+
+				// Create post object
+				posts.push({
+					id:
+						post.id ||
+						`post_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+					timestamp: post.creation_timestamp
+						? new Date(post.creation_timestamp * 1000)
+						: new Date(),
+					mediaUrls,
+					caption: post.caption?.text || "",
+				});
+			} catch (error) {
+				console.error("Error transforming post:", error);
+				// Continue processing other posts
+			}
+		}
+
+		return posts;
 	}
 
 	private async storeProfile(profile: InstagramProfile): Promise<void> {
@@ -287,11 +428,12 @@ export class InstagramArchiveHandler {
 	}
 }
 
-// Usage in a component:
 export default function ImportScreen() {
 	const [importing, setImporting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [debugData, setDebugData] = useState<any>(null);
+	const [importedProfile, setImportedProfile] =
+		useState<InstagramProfile | null>(null);
 
 	const handleImport = async () => {
 		setImporting(true);
@@ -303,14 +445,14 @@ export default function ImportScreen() {
 
 		if (!result.success) {
 			setError(result.error || "Import failed");
+		} else if (result.profile) {
+			setImportedProfile(result.profile);
+			console.log("Import successful:", result.profile.username);
+			console.log("User's name: ", result.profile.fullName);
+			// Navigate to profile view or update UI
 		}
 
 		setImporting(false);
-
-		if (result.success && result.profile) {
-			console.log("Import successful:", result.profile.username);
-			// Navigate to profile view or update UI
-		}
 	};
 
 	const handleDebug = async () => {
@@ -354,6 +496,18 @@ export default function ImportScreen() {
 				</Button>
 
 				{error && <Text className="text-red-500 mt-4">{error}</Text>}
+
+				{importedProfile && (
+					<View className="mt-4 p-4 bg-gray-100 rounded w-full">
+						<Text className="font-bold mb-2">Imported Profile:</Text>
+						<Text>Username: {importedProfile.username}</Text>
+						<Text>Name: {importedProfile.fullName}</Text>
+						<Text>Bio: {importedProfile.biography}</Text>
+						<Text>Followers: {importedProfile.followers.length}</Text>
+						<Text>Following: {importedProfile.following.length}</Text>
+						<Text>Posts: {importedProfile.posts.length}</Text>
+					</View>
+				)}
 
 				{debugData && (
 					<View className="mt-4 p-4 bg-gray-100 rounded w-full">
