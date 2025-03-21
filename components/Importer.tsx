@@ -1,12 +1,15 @@
 import { ScrollView, Text, View } from "@/components/Themed";
+import { Platform } from "react-native";
 import { Button } from "@/components/ui/button";
 import { InstagramPost, InstagramProfile } from "@/constants/Instagram";
-import { FontAwesome } from "@expo/vector-icons";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { FontAwesome5 } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 import { useState } from "react";
-import * as ZipArchive from "react-native-zip-archive";
+const ZipArchive =
+	Platform.OS !== "web" ? require("react-native-zip-archive") : null;
 
 interface ImportResult {
 	success: boolean;
@@ -20,7 +23,9 @@ export class InstagramArchiveHandler {
 
 	constructor() {
 		// Create a unique temp directory for this import
-		this.tempDir = `${FileSystem.cacheDirectory}instagram_import_${Date.now()}`;
+		this.tempDir = `${
+			FileSystem.cacheDirectory
+		}instagram_import_${Date.now()}`;
 	}
 
 	async importArchive(): Promise<ImportResult> {
@@ -73,95 +78,6 @@ export class InstagramArchiveHandler {
 		}
 	}
 
-	async debugImport(): Promise<ImportResult> {
-		try {
-			// Let user pick a test archive
-			const result = await DocumentPicker.getDocumentAsync({
-				copyToCacheDirectory: true,
-				type: ["application/zip"],
-			});
-
-			if (result.canceled) {
-				return { success: false, error: "File selection canceled" };
-			}
-
-			const file = result.assets[0];
-			console.log(`Selected file: ${file.name}`);
-
-			// Create temp directory if it doesn't exist
-			const dirInfo = await FileSystem.getInfoAsync(this.tempDir);
-			if (!dirInfo.exists) {
-				await FileSystem.makeDirectoryAsync(this.tempDir, {
-					intermediates: true,
-				});
-			}
-
-			// Extract the archive
-			console.log(`Extracting to ${this.tempDir}`);
-			await ZipArchive.unzip(file.uri, this.tempDir);
-
-			// recursively locate all JSON files to see what we're working with
-			const jsonFiles = await this.findJsonFiles(this.tempDir);
-			// log all files
-			// console.log("JSON files found:", jsonFiles);
-
-			// read in profile information
-			const profilePath = `${this.tempDir}/personal_information/personal_information/personal_information.json`;
-			const profileExists = await FileSystem.getInfoAsync(profilePath);
-
-			if (profileExists.exists) {
-				const profileContent = await FileSystem.readAsStringAsync(profilePath);
-				const profileData = JSON.parse(profileContent);
-				console.log(
-					"Found profile data:",
-					JSON.stringify(profileData, null, 2),
-				);
-
-				return {
-					success: true,
-					debugData: {
-						profileData,
-						foundJsonFiles: jsonFiles,
-					},
-				};
-			} else {
-				// Try to find any JSON file to debug
-				if (jsonFiles.length > 0) {
-					const sampleJsonPath = jsonFiles[0];
-					const sampleContent =
-						await FileSystem.readAsStringAsync(sampleJsonPath);
-					const sampleData = JSON.parse(sampleContent);
-
-					return {
-						success: true,
-						debugData: {
-							samplePath: sampleJsonPath,
-							sampleData,
-							foundJsonFiles: jsonFiles,
-						},
-					};
-				}
-
-				return {
-					success: false,
-					error: "No JSON files found in archive",
-				};
-			}
-		} catch (error) {
-			console.error("Debug import failed:", error);
-			return {
-				success: false,
-				error:
-					error instanceof Error
-						? error.message
-						: "Unknown error during debug import",
-			};
-		} finally {
-			// Clean up temp files
-			await this.cleanup();
-		}
-	}
-
 	private async findJsonFiles(directory: string): Promise<string[]> {
 		try {
 			const result: string[] = [];
@@ -195,11 +111,16 @@ export class InstagramArchiveHandler {
 			const followingPath = `${this.tempDir}/connections/followers_and_following/following.json`;
 
 			// check if files exist
-			const personalInfoExists =
-				await FileSystem.getInfoAsync(personalInfoPath);
+			const personalInfoExists = await FileSystem.getInfoAsync(
+				personalInfoPath
+			);
 			const postsExists = await FileSystem.getInfoAsync(postsPath);
-			const followersExists = await FileSystem.getInfoAsync(followersPath);
-			const followingExists = await FileSystem.getInfoAsync(followingPath);
+			const followersExists = await FileSystem.getInfoAsync(
+				followersPath
+			);
+			const followingExists = await FileSystem.getInfoAsync(
+				followingPath
+			);
 			// error if any of the paths we need are missing
 			if (
 				!personalInfoExists.exists ||
@@ -208,7 +129,7 @@ export class InstagramArchiveHandler {
 				!followingExists.exists
 			) {
 				throw new Error(
-					"Required Instagram profile information not found in archive",
+					"Required Instagram profile information not found in archive"
 				);
 			}
 
@@ -217,17 +138,21 @@ export class InstagramArchiveHandler {
 				personalInfoPath,
 				{
 					encoding: FileSystem.EncodingType.UTF8,
-				},
+				}
 			);
 			const personalInfo = JSON.parse(personalInfoJson);
 
 			// Parse followers
-			const followersJson = await FileSystem.readAsStringAsync(followersPath);
+			const followersJson = await FileSystem.readAsStringAsync(
+				followersPath
+			);
 			const followersData = JSON.parse(followersJson);
 			const followers = this.transformFollowers(followersData);
 
 			// Parse following
-			const followingJson = await FileSystem.readAsStringAsync(followingPath);
+			const followingJson = await FileSystem.readAsStringAsync(
+				followingPath
+			);
 			const followingData = JSON.parse(followingJson);
 			const following = this.transformFollowing(followingData);
 
@@ -236,11 +161,14 @@ export class InstagramArchiveHandler {
 			if (postsExists.exists) {
 				const postsJson = await FileSystem.readAsStringAsync(postsPath);
 				const postsData = JSON.parse(postsJson);
-				posts = this.transformPosts(postsData);
+				posts = await this.transformPosts(postsData);
 			}
 
 			// Transform into our app's format using the new structure
-			if (personalInfo.profile_user && personalInfo.profile_user.length > 0) {
+			if (
+				personalInfo.profile_user &&
+				personalInfo.profile_user.length > 0
+			) {
 				const profileUser = personalInfo.profile_user[0];
 				const stringMap = profileUser.string_map_data || {};
 				const mediaMap = profileUser.media_map_data || {};
@@ -254,14 +182,18 @@ export class InstagramArchiveHandler {
 						// Handle profile picture
 						// Copy to a permanent location if needed
 						const permanentDir = `${FileSystem.documentDirectory}profile_pics/`;
-						const dirExists = await FileSystem.getInfoAsync(permanentDir);
+						const dirExists = await FileSystem.getInfoAsync(
+							permanentDir
+						);
 						if (!dirExists.exists) {
 							await FileSystem.makeDirectoryAsync(permanentDir, {
 								intermediates: true,
 							});
 						}
 
-						const fileName = `profile_${stringMap.Username?.value || "user"}_${Date.now()}.jpg`;
+						const fileName = `profile_${
+							stringMap.Username?.value || "user"
+						}_${Date.now()}.jpg`;
 						const newPath = `${permanentDir}${fileName}`;
 
 						try {
@@ -272,20 +204,28 @@ export class InstagramArchiveHandler {
 							// Update the path to the permanent location
 							profilePicUrl = newPath;
 						} catch (error) {
-							console.error("Failed to copy profile picture:", error);
+							console.error(
+								"Failed to copy profile picture:",
+								error
+							);
 							// If copy fails, keep the temporary path but log the error
 						}
 					}
 				}
 
 				return {
-					username: this.fixDoubleEncodedEmoji(stringMap.Username?.value),
-					fullName: this.fixDoubleEncodedEmoji(stringMap.Name?.value) || "",
-					biography: this.fixDoubleEncodedEmoji(stringMap.Bio?.value) || "",
+					username: this.fixDoubleEncodedEmoji(
+						stringMap.Username?.value
+					),
+					fullName:
+						this.fixDoubleEncodedEmoji(stringMap.Name?.value) || "",
+					biography:
+						this.fixDoubleEncodedEmoji(stringMap.Bio?.value) || "",
 					profilePicUrl,
 					followers,
 					following,
 					posts,
+					whenImported: new Date(),
 				};
 			}
 
@@ -312,7 +252,7 @@ export class InstagramArchiveHandler {
 		}
 	}
 	private transformFollowers(
-		followersData: any[],
+		followersData: any[]
 	): { name: string; profileUrl: string }[] {
 		const followers: { name: string; profileUrl: string }[] = [];
 
@@ -322,7 +262,10 @@ export class InstagramArchiveHandler {
 		}
 
 		for (const follower of followersData) {
-			if (follower.string_list_data && follower.string_list_data.length > 0) {
+			if (
+				follower.string_list_data &&
+				follower.string_list_data.length > 0
+			) {
 				const data = follower.string_list_data[0];
 				followers.push({
 					name: data.value || "",
@@ -335,7 +278,7 @@ export class InstagramArchiveHandler {
 	}
 
 	private transformFollowing(
-		followingData: any,
+		followingData: any
 	): { name: string; profileUrl: string }[] {
 		const following: { name: string; profileUrl: string }[] = [];
 
@@ -348,7 +291,10 @@ export class InstagramArchiveHandler {
 		}
 
 		for (const relation of followingData.relationships_following) {
-			if (relation.string_list_data && relation.string_list_data.length > 0) {
+			if (
+				relation.string_list_data &&
+				relation.string_list_data.length > 0
+			) {
 				const data = relation.string_list_data[0];
 				following.push({
 					name: data.value || "",
@@ -360,41 +306,73 @@ export class InstagramArchiveHandler {
 		return following;
 	}
 
-	private transformPosts(postsData: any): InstagramPost[] {
+	private async transformPosts(postsData: any): Promise<InstagramPost[]> {
 		const posts: InstagramPost[] = [];
 
-		// Check if postsData has the expected structure
+		// Create permanent media directory
+		const permanentMediaDir = `${FileSystem.documentDirectory}instagram_media/`;
+		const dirExists = await FileSystem.getInfoAsync(permanentMediaDir);
+		if (!dirExists.exists) {
+			await FileSystem.makeDirectoryAsync(permanentMediaDir, {
+				intermediates: true,
+			});
+		}
+
 		if (!postsData || !Array.isArray(postsData)) {
 			console.warn("Posts data format is unexpected:", postsData);
 			return posts;
 		}
 
-		// Assuming the structure is similar to other Instagram exports
-		// This would need adjustment when the actual structure is confirmed
 		for (const post of postsData) {
 			try {
 				const mediaUrls: string[] = [];
 
-				// Extract media URLs if available
+				// Extract and copy media files if available
 				if (post.media && Array.isArray(post.media)) {
 					for (const media of post.media) {
 						if (media.uri) {
-							// Convert relative paths to absolute
-							const mediaPath = `${this.tempDir}/${media.uri}`;
-							mediaUrls.push(mediaPath);
+							// Source path in temp directory
+							const tempMediaPath = `${this.tempDir}/${media.uri}`;
+
+							// Generate a unique filename for the permanent storage
+							const fileName = `media_${Date.now()}_${Math.random()
+								.toString(36)
+								.substring(2, 9)}_${media.uri
+								.split("/")
+								.pop()}`;
+							const permanentPath = `${permanentMediaDir}${fileName}`;
+
+							try {
+								// Copy the file to permanent storage
+								await FileSystem.copyAsync({
+									from: tempMediaPath,
+									to: permanentPath,
+								});
+
+								// Store the permanent path
+								mediaUrls.push(permanentPath);
+							} catch (copyError) {
+								console.error(
+									"Failed to copy media file:",
+									copyError
+								);
+								// If copy fails, don't add this media URL
+							}
 						}
 					}
 				}
 
-				// Create post object
+				// Create post object with permanent media paths
 				posts.push({
 					id:
 						post.id ||
-						`post_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+						`post_${Date.now()}_${Math.random()
+							.toString(36)
+							.substring(2, 9)}`,
 					timestamp: post.creation_timestamp
 						? new Date(post.creation_timestamp * 1000)
 						: new Date(),
-					mediaUrls,
+					mediaUrls, // These now point to permanent locations
 					caption: post.caption?.text || "",
 				});
 			} catch (error) {
@@ -407,11 +385,8 @@ export class InstagramArchiveHandler {
 	}
 
 	private async storeProfile(profile: InstagramProfile): Promise<void> {
-		// store locally
-		await AsyncStorage.setItem(
-			`profile_${profile.username}`,
-			JSON.stringify(profile),
-		);
+		const uniqueKey = `profile_${profile.username}_${Date.now()}`;
+		await AsyncStorage.setItem(uniqueKey, JSON.stringify(profile));
 	}
 
 	private async cleanup(): Promise<void> {
@@ -434,6 +409,7 @@ export default function ImportScreen() {
 	const [debugData, setDebugData] = useState<any>(null);
 	const [importedProfile, setImportedProfile] =
 		useState<InstagramProfile | null>(null);
+	const colorScheme = useColorScheme().colorScheme;
 
 	const handleImport = async () => {
 		setImporting(true);
@@ -455,67 +431,95 @@ export default function ImportScreen() {
 		setImporting(false);
 	};
 
-	const handleDebug = async () => {
-		setImporting(true);
-		setError(null);
-		setDebugData(null);
+	const showStorage = async () => {
+		const printDirectoryContents = async (directory: string) => {
+			try {
+				const files = await FileSystem.readDirectoryAsync(directory);
+				for (const file of files) {
+					const filePath = `${directory}/${file}`;
+					const fileInfo = await FileSystem.getInfoAsync(filePath);
+					if (fileInfo.isDirectory) {
+						console.log(`Directory: ${filePath}`);
+						await printDirectoryContents(filePath); // Recursively print contents
+					} else {
+						console.log(`File: ${filePath}`);
+					}
+				}
+			} catch (error) {
+				console.error(`Error reading directory ${directory}:`, error);
+			}
+		};
 
-		const importer = new InstagramArchiveHandler();
-		const result = await importer.debugImport();
-
-		if (!result.success) {
-			setError(result.error || "Debug import failed");
-		} else if (result.debugData) {
-			setDebugData(result.debugData);
+		try {
+			const rootDirectory = FileSystem.documentDirectory || "";
+			await printDirectoryContents(rootDirectory);
+		} catch (error) {
+			console.error("Error reading storage:", error);
 		}
-
-		setImporting(false);
 	};
 
 	return (
-		<ScrollView className="flex-1">
-			<View className="flex justify-center items-center w-full p-4 mb-8">
-				<Text className="text-xl font-bold mb-4">
-					Instagram Archive Importer Debug Menu
+		<View className="flex justify-center items-center w-full h-full p-4 mb-8">
+			<View className="flex-1 items-center justify-center px-5 flex">
+				<FontAwesome5
+					name="file-import"
+					size={80}
+					color={colorScheme === "dark" ? "white" : "black"}
+				/>
+				<View className="mt-4 mb-3 h-[2px] rounded-full w-[55%] bg-slate-400" />
+				<Text className="text-xl text-center">
+					Want to take some time off Instagram?
 				</Text>
-
+				<Text className="text-xl text-center">
+					Import your data here!
+				</Text>
+				<Text className="text-lg text-center mt-4">
+					Click the icon in the top right to find out how to get an
+					export of your data, and then press below once you've
+					received it!
+				</Text>
+			</View>
+			<View className="flex flex-row gap-2">
 				<Button
-					className="bg-iguana-500 w-fit px-6 py-2 mb-4"
+					className="bg-iguana-500 w-2/3 h-20 px-6 py-2 mb-8"
 					onPress={handleImport}
 					disabled={importing}
 				>
-					<Text>{importing ? "Importing..." : "Import from Instagram"}</Text>
+					<Text>
+						{importing ? "Importing..." : "Import from Instagram"}
+					</Text>
 				</Button>
-
+			</View>
+			<View className="flex flex-row gap-2">
 				<Button
-					className="bg-blue-500 w-fit px-6 py-2"
-					onPress={handleDebug}
+					className="bg-slate-500 w-2/3 h-20 px-6 py-2 mb-8"
+					onPress={showStorage}
 					disabled={importing}
 				>
-					<Text>{importing ? "Testing..." : "Debug Import"}</Text>
+					<Text>Debug Storage</Text>
 				</Button>
-
-				{error && <Text className="text-red-500 mt-4">{error}</Text>}
-
-				{importedProfile && (
-					<View className="mt-4 p-4 bg-gray-100 rounded w-full">
-						<Text className="font-bold mb-2">Imported Profile:</Text>
-						<Text>Username: {importedProfile.username}</Text>
-						<Text>Name: {importedProfile.fullName}</Text>
-						<Text>Bio: {importedProfile.biography}</Text>
-						<Text>Followers: {importedProfile.followers.length}</Text>
-						<Text>Following: {importedProfile.following.length}</Text>
-						<Text>Posts: {importedProfile.posts.length}</Text>
-					</View>
-				)}
-
-				{debugData && (
-					<View className="mt-4 p-4 bg-gray-100 rounded w-full">
-						<Text className="font-bold mb-2">Debug Data:</Text>
-						<Text>{JSON.stringify(debugData, null, 2)}</Text>
-					</View>
-				)}
 			</View>
-		</ScrollView>
+
+			{error && <Text className="text-red-500 mt-4">{error}</Text>}
+
+			{importedProfile && (
+				<View className="mt-4 p-4 bg-gray-100 rounded w-full">
+					<Text className="font-bold mb-2">Imported Profile:</Text>
+					<Text>Username: {importedProfile.username}</Text>
+					<Text>Name: {importedProfile.fullName}</Text>
+					<Text>Bio: {importedProfile.biography}</Text>
+					<Text>Followers: {importedProfile.followers.length}</Text>
+					<Text>Following: {importedProfile.following.length}</Text>
+					<Text>Posts: {importedProfile.posts.length}</Text>
+				</View>
+			)}
+
+			{debugData && (
+				<View className="mt-4 p-4 bg-gray-100 rounded w-full">
+					<Text className="font-bold mb-2">Debug Data:</Text>
+					<Text>{JSON.stringify(debugData, null, 2)}</Text>
+				</View>
+			)}
+		</View>
 	);
 }
