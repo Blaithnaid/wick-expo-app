@@ -6,6 +6,7 @@ export interface InstagramProfile {
 	followers: { name: string; profileUrl: string }[];
 	following: { name: string; profileUrl: string }[];
 	posts: InstagramPost[];
+	whenImported: Date;
 }
 
 export interface InstagramPost {
@@ -66,4 +67,5 @@ export const exampleInstagramProfile: InstagramProfile = {
 			caption: "Example caption 2",
 		},
 	],
+	whenImported: new Date(),
 };
