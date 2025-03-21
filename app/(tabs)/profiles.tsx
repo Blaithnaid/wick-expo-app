@@ -1,19 +1,16 @@
 import { View, Text } from "@/components/Themed";
-import { FlatList } from "react-native";
+import { FlatList, Pressable } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Pressable } from "react-native";
 import { useEffect, useState, useCallback } from "react";
 import { useAuthContext } from "@/services/AuthProvider";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import Importer from "@/components/Importer";
 import { Image } from "expo-image";
-import { exampleInstagramProfile } from "@/constants/Instagram";
 import InstagramProfileViewer from "@/components/InstagramProfileViewer";
 import { useProfileToggle } from "@/services/ProfileToggleContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { InstagramProfile } from "@/constants/Instagram";
 
-export default function IgProfileScreen() {
+export default function ProfilesScreen() {
 	const [profiles, setProfiles] = useState<InstagramProfile[]>([]);
 	const [selectedProfile, setSelectedProfile] =
 		useState<InstagramProfile | null>(null);
@@ -26,6 +23,10 @@ export default function IgProfileScreen() {
 				const profileData = await AsyncStorage.getItem(key);
 				if (profileData) {
 					const profile = JSON.parse(profileData) as InstagramProfile;
+					profile.posts = profile.posts.map((post: any) => ({
+						...post,
+						timestamp: new Date(post.timestamp),
+					}));
 					profile.whenImported = new Date(profile.whenImported);
 					return { ...profile };
 				}
@@ -58,7 +59,6 @@ export default function IgProfileScreen() {
 
 	const auth = useAuthContext();
 	const colorScheme = useColorScheme().colorScheme;
-	const { showImporter } = useProfileToggle();
 
 	if (!auth?.profile) {
 		return (
@@ -77,21 +77,9 @@ export default function IgProfileScreen() {
 					account, or sign back in!
 				</Text>
 				<Text className="text-lg text-center w-3/4 mt-2">
-					Once signed in, you can easily sync your profile to our{" "}
-					<Text className="font-bold">Web client!</Text>
+					Once signed in, you can easily sync your profile, and view it here in
+					the app and on our <Text className="font-bold">Web client!</Text>
 				</Text>
-			</View>
-		);
-	}
-
-	if (profiles.length === 0) {
-		return (
-			<View className="h-full w-full">
-				{showImporter ? (
-					<Importer />
-				) : (
-					<InstagramProfileViewer {...exampleInstagramProfile} />
-				)}
 			</View>
 		);
 	}
@@ -102,14 +90,14 @@ export default function IgProfileScreen() {
 				<InstagramProfileViewer {...selectedProfile} />
 			) : (
 				<>
-					<Text className="text-xl font-bold underline my-2 text-left w-full pl-3">
+					<Text className="text-xl font-bold mt-3 mb-2 text-left w-full pl-3">
 						Instagram
 					</Text>
 					<FlatList
 						data={profiles}
 						renderItem={({ item }: { item: InstagramProfile }) => (
 							<Pressable
-								className="dark:bg-oxford-400 p-3 w-full flex flex-row items-start justify-center border-y border-oxford-300"
+								className="dark:bg-oxford-400 p-3 w-full flex flex-row items-center justify-center border-y border-oxford-300"
 								android_ripple={{ color: "gray" }}
 								onPress={() => setSelectedProfile(item)}
 							>
@@ -117,7 +105,7 @@ export default function IgProfileScreen() {
 									source={{ uri: item.profilePicUrl }}
 									style={{ width: 64, height: 64, borderRadius: 64 }}
 								/>
-								<View className="dark:bg-oxford-400 ml-2">
+								<View className="ml-2 dark:bg-transparent">
 									<Text className="text-black text-2xl font-bold dark:text-white my-1">
 										{item.username}
 									</Text>

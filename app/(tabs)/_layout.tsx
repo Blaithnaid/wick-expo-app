@@ -20,34 +20,6 @@ function TabBarIcon(props: {
 	return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
 
-function HeaderRightButton() {
-	const { toggleImporter } = useProfileToggle();
-	const colorScheme = useColorScheme().colorScheme;
-
-	return (
-		<Pressable
-			onPress={() => {
-				toggleImporter();
-				if (Platform.OS !== "web") {
-					Haptics.selectionAsync();
-				}
-			}}
-		>
-			{({ pressed }) => (
-				<FontAwesome
-					name="user-plus"
-					size={25}
-					color={Colors[colorScheme ?? "light"].text}
-					className="mr-4"
-					style={{
-						opacity: pressed ? 0.5 : 1,
-					}}
-				/>
-			)}
-		</Pressable>
-	);
-}
-
 export default function TabLayout() {
 	const colorScheme = useColorScheme().colorScheme;
 
@@ -114,12 +86,28 @@ export default function TabLayout() {
 					}}
 				/>
 				<Tabs.Screen
-					name="igprofile"
+					name="profiles"
 					options={{
 						title: "Profiles",
 						headerTitle: () => <Text className="text-lg ml-2.5">Profiles</Text>,
 						tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
-						headerRight: () => <HeaderRightButton />,
+						headerRight: () => (
+							<Link href="/importer" asChild>
+								<Pressable>
+									{({ pressed }) => (
+										<FontAwesome
+											name="user-plus"
+											size={25}
+											color={Colors[colorScheme ?? "light"].text}
+											style={{
+												marginRight: 15,
+												opacity: pressed ? 0.5 : 1,
+											}}
+										/>
+									)}
+								</Pressable>
+							</Link>
+						),
 					}}
 				/>
 				<Tabs.Screen
