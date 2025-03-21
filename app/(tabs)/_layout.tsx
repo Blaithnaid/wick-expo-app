@@ -20,7 +20,7 @@ function TabBarIcon(props: {
 	return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
 
-function HeaderLeftButton() {
+function HeaderRightButton() {
 	const { toggleImporter } = useProfileToggle();
 	const colorScheme = useColorScheme().colorScheme;
 
@@ -35,7 +35,7 @@ function HeaderLeftButton() {
 		>
 			{({ pressed }) => (
 				<FontAwesome
-					name="arrows-h"
+					name="user-plus"
 					size={25}
 					color={Colors[colorScheme ?? "light"].text}
 					className="mr-4"
@@ -116,19 +116,10 @@ export default function TabLayout() {
 				<Tabs.Screen
 					name="igprofile"
 					options={{
-						title: "Profile",
-						headerTitle: () => (
-							<View className="flex flex-row items-center dark:bg-oxford-700">
-								<FontAwesome
-									name="instagram"
-									size={24}
-									color={colorScheme ? "white" : "black"}
-								/>
-								<Text className="text-lg ml-2.5">Instagram Profile</Text>
-							</View>
-						),
+						title: "Profiles",
+						headerTitle: () => <Text className="text-lg ml-2.5">Profiles</Text>,
 						tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
-						headerRight: () => <HeaderLeftButton />,
+						headerRight: () => <HeaderRightButton />,
 					}}
 				/>
 				<Tabs.Screen
