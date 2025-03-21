@@ -1,4 +1,4 @@
-import { ScrollView, Text, View, Pressable } from "@/components/Themed";
+import { Text, View, Pressable } from "@/components/Themed";
 import { FlatList, Dimensions } from "react-native";
 import { InstagramProfile } from "@/constants/Instagram";
 import { Image } from "expo-image";
@@ -20,7 +20,9 @@ export default function InstagramProfileViewer(profile: InstagramProfile) {
 				</View>
 				<View className="w-max flex flex-row justify-between mx-8 flex-grow">
 					<View className="flex flex-col items-center">
-						<Text className="text-2xl self-start">{profile.posts.length}</Text>
+						<Text className="text-2xl self-start">
+							{profile.posts.length}
+						</Text>
 						<Text className="text-lg">posts</Text>
 					</View>
 					<View className="flex flex-col items-center">
@@ -40,7 +42,9 @@ export default function InstagramProfileViewer(profile: InstagramProfile) {
 			<View className="h-fit px-4 pb-4 w-full border-b-3 dark:border-oxford-600 flex flex-col items-start">
 				<View>
 					<Text className="font-extrabold">{profile.fullName}</Text>
-					<Text className="my-1.5 dark:text-gray-300">{profile.username}</Text>
+					<Text className="my-1.5 dark:text-gray-300">
+						{profile.username}
+					</Text>
 					<Text className="text-gray-500">{profile.biography}</Text>
 				</View>
 			</View>
