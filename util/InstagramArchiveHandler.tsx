@@ -1,13 +1,8 @@
-import { ScrollView, Text, View } from "@/components/Themed";
 import { Platform } from "react-native";
-import { Button } from "@/components/ui/button";
 import { InstagramPost, InstagramProfile } from "@/constants/Instagram";
-import { useColorScheme } from "@/hooks/useColorScheme";
-import { FontAwesome5 } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
-import { useState } from "react";
 const ZipArchive =
 	Platform.OS !== "web" ? require("react-native-zip-archive") : null;
 
@@ -23,9 +18,7 @@ export class InstagramArchiveHandler {
 
 	constructor() {
 		// Create a unique temp directory for this import
-		this.tempDir = `${
-			FileSystem.cacheDirectory
-		}instagram_import_${Date.now()}`;
+		this.tempDir = `${FileSystem.cacheDirectory}instagram_import_${Date.now()}`;
 	}
 
 	async importArchive(): Promise<ImportResult> {
@@ -111,16 +104,11 @@ export class InstagramArchiveHandler {
 			const followingPath = `${this.tempDir}/connections/followers_and_following/following.json`;
 
 			// check if files exist
-			const personalInfoExists = await FileSystem.getInfoAsync(
-				personalInfoPath
-			);
+			const personalInfoExists =
+				await FileSystem.getInfoAsync(personalInfoPath);
 			const postsExists = await FileSystem.getInfoAsync(postsPath);
-			const followersExists = await FileSystem.getInfoAsync(
-				followersPath
-			);
-			const followingExists = await FileSystem.getInfoAsync(
-				followingPath
-			);
+			const followersExists = await FileSystem.getInfoAsync(followersPath);
+			const followingExists = await FileSystem.getInfoAsync(followingPath);
 			// error if any of the paths we need are missing
 			if (
 				!personalInfoExists.exists ||
@@ -129,7 +117,7 @@ export class InstagramArchiveHandler {
 				!followingExists.exists
 			) {
 				throw new Error(
-					"Required Instagram profile information not found in archive"
+					"Required Instagram profile information not found in archive",
 				);
 			}
 
@@ -138,21 +126,17 @@ export class InstagramArchiveHandler {
 				personalInfoPath,
 				{
 					encoding: FileSystem.EncodingType.UTF8,
-				}
+				},
 			);
 			const personalInfo = JSON.parse(personalInfoJson);
 
 			// Parse followers
-			const followersJson = await FileSystem.readAsStringAsync(
-				followersPath
-			);
+			const followersJson = await FileSystem.readAsStringAsync(followersPath);
 			const followersData = JSON.parse(followersJson);
 			const followers = this.transformFollowers(followersData);
 
 			// Parse following
-			const followingJson = await FileSystem.readAsStringAsync(
-				followingPath
-			);
+			const followingJson = await FileSystem.readAsStringAsync(followingPath);
 			const followingData = JSON.parse(followingJson);
 			const following = this.transformFollowing(followingData);
 
@@ -165,10 +149,7 @@ export class InstagramArchiveHandler {
 			}
 
 			// Transform into our app's format using the new structure
-			if (
-				personalInfo.profile_user &&
-				personalInfo.profile_user.length > 0
-			) {
+			if (personalInfo.profile_user && personalInfo.profile_user.length > 0) {
 				const profileUser = personalInfo.profile_user[0];
 				const stringMap = profileUser.string_map_data || {};
 				const mediaMap = profileUser.media_map_data || {};
@@ -182,9 +163,7 @@ export class InstagramArchiveHandler {
 						// Handle profile picture
 						// Copy to a permanent location if needed
 						const permanentDir = `${FileSystem.documentDirectory}profile_pics/`;
-						const dirExists = await FileSystem.getInfoAsync(
-							permanentDir
-						);
+						const dirExists = await FileSystem.getInfoAsync(permanentDir);
 						if (!dirExists.exists) {
 							await FileSystem.makeDirectoryAsync(permanentDir, {
 								intermediates: true,
@@ -204,23 +183,16 @@ export class InstagramArchiveHandler {
 							// Update the path to the permanent location
 							profilePicUrl = newPath;
 						} catch (error) {
-							console.error(
-								"Failed to copy profile picture:",
-								error
-							);
+							console.error("Failed to copy profile picture:", error);
 							// If copy fails, keep the temporary path but log the error
 						}
 					}
 				}
 
 				return {
-					username: this.fixDoubleEncodedEmoji(
-						stringMap.Username?.value
-					),
-					fullName:
-						this.fixDoubleEncodedEmoji(stringMap.Name?.value) || "",
-					biography:
-						this.fixDoubleEncodedEmoji(stringMap.Bio?.value) || "",
+					username: this.fixDoubleEncodedEmoji(stringMap.Username?.value),
+					fullName: this.fixDoubleEncodedEmoji(stringMap.Name?.value) || "",
+					biography: this.fixDoubleEncodedEmoji(stringMap.Bio?.value) || "",
 					profilePicUrl,
 					followers,
 					following,
@@ -252,7 +224,7 @@ export class InstagramArchiveHandler {
 		}
 	}
 	private transformFollowers(
-		followersData: any[]
+		followersData: any[],
 	): { name: string; profileUrl: string }[] {
 		const followers: { name: string; profileUrl: string }[] = [];
 
@@ -262,10 +234,7 @@ export class InstagramArchiveHandler {
 		}
 
 		for (const follower of followersData) {
-			if (
-				follower.string_list_data &&
-				follower.string_list_data.length > 0
-			) {
+			if (follower.string_list_data && follower.string_list_data.length > 0) {
 				const data = follower.string_list_data[0];
 				followers.push({
 					name: data.value || "",
@@ -278,7 +247,7 @@ export class InstagramArchiveHandler {
 	}
 
 	private transformFollowing(
-		followingData: any
+		followingData: any,
 	): { name: string; profileUrl: string }[] {
 		const following: { name: string; profileUrl: string }[] = [];
 
@@ -291,10 +260,7 @@ export class InstagramArchiveHandler {
 		}
 
 		for (const relation of followingData.relationships_following) {
-			if (
-				relation.string_list_data &&
-				relation.string_list_data.length > 0
-			) {
+			if (relation.string_list_data && relation.string_list_data.length > 0) {
 				const data = relation.string_list_data[0];
 				following.push({
 					name: data.value || "",
@@ -337,9 +303,7 @@ export class InstagramArchiveHandler {
 							// Generate a unique filename for the permanent storage
 							const fileName = `media_${Date.now()}_${Math.random()
 								.toString(36)
-								.substring(2, 9)}_${media.uri
-								.split("/")
-								.pop()}`;
+								.substring(2, 9)}_${media.uri.split("/").pop()}`;
 							const permanentPath = `${permanentMediaDir}${fileName}`;
 
 							try {
@@ -352,10 +316,7 @@ export class InstagramArchiveHandler {
 								// Store the permanent path
 								mediaUrls.push(permanentPath);
 							} catch (copyError) {
-								console.error(
-									"Failed to copy media file:",
-									copyError
-								);
+								console.error("Failed to copy media file:", copyError);
 								// If copy fails, don't add this media URL
 							}
 						}
@@ -366,9 +327,7 @@ export class InstagramArchiveHandler {
 				posts.push({
 					id:
 						post.id ||
-						`post_${Date.now()}_${Math.random()
-							.toString(36)
-							.substring(2, 9)}`,
+						`post_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
 					timestamp: post.creation_timestamp
 						? new Date(post.creation_timestamp * 1000)
 						: new Date(),
@@ -401,125 +360,4 @@ export class InstagramArchiveHandler {
 			console.error("Cleanup failed:", error);
 		}
 	}
-}
-
-export default function ImportScreen() {
-	const [importing, setImporting] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-	const [debugData, setDebugData] = useState<any>(null);
-	const [importedProfile, setImportedProfile] =
-		useState<InstagramProfile | null>(null);
-	const colorScheme = useColorScheme().colorScheme;
-
-	const handleImport = async () => {
-		setImporting(true);
-		setError(null);
-		setDebugData(null);
-
-		const importer = new InstagramArchiveHandler();
-		const result = await importer.importArchive();
-
-		if (!result.success) {
-			setError(result.error || "Import failed");
-		} else if (result.profile) {
-			setImportedProfile(result.profile);
-			console.log("Import successful:", result.profile.username);
-			console.log("User's name: ", result.profile.fullName);
-			// Navigate to profile view or update UI
-		}
-
-		setImporting(false);
-	};
-
-	const showStorage = async () => {
-		const printDirectoryContents = async (directory: string) => {
-			try {
-				const files = await FileSystem.readDirectoryAsync(directory);
-				for (const file of files) {
-					const filePath = `${directory}/${file}`;
-					const fileInfo = await FileSystem.getInfoAsync(filePath);
-					if (fileInfo.isDirectory) {
-						console.log(`Directory: ${filePath}`);
-						await printDirectoryContents(filePath); // Recursively print contents
-					} else {
-						console.log(`File: ${filePath}`);
-					}
-				}
-			} catch (error) {
-				console.error(`Error reading directory ${directory}:`, error);
-			}
-		};
-
-		try {
-			const rootDirectory = FileSystem.documentDirectory || "";
-			await printDirectoryContents(rootDirectory);
-		} catch (error) {
-			console.error("Error reading storage:", error);
-		}
-	};
-
-	return (
-		<View className="flex justify-center items-center w-full h-full p-4 mb-8">
-			<View className="flex-1 items-center justify-center px-5 flex">
-				<FontAwesome5
-					name="file-import"
-					size={80}
-					color={colorScheme === "dark" ? "white" : "black"}
-				/>
-				<View className="mt-4 mb-3 h-[2px] rounded-full w-[55%] bg-slate-400" />
-				<Text className="text-xl text-center">
-					Want to take some time off Instagram?
-				</Text>
-				<Text className="text-xl text-center">
-					Import your data here!
-				</Text>
-				<Text className="text-lg text-center mt-4">
-					Click the icon in the top right to find out how to get an
-					export of your data, and then press below once you've
-					received it!
-				</Text>
-			</View>
-			<View className="flex flex-row gap-2">
-				<Button
-					className="bg-iguana-500 w-2/3 h-20 px-6 py-2 mb-8"
-					onPress={handleImport}
-					disabled={importing}
-				>
-					<Text>
-						{importing ? "Importing..." : "Import from Instagram"}
-					</Text>
-				</Button>
-			</View>
-			<View className="flex flex-row gap-2">
-				<Button
-					className="bg-slate-500 w-2/3 h-20 px-6 py-2 mb-8"
-					onPress={showStorage}
-					disabled={importing}
-				>
-					<Text>Debug Storage</Text>
-				</Button>
-			</View>
-
-			{error && <Text className="text-red-500 mt-4">{error}</Text>}
-
-			{importedProfile && (
-				<View className="mt-4 p-4 bg-gray-100 rounded w-full">
-					<Text className="font-bold mb-2">Imported Profile:</Text>
-					<Text>Username: {importedProfile.username}</Text>
-					<Text>Name: {importedProfile.fullName}</Text>
-					<Text>Bio: {importedProfile.biography}</Text>
-					<Text>Followers: {importedProfile.followers.length}</Text>
-					<Text>Following: {importedProfile.following.length}</Text>
-					<Text>Posts: {importedProfile.posts.length}</Text>
-				</View>
-			)}
-
-			{debugData && (
-				<View className="mt-4 p-4 bg-gray-100 rounded w-full">
-					<Text className="font-bold mb-2">Debug Data:</Text>
-					<Text>{JSON.stringify(debugData, null, 2)}</Text>
-				</View>
-			)}
-		</View>
-	);
 }
