@@ -23,7 +23,8 @@
 				"foregroundImage": "./assets/images/adaptive-icon.png",
 				"backgroundColor": "#2E3443"
 			},
-			"userInterfaceStyle": "automatic"
+			"userInterfaceStyle": "automatic",
+			"package": "com.blaithnaid.wickapp"
 		},
 		"web": {
 			"bundler": "metro",
