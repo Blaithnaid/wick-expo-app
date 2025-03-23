@@ -64,7 +64,7 @@ export default function Signup() {
 							</FormControlLabelText>
 						</FormControlLabel>
 						<Input
-							className="my-1 rounded-lg bg-slate-700"
+							className="my-1 rounded-lg bg-slate-300 dark:bg-slate-700"
 							size={"md"}
 						>
 							<InputField
@@ -89,7 +89,7 @@ export default function Signup() {
 							</FormControlLabelText>
 						</FormControlLabel>
 						<Input
-							className="my-1 rounded-lg bg-slate-700"
+							className="my-1 rounded-lg bg-slate-300 dark:bg-slate-700"
 							size={"md"}
 						>
 							<InputField
@@ -108,9 +108,7 @@ export default function Signup() {
 						</Input>
 						<FormControlError>
 							<FormControlErrorIcon as={AlertCircleIcon} />
-							<FormControlErrorText>
-								Email is invalid.
-							</FormControlErrorText>
+							<FormControlErrorText>Email is invalid.</FormControlErrorText>
 						</FormControlError>
 					</FormControl>
 					<FormControl
@@ -125,7 +123,7 @@ export default function Signup() {
 							</FormControlLabelText>
 						</FormControlLabel>
 						<Input
-							className="my-1 rounded-lg bg-slate-700"
+							className="my-1 rounded-lg bg-slate-300 dark:bg-slate-700"
 							size={"md"}
 						>
 							<InputField
@@ -136,9 +134,7 @@ export default function Signup() {
 									// Only mark invalid if password isn't empty and doesn't meet requirements
 									if (
 										text.length > 0 &&
-										!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d|\W)/.test(
-											text
-										)
+										!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d|\W)/.test(text)
 									) {
 										setIsPasswordInvalid(true);
 									} else {
@@ -149,9 +145,8 @@ export default function Signup() {
 						</Input>
 						<FormControlHelper>
 							<FormControlHelperText>
-								Must be at least 8 characters, with at least one
-								letter of each case, and one number or special
-								character.
+								Must be at least 8 characters, with at least one letter of each
+								case, and one number or special character.
 							</FormControlHelperText>
 						</FormControlHelper>
 						<FormControlError>
@@ -173,7 +168,7 @@ export default function Signup() {
 							</FormControlLabelText>
 						</FormControlLabel>
 						<Input
-							className="my-1 rounded-lg bg-slate-700"
+							className="my-1 rounded-lg bg-slate-300 dark:bg-slate-700"
 							size={"md"}
 						>
 							<InputField
@@ -198,7 +193,7 @@ export default function Signup() {
 						</FormControlError>
 					</FormControl>
 					<Button
-						className="w-fit bg-iguana-500 self-end mt-4"
+						className="w-fit bg-iguana-400 dark:bg-iguana-600 self-end mt-4"
 						size="md"
 						onPress={handleSubmit}
 					>
@@ -220,7 +215,7 @@ export default function Signup() {
 							router.push("/(auth)/login");
 						}}
 					>
-						<Text className="pb-2 text-center underline">
+						<Text className="pb-2 font-bold text-center underline">
 							Already have an account?
 						</Text>
 					</Pressable>
