@@ -30,10 +30,14 @@ export default function TabLayout() {
 					tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
 					headerShown: useClientOnlyValue(false, true),
 					tabBarStyle: {
-						backgroundColor: Colors[colorScheme ?? "light"].headerBackground,
+						backgroundColor:
+							Colors[colorScheme ?? "light"].headerBackground,
 					},
 					headerStyle: {
-						backgroundColor: Colors[colorScheme ?? "light"].headerBackground,
+						backgroundColor:
+							Colors[colorScheme ?? "light"].headerBackground,
+						// Note: This is the header height that nested stacks should match
+						// Default React Navigation header height is applied here
 					},
 				}}
 				screenListeners={{
@@ -47,7 +51,9 @@ export default function TabLayout() {
 					name="index"
 					options={{
 						title: "Home",
-						tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+						tabBarIcon: ({ color }) => (
+							<TabBarIcon name="home" color={color} />
+						),
 					}}
 				/>
 				<Tabs.Screen
@@ -73,7 +79,10 @@ export default function TabLayout() {
 										<FontAwesome
 											name="info-circle"
 											size={25}
-											color={Colors[colorScheme ?? "light"].text}
+											color={
+												Colors[colorScheme ?? "light"]
+													.text
+											}
 											style={{
 												marginRight: 15,
 												opacity: pressed ? 0.5 : 1,
@@ -89,24 +98,9 @@ export default function TabLayout() {
 					name="profiles"
 					options={{
 						title: "Profiles",
-						headerTitle: () => <Text className="text-lg ml-2.5">Profiles</Text>,
-						tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
-						headerRight: () => (
-							<Link href="/importer" asChild>
-								<Pressable>
-									{({ pressed }) => (
-										<FontAwesome
-											name="user-plus"
-											size={25}
-											color={Colors[colorScheme ?? "light"].text}
-											style={{
-												marginRight: 15,
-												opacity: pressed ? 0.5 : 1,
-											}}
-										/>
-									)}
-								</Pressable>
-							</Link>
+						headerShown: false, // Important: hide the tab header since we'll handle it in the nested stack
+						tabBarIcon: ({ color }) => (
+							<TabBarIcon name="user" color={color} />
 						),
 					}}
 				/>
@@ -114,7 +108,9 @@ export default function TabLayout() {
 					name="settings"
 					options={{
 						title: "Settings",
-						tabBarIcon: ({ color }) => <TabBarIcon name="gear" color={color} />,
+						tabBarIcon: ({ color }) => (
+							<TabBarIcon name="gear" color={color} />
+						),
 					}}
 				/>
 			</Tabs>
