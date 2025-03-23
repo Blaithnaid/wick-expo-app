@@ -1,7 +1,8 @@
-import { Stack } from "expo-router";
+import { Stack, Link } from "expo-router";
 import { View, Pressable } from "react-native";
 import { Text } from "@/components/Themed";
 import { router } from "expo-router";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useClientOnlyValue } from "@/hooks/useClientOnlyValue";
 import Colors from "@/constants/Colors";
@@ -22,6 +23,23 @@ export default function ProfilesLayout() {
 				name="index"
 				options={{
 					title: "Profiles",
+					headerRight: () => (
+						<Link href="/importer" asChild>
+							<Pressable>
+								{({ pressed }) => (
+									<FontAwesome
+										name="user-plus"
+										size={25}
+										color={Colors[colorScheme ?? "light"].text}
+										style={{
+											marginRight: 15,
+											opacity: pressed ? 0.5 : 1,
+										}}
+									/>
+								)}
+							</Pressable>
+						</Link>
+					),
 				}}
 			/>
 			<Stack.Screen

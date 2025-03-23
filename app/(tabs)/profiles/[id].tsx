@@ -1,5 +1,5 @@
-import { Text, View } from "@/components/Themed";
-import { Pressable } from "react-native";
+import { Text, View as TView } from "@/components/Themed";
+import { View, Pressable } from "react-native";
 import { useState, useEffect } from "react";
 import { FlatList, Dimensions } from "react-native";
 import {
@@ -23,9 +23,7 @@ import { Button, ButtonText } from "@/components/ui/button";
 export default function InstagramProfileViewerScreen() {
 	const { id } = useLocalSearchParams();
 	const [profile, setProfile] = useState<InstagramProfile | null>(null);
-	const [selectedPost, setSelectedPost] = useState<InstagramPost | null>(
-		null
-	);
+	const [selectedPost, setSelectedPost] = useState<InstagramPost | null>(null);
 	const [selectedImage, setSelectedImage] = useState(0);
 
 	const numColumns = 3;
@@ -36,39 +34,25 @@ export default function InstagramProfileViewerScreen() {
 		const fetchProfile = async () => {
 			try {
 				const profileId = Array.isArray(id) ? id[0] : id;
-
-				console.log("Attempting to load profile with ID:", profileId);
-
-				// First try direct lookup if we have a full ID
 				let profileData = await AsyncStorage.getItem(`${profileId}`);
 
 				if (profileData) {
 					const parsedProfile = JSON.parse(profileData);
-					console.log(
-						"Successfully loaded profile:",
-						parsedProfile.username
-					);
 
-					// Make sure dates are properly converted from strings to Date objects
+					// convert to dates
 					if (parsedProfile.posts) {
-						parsedProfile.posts = parsedProfile.posts.map(
-							(post: any) => ({
-								...post,
-								timestamp: new Date(post.timestamp),
-							})
-						);
+						parsedProfile.posts = parsedProfile.posts.map((post: any) => ({
+							...post,
+							timestamp: new Date(post.timestamp),
+						}));
 					}
 					if (parsedProfile.whenImported) {
-						parsedProfile.whenImported = new Date(
-							parsedProfile.whenImported
-						);
+						parsedProfile.whenImported = new Date(parsedProfile.whenImported);
 					}
 
 					setProfile(parsedProfile);
 				} else {
-					console.log(
-						"Profile not found, using example profile instead"
-					);
+					console.log("Profile not found, using example profile instead");
 					setProfile(exampleInstagramProfile);
 				}
 			} catch (error) {
@@ -81,7 +65,7 @@ export default function InstagramProfileViewerScreen() {
 	}, [id]);
 
 	return (
-		<View className="flex justify-start items-center w-full h-full">
+		<TView className="flex justify-start items-center w-full h-full">
 			<Modal
 				isOpen={selectedPost !== null}
 				onClose={() => {
@@ -106,9 +90,7 @@ export default function InstagramProfileViewerScreen() {
 									if (selectedImage > 0) {
 										setSelectedImage(selectedImage - 1);
 									} else if (selectedPost?.mediaUrls) {
-										setSelectedImage(
-											selectedPost.mediaUrls.length - 1
-										);
+										setSelectedImage(selectedPost.mediaUrls.length - 1);
 									}
 								}}
 							>
@@ -135,8 +117,7 @@ export default function InstagramProfileViewerScreen() {
 								onPress={() => {
 									if (
 										selectedImage <
-										(selectedPost?.mediaUrls?.length ?? 0) -
-											1
+										(selectedPost?.mediaUrls?.length ?? 0) - 1
 									) {
 										setSelectedImage(selectedImage + 1);
 									} else {
@@ -154,9 +135,7 @@ export default function InstagramProfileViewerScreen() {
 						</View>
 						<View className="dark:bg-transparent">
 							{selectedPost?.caption && (
-								<Text className="text-lg mt-4">
-									{selectedPost.caption}
-								</Text>
+								<Text className="text-lg mt-4">{selectedPost.caption}</Text>
 							)}
 						</View>
 					</ModalBody>
@@ -172,12 +151,21 @@ export default function InstagramProfileViewerScreen() {
 				</ModalContent>
 			</Modal>
 			<View className="h-32 w-full dark:border-oxford-400 flex flex-row items-center">
-				<View className="w-24 h-24 mx-4 rounded-full overflow-hidden">
-					<Image
-						source={{ uri: profile?.profilePicUrl }}
-						contentFit="cover"
-						style={{ width: "100%", height: "100%" }}
-					/>
+				<View className="w-24 h-24 dark:bg-oxford-800 mx-4 rounded-full overflow-hidden flex items-center justify-center">
+					{profile?.profilePicUrl ? (
+						<Image
+							source={{ uri: profile?.profilePicUrl }}
+							contentFit="cover"
+							style={{ width: "100%", height: "100%" }}
+						/>
+					) : (
+						<FontAwesome
+							className=""
+							name="user-circle"
+							size={84}
+							color="gray"
+						/>
+					)}
 				</View>
 				<View className="w-max flex flex-row justify-between mx-8 flex-grow">
 					<View className="flex flex-col items-center">
@@ -203,9 +191,7 @@ export default function InstagramProfileViewerScreen() {
 			<View className="h-fit px-4 pb-4 w-full border-b-3 dark:border-oxford-600 flex flex-col items-start">
 				<View>
 					<Text className="font-extrabold">{profile?.fullName}</Text>
-					<Text className="my-1.5 dark:text-gray-300">
-						{profile?.username}
-					</Text>
+					<Text className="my-1.5 dark:text-gray-300">{profile?.username}</Text>
 					<Text className="text-gray-500">{profile?.biography}</Text>
 				</View>
 			</View>
@@ -215,7 +201,7 @@ export default function InstagramProfileViewerScreen() {
 				renderItem={({ item }) => (
 					<Pressable
 						style={{ width: itemSize, height: itemSize }}
-						className="border dark:border-oxford-800"
+						className="border border-gray-400 dark:border-oxford-800"
 						onPress={() => {
 							setSelectedPost(item);
 							setSelectedImage(0);
@@ -231,6 +217,6 @@ export default function InstagramProfileViewerScreen() {
 				keyExtractor={(_, index) => index.toString()}
 				numColumns={numColumns}
 			/>
-		</View>
+		</TView>
 	);
 }

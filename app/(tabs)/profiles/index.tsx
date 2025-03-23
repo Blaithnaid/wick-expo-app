@@ -16,9 +16,7 @@ export default function ProfilesScreen() {
 	const loadProfiles = useCallback(async () => {
 		try {
 			const keys = await AsyncStorage.getAllKeys();
-			const profileKeys = keys.filter((key) =>
-				key.startsWith("profile_")
-			);
+			const profileKeys = keys.filter((key) => key.startsWith("profile_"));
 			const profilePromises = profileKeys.map(async (key) => {
 				const profileData = await AsyncStorage.getItem(key);
 				if (profileData) {
@@ -34,9 +32,7 @@ export default function ProfilesScreen() {
 			});
 			const profiles = await Promise.all(profilePromises);
 			setProfiles(
-				profiles.filter(
-					(profile) => profile !== null
-				) as InstagramProfile[]
+				profiles.filter((profile) => profile !== null) as InstagramProfile[],
 			);
 		} catch (error) {
 			console.error("Error loading profiles:", error);
@@ -46,9 +42,7 @@ export default function ProfilesScreen() {
 	const clearProfiles = async () => {
 		try {
 			const keys = await AsyncStorage.getAllKeys();
-			const profileKeys = keys.filter((key) =>
-				key.startsWith("profile_")
-			);
+			const profileKeys = keys.filter((key) => key.startsWith("profile_"));
 			profileKeys.forEach((key) => {
 				AsyncStorage.removeItem(key);
 			});
@@ -71,7 +65,7 @@ export default function ProfilesScreen() {
 	useFocusEffect(
 		useCallback(() => {
 			loadProfiles();
-		}, [loadProfiles])
+		}, [loadProfiles]),
 	);
 
 	const auth = useAuthContext();
@@ -90,13 +84,12 @@ export default function ProfilesScreen() {
 					You are not signed in!
 				</Text>
 				<Text className="text-lg text-oxford-400 text-center w-3/4 mt-4">
-					Head over to <Text className="font-bold">Settings</Text> and
-					create an account, or sign back in!
+					Head over to <Text className="font-bold">Settings</Text> and create an
+					account, or sign back in!
 				</Text>
 				<Text className="text-lg text-center w-3/4 mt-2">
-					Once signed in, you can easily sync your profile, and view
-					it here in the app and on our{" "}
-					<Text className="font-bold">Web client!</Text>
+					Once signed in, you can easily sync your profile, and view it here in
+					the app and on our <Text className="font-bold">Web client!</Text>
 				</Text>
 			</View>
 		);
@@ -112,14 +105,23 @@ export default function ProfilesScreen() {
 				renderItem={({ item }: { item: InstagramProfile }) => (
 					<Link href={`/profiles/${item.id}`}>
 						<View className="dark:bg-oxford-400 p-3 w-full flex flex-row items-center justify-center border-y border-oxford-300">
-							<Image
-								source={{ uri: item.profilePicUrl }}
-								style={{
-									width: 64,
-									height: 64,
-									borderRadius: 64,
-								}}
-							/>
+							{item.profilePicUrl ? (
+								<Image
+									source={{ uri: item.profilePicUrl }}
+									style={{
+										width: 64,
+										height: 64,
+										borderRadius: 64,
+									}}
+								/>
+							) : (
+								<FontAwesome
+									className=""
+									name="user-circle"
+									size={64}
+									color="gray"
+								/>
+							)}
 							<View className="ml-2 dark:bg-transparent">
 								<Text className="text-black text-xl font-bold dark:text-white my-1">
 									{item.username}
