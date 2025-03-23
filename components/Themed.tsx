@@ -52,11 +52,12 @@ export function Text(props: TextProps) {
 
 export function View(props: ViewProps) {
 	const { className, ...otherProps } = props;
+	const bgClass = className?.includes("bg-")
+		? ""
+		: "bg-white dark:bg-oxford-500";
 	return (
 		<DefaultView
-			className={`bg-white dark:bg-oxford-500 ${
-				className ? className + " " : ""
-			}`}
+			className={`${bgClass} ${className ? className + " " : ""}`}
 			{...otherProps}
 		/>
 	);
