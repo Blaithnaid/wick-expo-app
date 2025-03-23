@@ -17,7 +17,7 @@ export default function AccountSettings() {
 	const [didSubmit, setDidSubmit] = useState(false);
 
 	const handlePasswordReset = async () => {
-		const reset = await sendPasswordResetEmail(firebase.myAuth, profile?.email);
+		await sendPasswordResetEmail(firebase.myAuth, profile?.email);
 		setDidSubmit(true);
 	};
 
