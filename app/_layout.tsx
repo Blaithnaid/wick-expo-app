@@ -7,16 +7,18 @@ import {
 	ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
+import { Pressable } from "react-native";
 
-import { FirebaseProvider } from "@/services/FirebaseProvider";
-import { AuthProvider } from "@/services/AuthProvider";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { Text } from "@/components/Themed";
 import Colors from "@/constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { AuthProvider } from "@/services/AuthProvider";
+import { FirebaseProvider } from "@/services/FirebaseProvider";
 
 export {
 	// Catch any errors thrown by the Layout component.
@@ -66,10 +68,7 @@ function RootLayoutNav() {
 					value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
 				>
 					<Stack>
-						<Stack.Screen
-							name="(tabs)"
-							options={{ headerShown: false }}
-						/>
+						<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 						<Stack.Screen
 							name="modal"
 							options={{
@@ -77,11 +76,21 @@ function RootLayoutNav() {
 								headerTitle: "Wickbot Info", // Change the header text
 								headerStyle: {
 									backgroundColor:
-										Colors[colorScheme ?? "light"]
-											.headerBackground,
+										Colors[colorScheme ?? "light"].headerBackground,
 								},
-								headerTintColor:
-									Colors[colorScheme ?? "light"].text,
+								headerTintColor: Colors[colorScheme ?? "light"].text,
+							}}
+						/>
+						<Stack.Screen
+							name="importer"
+							options={{
+								presentation: "modal",
+								headerTitle: "Import a profile", // Change the header text
+								headerStyle: {
+									backgroundColor:
+										Colors[colorScheme ?? "light"].headerBackground,
+								},
+								headerTintColor: Colors[colorScheme ?? "light"].text,
 							}}
 						/>
 						<Stack.Screen
@@ -92,24 +101,20 @@ function RootLayoutNav() {
 							}}
 						/>
 						<Stack.Screen
-							name="profile"
+							name="account"
 							options={{
 								presentation: "modal",
-								headerTitle: "Your Profile",
+								headerTitle: "Your Account",
 								headerStyle: {
 									backgroundColor:
-										Colors[colorScheme ?? "light"]
-											.headerBackground,
+										Colors[colorScheme ?? "light"].headerBackground,
 								},
-								headerTintColor:
-									Colors[colorScheme ?? "light"].text,
+								headerTintColor: Colors[colorScheme ?? "light"].text,
 								animation: "slide_from_bottom",
 							}}
 						/>
 					</Stack>
-					<StatusBar
-						style={colorScheme === "dark" ? "light" : "dark"}
-					/>
+					<StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
 				</ThemeProvider>
 			</AuthProvider>
 		</FirebaseProvider>
