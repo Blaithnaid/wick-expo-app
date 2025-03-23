@@ -1,10 +1,8 @@
-import { Platform } from "react-native";
 import { InstagramPost, InstagramProfile } from "@/constants/Instagram";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
-const ZipArchive =
-	Platform.OS !== "web" ? require("react-native-zip-archive") : null;
+import * as ZipArchive from "react-native-zip-archive";
 
 interface ImportResult {
 	success: boolean;
@@ -157,6 +155,7 @@ export class InstagramArchiveHandler {
 				// Extract profile picture URL if available
 				let profilePicUrl = "";
 				if (mediaMap["Profile Photo"]) {
+					console.log(mediaMap["Profile Photo"]);
 					const picPath = mediaMap["Profile Photo"].uri;
 					if (picPath) {
 						profilePicUrl = `${this.tempDir}/${picPath}`;
@@ -190,6 +189,7 @@ export class InstagramArchiveHandler {
 				}
 
 				return {
+					id: `profile_${stringMap.Username?.value}_${Date.now()}`,
 					username: this.fixDoubleEncodedEmoji(stringMap.Username?.value),
 					fullName: this.fixDoubleEncodedEmoji(stringMap.Name?.value) || "",
 					biography: this.fixDoubleEncodedEmoji(stringMap.Bio?.value) || "",
@@ -339,13 +339,12 @@ export class InstagramArchiveHandler {
 				// Continue processing other posts
 			}
 		}
-
 		return posts;
 	}
 
 	private async storeProfile(profile: InstagramProfile): Promise<void> {
-		const uniqueKey = `profile_${profile.username}_${Date.now()}`;
-		await AsyncStorage.setItem(uniqueKey, JSON.stringify(profile));
+		await AsyncStorage.setItem(profile.id, JSON.stringify(profile));
+		console.log("Stored profile:", profile.id);
 	}
 
 	private async cleanup(): Promise<void> {
