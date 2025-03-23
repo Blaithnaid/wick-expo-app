@@ -1,4 +1,5 @@
 export interface InstagramProfile {
+	id: string;
 	username: string;
 	fullName: string;
 	biography: string;
@@ -24,6 +25,7 @@ export interface ImportStatus {
 }
 
 export const exampleInstagramProfile: InstagramProfile = {
+	id: "profile_example",
 	username: "example_user",
 	fullName: "Example User",
 	biography:
