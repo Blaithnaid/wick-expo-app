@@ -7,16 +7,14 @@ import {
 	ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack, router } from "expo-router";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
-import { Pressable } from "react-native";
-
-import { Text } from "@/components/Themed";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { AuthProvider } from "@/services/AuthProvider";
 import { FirebaseProvider } from "@/services/FirebaseProvider";
 
@@ -62,61 +60,63 @@ function RootLayoutNav() {
 	console.log("colorScheme in RootLayoutNav: " + colorScheme);
 
 	return (
-		<FirebaseProvider>
-			<AuthProvider>
-				<ThemeProvider
-					value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-				>
-					<Stack>
-						<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-						<Stack.Screen
-							name="modal"
-							options={{
-								presentation: "modal",
-								headerTitle: "Wickbot Info", // Change the header text
-								headerStyle: {
-									backgroundColor:
-										Colors[colorScheme ?? "light"].headerBackground,
-								},
-								headerTintColor: Colors[colorScheme ?? "light"].text,
-							}}
-						/>
-						<Stack.Screen
-							name="importer"
-							options={{
-								presentation: "modal",
-								headerTitle: "Import a profile", // Change the header text
-								headerStyle: {
-									backgroundColor:
-										Colors[colorScheme ?? "light"].headerBackground,
-								},
-								headerTintColor: Colors[colorScheme ?? "light"].text,
-							}}
-						/>
-						<Stack.Screen
-							name="(auth)"
-							options={{
-								headerShown: false,
-								animation: "slide_from_bottom",
-							}}
-						/>
-						<Stack.Screen
-							name="account"
-							options={{
-								presentation: "modal",
-								headerTitle: "Your Account",
-								headerStyle: {
-									backgroundColor:
-										Colors[colorScheme ?? "light"].headerBackground,
-								},
-								headerTintColor: Colors[colorScheme ?? "light"].text,
-								animation: "slide_from_bottom",
-							}}
-						/>
-					</Stack>
-					<StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-				</ThemeProvider>
-			</AuthProvider>
-		</FirebaseProvider>
+		<ActionSheetProvider>
+			<FirebaseProvider>
+				<AuthProvider>
+					<ThemeProvider
+						value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+					>
+						<Stack>
+							<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+							<Stack.Screen
+								name="modal"
+								options={{
+									presentation: "modal",
+									headerTitle: "Wickbot Info", // Change the header text
+									headerStyle: {
+										backgroundColor:
+											Colors[colorScheme ?? "light"].headerBackground,
+									},
+									headerTintColor: Colors[colorScheme ?? "light"].text,
+								}}
+							/>
+							<Stack.Screen
+								name="importer"
+								options={{
+									presentation: "modal",
+									headerTitle: "Import a profile", // Change the header text
+									headerStyle: {
+										backgroundColor:
+											Colors[colorScheme ?? "light"].headerBackground,
+									},
+									headerTintColor: Colors[colorScheme ?? "light"].text,
+								}}
+							/>
+							<Stack.Screen
+								name="(auth)"
+								options={{
+									headerShown: false,
+									animation: "slide_from_bottom",
+								}}
+							/>
+							<Stack.Screen
+								name="account"
+								options={{
+									presentation: "modal",
+									headerTitle: "Your Account",
+									headerStyle: {
+										backgroundColor:
+											Colors[colorScheme ?? "light"].headerBackground,
+									},
+									headerTintColor: Colors[colorScheme ?? "light"].text,
+									animation: "slide_from_bottom",
+								}}
+							/>
+						</Stack>
+						<StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+					</ThemeProvider>
+				</AuthProvider>
+			</FirebaseProvider>
+		</ActionSheetProvider>
 	);
 }
