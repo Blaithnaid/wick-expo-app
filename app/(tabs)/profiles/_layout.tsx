@@ -5,10 +5,12 @@ import { router } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useClientOnlyValue } from "@/hooks/useClientOnlyValue";
+import { useAuthContext } from "@/services/AuthProvider";
 import Colors from "@/constants/Colors";
 
 export default function ProfilesLayout() {
 	const colorScheme = useColorScheme().colorScheme;
+	const auth = useAuthContext();
 
 	return (
 		<Stack
@@ -23,23 +25,27 @@ export default function ProfilesLayout() {
 				name="index"
 				options={{
 					title: "Profiles",
-					headerRight: () => (
-						<Link href="/importer" asChild>
-							<Pressable>
-								{({ pressed }) => (
-									<FontAwesome
-										name="user-plus"
-										size={25}
-										color={Colors[colorScheme ?? "light"].text}
-										style={{
-											marginRight: 15,
-											opacity: pressed ? 0.5 : 1,
-										}}
-									/>
-								)}
-							</Pressable>
-						</Link>
-					),
+					headerRight: () =>
+						auth.user ? (
+							// only show import button if user is logged in
+							<Link href="/importer" asChild>
+								<Pressable>
+									{({ pressed }) => (
+										<FontAwesome
+											name="user-plus"
+											size={25}
+											color={Colors[colorScheme ?? "light"].text}
+											style={{
+												marginRight: 15,
+												opacity: pressed ? 0.5 : 1,
+											}}
+										/>
+									)}
+								</Pressable>
+							</Link>
+						) : (
+							<></>
+						),
 				}}
 			/>
 			<Stack.Screen
