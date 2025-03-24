@@ -79,7 +79,7 @@ export default function ProfilesScreen() {
 					size={80}
 					color={colorScheme === "dark" ? "white" : "black"}
 				/>
-				<View className="mt-4 mb-3 h-[8px] rounded-full w-[55%] bg-slate-400" />
+				<View className="mt-4 mb-3 h-0.5 rounded-full w-[55%] bg-slate-400" />
 				<Text className="text-xl text-center w-2/3">
 					You are not signed in!
 				</Text>
