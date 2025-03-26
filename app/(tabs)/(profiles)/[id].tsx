@@ -1,5 +1,5 @@
 import { Text, View as TView } from "@/components/Themed";
-import { View, Pressable } from "react-native";
+import { View, Pressable, TouchableOpacity } from "react-native";
 import { useState, useEffect } from "react";
 import { FlatList, Dimensions } from "react-native";
 import {
@@ -9,7 +9,7 @@ import {
 } from "@/constants/Instagram";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { router, Stack, useLocalSearchParams } from "expo-router";
+import { router, Link, Stack, useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
 	Modal,
@@ -43,7 +43,8 @@ const ProfileMenu = ({ profileId }: { profileId: string }) => {
 			(i?: number) => {
 				switch (i) {
 					case destructiveButtonIndex:
-						profiles.deleteProfiles([profileId]);
+						console.log("BUTTON PRESSED deleting:", profileId);
+						profiles.deleteProfile(profileId);
 						profiles.loadProfiles();
 						router.back();
 						break;
@@ -55,19 +56,16 @@ const ProfileMenu = ({ profileId }: { profileId: string }) => {
 	};
 
 	return (
-		<Pressable onPress={onPress}>
-			{({ pressed }) => (
-				<FontAwesome
-					name="ellipsis-h"
-					size={25}
-					color={Colors[colorScheme ?? "light"].text}
-					style={{
-						...(Platform.OS === "web" && { marginRight: 15 }),
-						opacity: pressed ? 0.5 : 1,
-					}}
-				/>
-			)}
-		</Pressable>
+		<TouchableOpacity onPress={onPress}>
+			<FontAwesome
+				name="ellipsis-h"
+				size={25}
+				color={Colors[colorScheme ?? "light"].text}
+				style={{
+					...(Platform.OS === "web" && { marginRight: 15 }),
+				}}
+			/>
+		</TouchableOpacity>
 	);
 };
 
@@ -76,7 +74,6 @@ export default function InstagramProfileViewerScreen() {
 	const [profile, setProfile] = useState<InstagramProfile | null>(null);
 	const [selectedPost, setSelectedPost] = useState<InstagramPost | null>(null);
 	const [selectedImage, setSelectedImage] = useState(0);
-	const colorScheme = useColorScheme().colorScheme;
 
 	const numColumns = 3;
 	const screenWidth = Dimensions.get("window").width;
@@ -123,14 +120,14 @@ export default function InstagramProfileViewerScreen() {
 					headerTitle: "",
 					headerLeft: () => (
 						<View className="flex-row">
-							<Pressable onPress={() => router.back()}>
+							<TouchableOpacity onPress={() => router.back()}>
 								<Text className="text-lg color-iguana-400 dark:color-iguana-400">
 									Back
 								</Text>
-							</Pressable>
+							</TouchableOpacity>
 						</View>
 					),
-					headerRight: () => <ProfileMenu profileId={selectedPost?.id ?? ""} />,
+					headerRight: () => <ProfileMenu profileId={profile?.id ?? "AAA"} />,
 				}}
 			/>
 			<TView className="flex justify-start items-center w-full h-full">
@@ -152,7 +149,7 @@ export default function InstagramProfileViewerScreen() {
 						/>
 						<ModalBody>
 							<View className="mt-4 dark:bg-oxford-600 flex flex-row w-full justify-center items-center">
-								<Pressable
+								<TouchableOpacity
 									className="mr-4"
 									onPress={() => {
 										if (selectedImage > 0) {
@@ -168,7 +165,7 @@ export default function InstagramProfileViewerScreen() {
 										color={"#ffffff"}
 										className="rounded-full"
 									/>
-								</Pressable>
+								</TouchableOpacity>
 								{selectedPost?.mediaUrls.map((url, index) => (
 									<View
 										key={url}
@@ -180,7 +177,7 @@ export default function InstagramProfileViewerScreen() {
 										}
 									/>
 								))}
-								<Pressable
+								<TouchableOpacity
 									className="ml-4"
 									onPress={() => {
 										if (
@@ -199,7 +196,7 @@ export default function InstagramProfileViewerScreen() {
 										color={"#ffffff"}
 										className="rounded-full"
 									/>
-								</Pressable>
+								</TouchableOpacity>
 							</View>
 							<View className="dark:bg-transparent">
 								{selectedPost?.caption && (
@@ -242,18 +239,26 @@ export default function InstagramProfileViewerScreen() {
 							</Text>
 							<Text className="text-lg">posts</Text>
 						</View>
-						<View className="flex flex-col items-center">
-							<Text className="text-2xl font-bold self-start">
-								{profile?.followers.length}
-							</Text>
-							<Text className="text-lg">followers</Text>
-						</View>
-						<View className="flex flex-col items-center">
-							<Text className="text-2xl font-bold self-start">
-								{profile?.following.length}
-							</Text>
-							<Text className="text-lg">following</Text>
-						</View>
+						<Link href={`/(profiles)/${profile?.id}/followers`} asChild>
+							<TouchableOpacity>
+								<View className="flex flex-col items-center">
+									<Text className="text-2xl font-bold self-start">
+										{profile?.followers.length}
+									</Text>
+									<Text className="text-lg">followers</Text>
+								</View>
+							</TouchableOpacity>
+						</Link>
+						<Link href={`/(profiles)/${profile?.id}/following`} asChild>
+							<TouchableOpacity>
+								<View className="flex flex-col items-center">
+									<Text className="text-2xl font-bold self-start">
+										{profile?.following.length}
+									</Text>
+									<Text className="text-lg">following</Text>
+								</View>
+							</TouchableOpacity>
+						</Link>
 					</View>
 				</View>
 				<View className="h-fit px-4 pb-4 w-full border-b-3 dark:border-oxford-600 flex flex-col items-start">
