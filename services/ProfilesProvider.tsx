@@ -13,7 +13,7 @@ interface ProfileContextType {
 	profiles: InstagramProfile[];
 	loadProfiles: () => Promise<void>;
 	clearProfiles: () => Promise<void>;
-	deleteProfiles: (profileIds: string[]) => Promise<void>;
+	deleteProfile: (profileId: string) => Promise<void>;
 }
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
@@ -49,15 +49,10 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({
 		}
 	}, []);
 
-	const deleteProfiles = async (profileIds: string[]) => {
+	const deleteProfile = async (profileId: string) => {
 		try {
-			console.log("Deleting profiles:", profileIds);
-			await Promise.all(
-				profileIds.map((id) => AsyncStorage.removeItem(`profile_${id}`)),
-			);
-			setProfiles((prevProfiles) =>
-				prevProfiles.filter((p) => !profileIds.includes(p.id)),
-			);
+			console.log("Deleting profiles:", profileId);
+			await AsyncStorage.removeItem(profileId);
 		} catch (error) {
 			console.error("Error deleting profiles:", error);
 		}
@@ -88,7 +83,7 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({
 
 	return (
 		<ProfileContext.Provider
-			value={{ profiles, loadProfiles, clearProfiles, deleteProfiles }}
+			value={{ profiles, loadProfiles, clearProfiles, deleteProfile }}
 		>
 			{children}
 		</ProfileContext.Provider>
