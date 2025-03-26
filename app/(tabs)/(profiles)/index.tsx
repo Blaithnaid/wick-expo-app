@@ -1,7 +1,7 @@
 import { View, Text } from "@/components/Themed";
-import { Pressable, FlatList, Platform } from "react-native";
+import { Pressable, FlatList, Platform, TouchableOpacity } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { router, Stack, Link } from "expo-router";
+import { Stack, Link } from "expo-router";
 import { useAuthContext } from "@/services/AuthProvider";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Image } from "expo-image";
@@ -152,44 +152,48 @@ export default function ProfilesScreen() {
 						<FlatList
 							data={profiles.profiles}
 							renderItem={({ item }: { item: InstagramProfile }) => (
-								<Link href={`/(profiles)/${item.id}`}>
-									<View className="dark:bg-oxford-400 p-3 w-full flex flex-row items-center justify-center border-y border-oxford-300">
-										{item.profilePicUrl ? (
-											<Image
-												source={{ uri: item.profilePicUrl }}
-												style={{
-													width: 64,
-													height: 64,
-													borderRadius: 64,
-												}}
-											/>
-										) : (
-											<FontAwesome
-												className=""
-												name="user-circle"
-												size={64}
-												color="gray"
-											/>
-										)}
-										<View className="ml-2 dark:bg-transparent">
-											<Text className="text-black text-xl font-bold dark:text-white my-1">
-												{item.username}
-											</Text>
-											<Text className="text-gray-400 text-md dark:text-white my-1">
-												imported:{" "}
-												{item.whenImported
-													? item.whenImported.toLocaleDateString()
-													: "Unknown"}
-											</Text>
-										</View>
-										<FontAwesome
-											name="chevron-right"
-											size={16}
-											color={"#ffffff"}
-											className="ml-auto pt-2.5"
-										/>
-									</View>
-								</Link>
+								<>
+									<Link href={`/(profiles)/${item.id}`} asChild>
+										<TouchableOpacity>
+											<View className="dark:bg-oxford-400 p-3 w-full flex flex-row items-center justify-center border-y border-oxford-300">
+												{item.profilePicUrl ? (
+													<Image
+														source={{ uri: item.profilePicUrl }}
+														style={{
+															width: 64,
+															height: 64,
+															borderRadius: 64,
+														}}
+													/>
+												) : (
+													<FontAwesome
+														className=""
+														name="user-circle"
+														size={64}
+														color="gray"
+													/>
+												)}
+												<View className="ml-2 dark:bg-transparent">
+													<Text className="text-black text-xl font-bold dark:text-white my-1">
+														{item.username}
+													</Text>
+													<Text className="text-gray-400 text-md dark:text-white my-1">
+														imported:{" "}
+														{item.whenImported
+															? item.whenImported.toLocaleDateString()
+															: "Unknown"}
+													</Text>
+												</View>
+												<FontAwesome
+													name="chevron-right"
+													size={16}
+													color={"#ffffff"}
+													className="ml-auto pt-2.5"
+												/>
+											</View>
+										</TouchableOpacity>
+									</Link>
+								</>
 							)}
 						/>
 					</>
