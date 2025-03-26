@@ -1,11 +1,12 @@
 import { Text, View } from "@/components/Themed";
 import { Button } from "@/components/ui/button";
-import { InstagramPost, InstagramProfile } from "@/constants/Instagram";
+import { InstagramProfile } from "@/constants/Instagram";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Platform } from "react-native";
 import { router } from "expo-router";
 import { useState } from "react";
+import { useProfiles } from "@/services/ProfilesProvider";
 const InstagramArchiveHandler =
 	Platform.OS !== "web"
 		? require("@/util/InstagramArchiveHandler").InstagramArchiveHandler
@@ -17,6 +18,7 @@ export default function ImportScreen() {
 	const [debugData, setDebugData] = useState<any>(null);
 	const [importedProfile, setImportedProfile] =
 		useState<InstagramProfile | null>(null);
+	const profiles = useProfiles();
 	const colorScheme = useColorScheme().colorScheme;
 
 	const handleImport = async () => {
@@ -38,6 +40,7 @@ export default function ImportScreen() {
 		setImporting(false);
 		if (result.success) {
 			router.dismiss();
+			profiles.loadProfiles();
 		}
 	};
 

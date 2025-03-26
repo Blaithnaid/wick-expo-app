@@ -3,8 +3,55 @@ import { View as UView } from "react-native";
 import { router } from "expo-router";
 import { Pressable } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useActionSheet } from "@expo/react-native-action-sheet";
+import { useColorScheme } from "@/hooks/useColorScheme";
 import { useAuthContext } from "@/services/AuthProvider";
 import { Image } from "expo-image";
+
+const ThemeMenu = () => {
+	const colorScheme = useColorScheme().colorScheme;
+	const { showActionSheetWithOptions } = useActionSheet();
+	const options = ["Light", "Dark", `Match system (${colorScheme})`, "Cancel"];
+	const cancelButtonIndex = 3;
+
+	const onPress = () => {
+		showActionSheetWithOptions(
+			{
+				options,
+				cancelButtonIndex,
+			},
+			(i?: number) => {
+				switch (i) {
+					case 0:
+						// Delete
+						break;
+					case 1:
+						break;
+					case 2:
+						break;
+					case cancelButtonIndex:
+						break;
+				}
+			},
+		);
+	};
+
+	return (
+		<Pressable
+			className="dark:bg-oxford-400 bg-neutral-300 p-3 w-full flex flex-row items-start border-y border-oxford-300"
+			android_ripple={{ color: "gray" }}
+			onPress={onPress}
+		>
+			<Text className="text-black text-xl dark:text-white my-1">Set theme</Text>
+			<FontAwesome
+				name="chevron-right"
+				size={16}
+				color={"#ffffff"}
+				className="ml-auto pt-2.5"
+			/>
+		</Pressable>
+	);
+};
 
 export default function SettingsScreen() {
 	const auth = useAuthContext();
@@ -52,6 +99,9 @@ export default function SettingsScreen() {
 					</Text>
 				</UView>
 			</Pressable>
+			<Text className="font-bold text-xl text-left w-full pl-3 my-2.5">
+				Account
+			</Text>
 			<View className="w-full items-center">
 				{auth.profile ? (
 					<Pressable
@@ -85,21 +135,10 @@ export default function SettingsScreen() {
 						className="ml-auto pt-2.5"
 					/>
 				</Pressable>
-				<Pressable
-					className="dark:bg-oxford-400 mt-10 bg-neutral-300 p-3 w-full flex flex-row items-start border-y border-oxford-300"
-					android_ripple={{ color: "gray" }}
-					onPress={() => console.log("Current profile name: ", auth.profile)}
-				>
-					<Text className="text-black text-xl dark:text-white my-1">
-						Set theme
-					</Text>
-					<FontAwesome
-						name="chevron-right"
-						size={16}
-						color={"#ffffff"}
-						className="ml-auto pt-2.5"
-					/>
-				</Pressable>
+				<Text className="font-bold text-xl text-left w-full pl-3 mt-4 my-2.5">
+					Appearance
+				</Text>
+				<ThemeMenu />
 			</View>
 		</View>
 	);
