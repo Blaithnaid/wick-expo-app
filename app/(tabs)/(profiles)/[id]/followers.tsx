@@ -1,28 +1,35 @@
+import { Text, View } from "@/components/Themed";
+import { createInstagramDeepLink } from "@/util/InstagramDeepLink";
+import { useProfiles } from "@/services/ProfilesProvider";
 import {
+	ExternalPathString,
+	Link,
 	router,
 	useLocalSearchParams,
-	Link,
-	ExternalPathString,
 } from "expo-router";
-import { TouchableOpacity, FlatList } from "react-native";
-import { View, Text } from "@/components/Themed";
 import { Stack } from "expo-router";
-import { useProfiles } from "@/services/ProfilesProvider";
-import { createInstagramDeepLink } from "@/util/InstagramDeepLink";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { FlatList, TouchableOpacity, Platform } from "react-native";
+import { useColorScheme } from "@/hooks/useColorScheme";
 
-export default function Followers() {
+export default function Following() {
 	const { id } = useLocalSearchParams();
+	const colorScheme = useColorScheme().colorScheme;
 	const followers = useProfiles().profiles.find((p) => p.id === id)?.followers;
+	const platform =
+		Platform.OS === "ios" || Platform.OS === "android" || Platform.OS === "web"
+			? Platform.OS
+			: "web"; // Default to "web" for unsupported platforms
 
 	return (
 		<>
 			<Stack.Screen
 				options={{
-					headerTitle: "Followers",
+					headerTitle: "Following",
 					headerLeft: () => (
 						<View className="dark:bg-transparent bg-transparent flex-row">
 							<TouchableOpacity onPress={() => router.back()}>
-								<Text className="text-lg color-iguana-400 dark:color-iguana-400">
+								<Text className="font-semibold text-lg color-iguana-600 dark:color-iguana-400">
 									Back
 								</Text>
 							</TouchableOpacity>
@@ -36,10 +43,23 @@ export default function Followers() {
 					renderItem={({
 						item,
 					}: { item: { name: string; profileUrl: string } }) => (
-						<View className="dark:bg-oxford-400 w-full h-fit p-4 flex flex-row items-center justify-start border-y dark:border-gray-800">
-							<Link href={item.profileUrl as ExternalPathString}>
-								<Text className="font-bold">{item.name}</Text>
+						<View className="dark:bg-oxford-400 w-full h-fit p-4 flex flex-row items-center justify-between border-b border-gray-500/50 dark:border-gray-600">
+							<Link
+								className="mr-2"
+								href={
+									createInstagramDeepLink({
+										profileUrl: item.profileUrl,
+										platform: platform,
+									}) as ExternalPathString
+								}
+							>
+								<Text className="font-semibold text-xl">{item.name}</Text>
 							</Link>
+							<FontAwesome
+								size={14}
+								name="chevron-right"
+								color={colorScheme === "dark" ? "white" : "black"}
+							/>
 						</View>
 					)}
 				/>

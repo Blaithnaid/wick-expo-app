@@ -14,6 +14,21 @@ export default function ProfilesLayout() {
 					backgroundColor: Colors[colorScheme ?? "light"].headerBackground,
 				},
 			}}
-		></Stack>
+		>
+			<Stack.Screen name="index" />
+			<Stack.Screen name="[id]" />
+			<Stack.Screen
+				name="[id]/followers"
+				options={{
+					presentation: "modal",
+				}}
+			/>
+			<Stack.Screen
+				name="[id]/following"
+				options={{
+					presentation: "modal",
+				}}
+			/>
+		</Stack>
 	);
 }

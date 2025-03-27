@@ -29,7 +29,7 @@ export default function Following() {
 					headerLeft: () => (
 						<View className="dark:bg-transparent bg-transparent flex-row">
 							<TouchableOpacity onPress={() => router.back()}>
-								<Text className="text-lg color-iguana-400 dark:color-iguana-400">
+								<Text className="font-semibold text-lg color-iguana-600 dark:color-iguana-400">
 									Back
 								</Text>
 							</TouchableOpacity>
@@ -43,8 +43,9 @@ export default function Following() {
 					renderItem={({
 						item,
 					}: { item: { name: string; profileUrl: string } }) => (
-						<View className="dark:bg-oxford-400 w-full h-fit p-4 flex flex-row items-center justify-start border-y border-gray-400 dark:border-gray-600">
+						<View className="dark:bg-oxford-400 w-full h-fit p-4 flex flex-row items-center justify-between border-b border-gray-500/50 dark:border-gray-600">
 							<Link
+								className="mr-2"
 								href={
 									createInstagramDeepLink({
 										profileUrl: item.profileUrl,
@@ -53,13 +54,12 @@ export default function Following() {
 								}
 							>
 								<Text className="font-semibold text-xl">{item.name}</Text>
-								<FontAwesome
-									size={14}
-									name="chevron-right"
-									color={colorScheme === "dark" ? "white" : "black"}
-									style={{ marginLeft: 200 }}
-								/>
 							</Link>
+							<FontAwesome
+								size={14}
+								name="chevron-right"
+								color={colorScheme === "dark" ? "white" : "black"}
+							/>
 						</View>
 					)}
 				/>
