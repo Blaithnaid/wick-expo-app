@@ -1,13 +1,20 @@
 import { ScrollView, Text, View } from "@/components/Themed";
 import { Image } from "expo-image";
 import { TouchableOpacity } from "react-native";
+import { useColorScheme } from "@/hooks/useColorScheme";
 import { useAuthContext } from "@/services/AuthProvider";
 import { FontAwesome } from "@expo/vector-icons";
 
 export default function HomeScreen() {
+	const colorScheme = useColorScheme().colorScheme;
 	const auth = useAuthContext();
 	const profileImage =
 		auth.profile?.photoURL || "https://via.placeholder.com/50";
+
+	const tasks: { name: string; progress: Number }[] = [
+		{ name: "Task 1", progress: 90 },
+		{ name: "Task 2", progress: 50 },
+	];
 
 	return (
 		<ScrollView className="flex-1 w-full px-5 py-4">
@@ -18,42 +25,45 @@ export default function HomeScreen() {
 						source={{ uri: profileImage }}
 						className="w-12 h-12 rounded-full"
 					/>
-					<View className="ml-3">
-						<Text className="text-gray-500">Hello!</Text>
-						<Text className="text-lg font-semibold text-indigo-600">
+					<View className="">
+						<Text className="text-gray-500 text-lg">Hello,</Text>
+						<Text className="text-xl font-semibold text-indigo-600">
 							{auth.profile?.displayName || "Username"}
 						</Text>
 					</View>
 				</View>
-				<FontAwesome size={24} name="bell" />
+				<FontAwesome
+					size={24}
+					name="bell"
+					color={colorScheme === "dark" ? "white" : "black"}
+				/>
 			</View>
 			{/* In Progress Section */}
 			<View className="mt-5">
 				<Text className="text-lg font-semibold">In Progress</Text>
-				<View className="flex-row space-x-3 mt-2">
+				<View className="flex-row space-x 3 mt-2">
 					{/* Task Card */}
-					<View className="bg-purple-500 p-4 rounded-lg w-[160px]">
-						<Text className="text-white font-semibold">
-							Task Almost Complete!
-						</Text>
-						<TouchableOpacity className="mt-2 bg-white py-1 px-3 rounded-full">
-							<Text className="text-blue-500 text-sm">View Task</Text>
-						</TouchableOpacity>
-						<View className="flex-row justify-between mt-2 items-center">
-							<Text className="text-white text-sm">90%</Text>
-							<View className="w-6 h-6 border-2 border-white rounded-full flex items-center justify-center">
-								<Text className="text-white text-xs">⟳</Text>
+					{tasks.map((task) => (
+						<View
+							key={task.name}
+							className="bg-purple-500 p-4 first:ml-0 mx-2 rounded-lg w-[160px]"
+						>
+							<Text className="text-white font-semibold">{task.name}</Text>
+							<TouchableOpacity className="mt-2 bg-white py-1 px-3 rounded-full">
+								<Text className="dark:text-blue-500 text-blue-500 text-sm">
+									View Task
+								</Text>
+							</TouchableOpacity>
+							<View className="flex-row justify-between mt-2 items-center">
+								<Text className="text-white text-sm">
+									{task.progress.toString()}%
+								</Text>
+								<View className="w-6 h-6 border-2 border-white rounded-full flex items-center justify-center">
+									<FontAwesome size={12} name="check" color="white" />
+								</View>
 							</View>
 						</View>
-					</View>
-					<View className="bg-purple-400 p-4 rounded-lg w-[160px]">
-						<Text className="text-white font-semibold">
-							Task Almost Complete!
-						</Text>
-						<TouchableOpacity className="mt-2 bg-white py-1 px-3 rounded-full">
-							<Text className="text-blue-500 text-sm">View Task</Text>
-						</TouchableOpacity>
-					</View>
+					))}
 				</View>
 			</View>
 
