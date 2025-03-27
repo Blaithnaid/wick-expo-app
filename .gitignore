@@ -37,3 +37,10 @@ yarn-error.*
 
 # ios build
 ios/
+
+# android build
+android/
+
+# example files for importing ig profiles
+test.json
+test.zip

@@ -17,7 +17,7 @@ import ChatBubble from "@/components/ChatBubble";
 export default function ChatScreen() {
 	const [message, setMessage] = useState("");
 	const [messages, setMessages] = useState<{ text: string; role: string }[]>(
-		[]
+		[],
 	);
 
 	const functions = useFirebaseContext().myFunctions;
@@ -25,7 +25,7 @@ export default function ChatScreen() {
 
 	const sendMessage = async (
 		message: string,
-		prevMessages: { text: string; role: string }[]
+		prevMessages: { text: string; role: string }[],
 	) => {
 		try {
 			const result = await chatWithGemini({
@@ -71,24 +71,19 @@ export default function ChatScreen() {
 				keyboardVerticalOffset={Platform.OS === "ios" ? 98 : 0}
 			>
 				{messages.length === 0 ? (
-					<TouchableWithoutFeedback
-						onPress={() => Keyboard.dismiss()}
-					>
+					<TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
 						<View className="flex-1 items-center justify-center px-5 flex">
 							<FontAwesome
 								name="robot"
 								size={80}
-								color={
-									colorScheme === "dark" ? "white" : "black"
-								}
+								color={colorScheme === "dark" ? "white" : "black"}
 							/>
 							<View className="mt-4 mb-3 h-[2px] rounded-full w-[55%] bg-slate-400" />
 							<Text className="text-xl text-center w-2/3">
 								Send a message to start chatting with Wickbot!
 							</Text>
 							<Text className="text-lg text-center w-3/4 mt-4">
-								Click the icon in the top right to get some
-								tips!
+								Click the icon in the top right to get some tips!
 							</Text>
 						</View>
 					</TouchableWithoutFeedback>
@@ -108,18 +103,14 @@ export default function ChatScreen() {
 							darkColor="rgba(255,255,255,0.1)"
 						/>
 						{[...messages].map((msg, index) => (
-							<ChatBubble
-								key={index}
-								text={msg.text}
-								role={msg.role}
-							/>
+							<ChatBubble key={index} text={msg.text} role={msg.role} />
 						))}
 					</ScrollView>
 				)}
 
 				<View className="items-center justify-center py-3 px-2">
 					<TextInput
-						className="rounded-2xl px-3.5 py-5 w-full bg-gray-400 dark:bg-gray-700 border border-gray-600 text-black dark:text-white"
+						className="rounded-2xl px-3.5 py-5 w-full bg-neutral-200 dark:bg-gray-700 border border-gray-600 text-black dark:text-white"
 						value={message}
 						onChangeText={setMessage}
 						onSubmitEditing={handleSend}
