@@ -79,8 +79,6 @@ function Providers({ children }: { children: React.ReactNode }) {
 
 function RootLayoutNav() {
 	const colorScheme = useColorScheme().colorScheme;
-	console.log("colorScheme in RootLayoutNav: " + colorScheme);
-
 	return (
 		<Providers>
 			<Stack>

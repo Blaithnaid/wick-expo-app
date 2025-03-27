@@ -74,6 +74,7 @@ export default function InstagramProfileViewerScreen() {
 	const [profile, setProfile] = useState<InstagramProfile | null>(null);
 	const [selectedPost, setSelectedPost] = useState<InstagramPost | null>(null);
 	const [selectedImage, setSelectedImage] = useState(0);
+	const colorScheme = useColorScheme().colorScheme;
 
 	const numColumns = 3;
 	const screenWidth = Dimensions.get("window").width;
@@ -121,7 +122,7 @@ export default function InstagramProfileViewerScreen() {
 					headerLeft: () => (
 						<View className="flex-row">
 							<TouchableOpacity onPress={() => router.back()}>
-								<Text className="text-lg color-iguana-400 dark:color-iguana-400">
+								<Text className="font-semibold text-lg color-iguana-600 dark:color-iguana-400">
 									Back
 								</Text>
 							</TouchableOpacity>
@@ -142,6 +143,7 @@ export default function InstagramProfileViewerScreen() {
 					<ModalContent className="dark:bg-oxford-600 p-0">
 						<Image
 							source={{ uri: selectedPost?.mediaUrls[selectedImage] }}
+							transition={200}
 							style={{
 								width: "100%",
 								aspectRatio: 1,
@@ -162,7 +164,7 @@ export default function InstagramProfileViewerScreen() {
 									<FontAwesome
 										name="chevron-left"
 										size={24}
-										color={"#ffffff"}
+										color={Colors[colorScheme ?? "light"].text}
 										className="rounded-full"
 									/>
 								</TouchableOpacity>
@@ -173,7 +175,7 @@ export default function InstagramProfileViewerScreen() {
 											"size-2.5 mx-1.5 rounded-full " +
 											(index === selectedImage
 												? "dark:bg-white bg-black"
-												: "dark:bg-oxford-700")
+												: "dark:bg-oxford-700 bg-gray-300")
 										}
 									/>
 								))}
@@ -193,7 +195,7 @@ export default function InstagramProfileViewerScreen() {
 									<FontAwesome
 										name="chevron-right"
 										size={24}
-										color={"#ffffff"}
+										color={Colors[colorScheme ?? "light"].text}
 										className="rounded-full"
 									/>
 								</TouchableOpacity>
@@ -205,13 +207,23 @@ export default function InstagramProfileViewerScreen() {
 							</View>
 						</ModalBody>
 						<ModalFooter className="p-2">
-							<Button
-								onPress={() => {
-									setSelectedPost(null);
-								}}
-							>
-								<ButtonText>Close</ButtonText>
-							</Button>
+							<Pressable>
+								{({ pressed }) => (
+									<Button
+										onPress={() => {
+											setSelectedPost(null);
+										}}
+										style={{
+											opacity: pressed ? 0.2 : 1,
+										}}
+										className="dark:bg-lavender-400 bg-lavender-300"
+									>
+										<ButtonText className="dark:text-white text-black">
+											Close
+										</ButtonText>
+									</Button>
+								)}
+							</Pressable>
 						</ModalFooter>
 					</ModalContent>
 				</Modal>
@@ -282,11 +294,17 @@ export default function InstagramProfileViewerScreen() {
 								setSelectedImage(0);
 							}}
 						>
-							<Image
-								source={{ uri: item.mediaUrls[0] }}
-								contentFit="cover"
-								style={{ width: "100%", height: "100%" }}
-							/>
+							{({ pressed }) => (
+								<Image
+									source={{ uri: item.mediaUrls[0] }}
+									contentFit="cover"
+									style={{
+										width: "100%",
+										height: "100%",
+										opacity: pressed ? 0.7 : 1,
+									}}
+								/>
+							)}
 						</Pressable>
 					)}
 					keyExtractor={(_, index) => index.toString()}

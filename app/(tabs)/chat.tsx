@@ -110,7 +110,7 @@ export default function ChatScreen() {
 
 				<View className="items-center justify-center py-3 px-2">
 					<TextInput
-						className="rounded-2xl px-3.5 py-5 w-full bg-gray-200 dark:bg-gray-700 border border-gray-600 text-black dark:text-white"
+						className="rounded-2xl px-3.5 py-5 w-full bg-neutral-200 dark:bg-gray-700 border border-gray-600 text-black dark:text-white"
 						value={message}
 						onChangeText={setMessage}
 						onSubmitEditing={handleSend}
