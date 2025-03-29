@@ -45,18 +45,14 @@ export default function Login() {
 		<SafeAreaView className="flex-1 px-4">
 			<View className="flex-1 justify-between">
 				<View className="pt-32 px-8">
-					<FormControl
-						isInvalid={isEmailInvalid}
-						size="md"
-						isRequired={true}
-					>
+					<FormControl isInvalid={isEmailInvalid} size="md" isRequired={true}>
 						<FormControlLabel>
 							<FormControlLabelText className="dark:text-white">
 								Email
 							</FormControlLabelText>
 						</FormControlLabel>
 						<Input
-							className="my-1 rounded-lg bg-slate-700"
+							className="my-1 rounded-lg bg-slate-300 dark:bg-slate-700"
 							size={"md"}
 						>
 							<InputField
@@ -75,9 +71,7 @@ export default function Login() {
 						</Input>
 						<FormControlError>
 							<FormControlErrorIcon as={AlertCircleIcon} />
-							<FormControlErrorText>
-								Email is invalid.
-							</FormControlErrorText>
+							<FormControlErrorText>Email is invalid.</FormControlErrorText>
 						</FormControlError>
 					</FormControl>
 					<FormControl
@@ -95,11 +89,11 @@ export default function Login() {
 								type="password"
 								value={password}
 								onChangeText={(text) => setPassword(text)}
-								className="bg-slate-700"
+								className="bg-slate-300 dark:bg-slate-700"
 							/>
 						</Input>
 						<FormControlHelper>
-							<FormControlHelperText>
+							<FormControlHelperText className="text-neutral-600 dark:text-neutral-300">
 								Must be at least 6 characters.
 							</FormControlHelperText>
 						</FormControlHelper>
@@ -111,7 +105,7 @@ export default function Login() {
 						</FormControlError>
 					</FormControl>
 					<Button
-						className="w-fit bg-iguana-500 self-end mt-4"
+						className="w-fit bg-iguana-400 dark:bg-iguana-600 self-end mt-4"
 						size="md"
 						onPress={() => {
 							handleSubmit();
@@ -122,8 +116,8 @@ export default function Login() {
 						</ButtonText>
 					</Button>
 					{loginError ? (
-						<View className="w-1/2 mt-8 self-center rounded-2xl p-4 bg-slate-800 dark:bg-slate-600 border-2 border-red-800 dark:border-red-800">
-							<Text className="text-center">
+						<View className="w-1/2 mt-8 self-center rounded-2xl p-4 bg-slate-800 dark:bg-slate-600 border-2 border-red-900 dark:border-red-900">
+							<Text className="text-center text-white dark:text-white">
 								Login failed. Please try again.
 							</Text>
 						</View>

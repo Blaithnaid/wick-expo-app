@@ -8,15 +8,19 @@ import {
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
+import { router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { Pressable, View } from "react-native";
 import "react-native-reanimated";
-import { StatusBar } from "expo-status-bar";
-
-import { FirebaseProvider } from "@/services/FirebaseProvider";
-import { AuthProvider } from "@/services/AuthProvider";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import Colors from "@/constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { AuthProvider } from "@/services/AuthProvider";
+import { Text } from "@/components/Themed";
+import { FirebaseProvider } from "@/services/FirebaseProvider";
+import { ProfileProvider } from "@/services/ProfilesProvider";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
+import { StatusBar } from "expo-status-bar";
 
 export {
 	// Catch any errors thrown by the Layout component.
@@ -54,64 +58,87 @@ export default function RootLayout() {
 		</GluestackUIProvider>
 	);
 }
+function Providers({ children }: { children: React.ReactNode }) {
+	const colorScheme = useColorScheme().colorScheme;
+	return (
+		<ActionSheetProvider>
+			<FirebaseProvider>
+				<AuthProvider>
+					<ProfileProvider>
+						<ThemeProvider
+							value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+						>
+							{children}
+						</ThemeProvider>
+					</ProfileProvider>
+				</AuthProvider>
+			</FirebaseProvider>
+		</ActionSheetProvider>
+	);
+}
 
 function RootLayoutNav() {
 	const colorScheme = useColorScheme().colorScheme;
-	console.log("colorScheme in RootLayoutNav: " + colorScheme);
-
 	return (
-		<FirebaseProvider>
-			<AuthProvider>
-				<ThemeProvider
-					value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-				>
-					<Stack>
-						<Stack.Screen
-							name="(tabs)"
-							options={{ headerShown: false }}
-						/>
-						<Stack.Screen
-							name="modal"
-							options={{
-								presentation: "modal",
-								headerTitle: "Wickbot Info", // Change the header text
-								headerStyle: {
-									backgroundColor:
-										Colors[colorScheme ?? "light"]
-											.headerBackground,
-								},
-								headerTintColor:
-									Colors[colorScheme ?? "light"].text,
-							}}
-						/>
-						<Stack.Screen
-							name="(auth)"
-							options={{
-								headerShown: false,
-								animation: "slide_from_bottom",
-							}}
-						/>
-						<Stack.Screen
-							name="profile"
-							options={{
-								presentation: "modal",
-								headerTitle: "Your Profile",
-								headerStyle: {
-									backgroundColor:
-										Colors[colorScheme ?? "light"]
-											.headerBackground,
-								},
-								headerTintColor:
-									Colors[colorScheme ?? "light"].text,
-								animation: "slide_from_bottom",
-							}}
-						/>
-					</Stack>
-					<StatusBar
-						style={colorScheme === "dark" ? "light" : "dark"}
-					/>
-				</ThemeProvider>
-			</AuthProvider>
-		</FirebaseProvider>
+		<Providers>
+			<Stack>
+				<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+				<Stack.Screen
+					name="modal"
+					options={{
+						presentation: "modal",
+						headerTitle: "Wickbot Info", // Change the header text
+						headerStyle: {
+							backgroundColor: Colors[colorScheme ?? "light"].headerBackground,
+						},
+						headerTintColor: Colors[colorScheme ?? "light"].text,
+					}}
+				/>
+				<Stack.Screen
+					name="importer"
+					options={{
+						presentation: "modal",
+						headerTitle: "Import a profile", // Change the header text
+						headerStyle: {
+							backgroundColor: Colors[colorScheme ?? "light"].headerBackground,
+						},
+						headerTintColor: Colors[colorScheme ?? "light"].text,
+					}}
+				/>
+				<Stack.Screen
+					name="(auth)"
+					options={{
+						headerShown: false,
+						animation: "slide_from_bottom",
+					}}
+				/>
+				<Stack.Screen
+					name="account"
+					options={{
+						presentation: "modal",
+						headerTitle: "Your Account",
+						headerStyle: {
+							backgroundColor: Colors[colorScheme ?? "light"].headerBackground,
+						},
+						headerLeft: () => (
+							<View className="flex-row">
+								<Pressable
+									onPress={() => {
+										router.dismiss();
+									}}
+								>
+									<Text className="color-iguana-400 dark:color-iguana-400">
+										Cancel
+									</Text>
+								</Pressable>
+							</View>
+						),
+						headerTintColor: Colors[colorScheme ?? "light"].text,
+						animation: "slide_from_bottom",
+					}}
+				/>
+			</Stack>
+			<StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+		</Providers>
 	);
 }

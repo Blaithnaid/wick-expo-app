@@ -8,6 +8,8 @@ import {
 	View as DefaultView,
 	SafeAreaView as DefaultSafeAreaView,
 	ScrollView as DefaultScrollView,
+	Pressable as DefaultPressable,
+	Button as DefaultButton,
 } from "react-native";
 
 import Colors from "@/constants/Colors";
@@ -23,7 +25,7 @@ export type ViewProps = ThemeProps & DefaultView["props"];
 
 export function useThemeColor(
 	props: { light?: string; dark?: string },
-	colorName: keyof typeof Colors.light & keyof typeof Colors.dark
+	colorName: keyof typeof Colors.light & keyof typeof Colors.dark,
 ) {
 	const theme = useColorScheme().colorScheme ?? "light";
 	const colorFromProps = props[theme];
@@ -50,11 +52,12 @@ export function Text(props: TextProps) {
 
 export function View(props: ViewProps) {
 	const { className, ...otherProps } = props;
+	const bgClass = className?.includes("bg-")
+		? ""
+		: "bg-white dark:bg-oxford-500";
 	return (
 		<DefaultView
-			className={`bg-white dark:bg-oxford-500 ${
-				className ? className + " " : ""
-			}`}
+			className={`${bgClass} ${className ? className + " " : ""}`}
 			{...otherProps}
 		/>
 	);
@@ -76,6 +79,18 @@ export function ScrollView(props: ViewProps) {
 	const { className, ...otherProps } = props;
 	return (
 		<DefaultScrollView
+			className={`bg-white dark:bg-oxford-500 ${
+				className ? className + " " : ""
+			}`}
+			{...otherProps}
+		/>
+	);
+}
+
+export function Pressable(props: ViewProps) {
+	const { className, ...otherProps } = props;
+	return (
+		<DefaultPressable
 			className={`bg-white dark:bg-oxford-500 ${
 				className ? className + " " : ""
 			}`}

@@ -11,8 +11,7 @@ export default function AuthLayout() {
 		<Stack
 			screenOptions={{
 				headerStyle: {
-					backgroundColor:
-						Colors[colorScheme ?? "light"].headerBackground,
+					backgroundColor: Colors[colorScheme ?? "light"].headerBackground,
 				},
 				presentation: "card",
 				headerShown: true,
@@ -47,7 +46,7 @@ export default function AuthLayout() {
 									router.dismiss();
 								}}
 							>
-								<Text className="text-iguana-400 dark:text-iguana-400">
+								<Text className="color-iguana-400 dark:color-iguana-400">
 									Cancel
 								</Text>
 							</Pressable>

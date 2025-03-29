@@ -10,9 +10,11 @@ export default function HomeScreen() {
 	return (
 		<View className="flex-1 items-center h-full w-full">
 			<View className="self-start p-5">
-				<Text className="text-3xl">
-					Hey, {auth.profile?.displayName}!
-				</Text>
+				{auth.user ? (
+					<Text className="text-3xl">Hey, {auth.profile?.displayName}</Text>
+				) : (
+					<Text className="text-3xl">Hey there!</Text>
+				)}
 				<Text className="text-md">
 					Check out some of the latest features below.
 				</Text>

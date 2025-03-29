@@ -1,6 +1,6 @@
 {
 	"expo": {
-		"name": "wick-expo-app",
+		"name": "Wick",
 		"slug": "wick-expo-app",
 		"version": "1.0.0",
 		"orientation": "portrait",
@@ -11,7 +11,7 @@
 		"splash": {
 			"image": "./assets/images/splash-icon.png",
 			"resizeMode": "contain",
-			"backgroundColor": "#ffffff"
+			"backgroundColor": "#2E3443"
 		},
 		"ios": {
 			"supportsTablet": true,
@@ -21,9 +21,10 @@
 		"android": {
 			"adaptiveIcon": {
 				"foregroundImage": "./assets/images/adaptive-icon.png",
-				"backgroundColor": "#ffffff"
+				"backgroundColor": "#2E3443"
 			},
-			"userInterfaceStyle": "automatic"
+			"userInterfaceStyle": "automatic",
+			"package": "com.blaithnaid.wickapp"
 		},
 		"web": {
 			"bundler": "metro",

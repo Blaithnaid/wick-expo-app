@@ -1,0 +1,71 @@
+{
+	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+	"vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
+	"files": { "ignoreUnknown": false, "ignore": [] },
+	"formatter": { "enabled": true, "indentStyle": "tab" },
+	"organizeImports": { "enabled": true },
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": false,
+			"complexity": { "noWith": "warn" },
+			"correctness": {
+				"noEmptyCharacterClassInRegex": "warn",
+				"noEmptyPattern": "warn",
+				"noUndeclaredVariables": "error",
+				"noUnreachable": "warn",
+				"noUnusedLabels": "warn",
+				"noUnusedVariables": "warn",
+				"useExhaustiveDependencies": "warn",
+				"useHookAtTopLevel": "error",
+				"useIsNan": "error"
+			},
+			"security": { "noDangerouslySetInnerHtmlWithChildren": "warn" },
+			"suspicious": {
+				"noDoubleEquals": "warn",
+				"noDuplicateCase": "error",
+				"noDuplicateClassMembers": "error",
+				"noDuplicateJsxProps": "error",
+				"noDuplicateObjectKeys": "error",
+				"noDuplicateParameters": "error",
+				"noRedeclare": "warn",
+				"noUnsafeNegation": "warn",
+				"useValidTypeof": "error"
+			}
+		},
+		"ignore": ["./dist/*", "android/app/build"]
+	},
+	"javascript": {
+		"formatter": { "quoteStyle": "double" },
+		"globals": ["console", "__DEV__", "shared-node-browser"]
+	},
+	"overrides": [
+		{ "include": ["*.web.*"] },
+		{ "include": ["*.d.ts"], "linter": { "rules": {} } },
+		{ "include": ["metro.config.js"] },
+		{ "include": ["*.js", "*.jsx"] },
+		{
+			"include": ["*.ts", "*.tsx", "*.d.ts"],
+			"linter": {
+				"rules": {
+					"complexity": { "noUselessConstructor": "warn" },
+					"correctness": {
+						"noUndeclaredVariables": "off",
+						"noUnusedVariables": "warn"
+					},
+					"style": {
+						"useConsistentArrayType": {
+							"level": "warn",
+							"options": { "syntax": "shorthand" }
+						}
+					},
+					"suspicious": {
+						"noDuplicateClassMembers": "error",
+						"noExtraNonNullAssertion": "warn",
+						"noRedeclare": "warn"
+					}
+				}
+			}
+		}
+	]
+}
