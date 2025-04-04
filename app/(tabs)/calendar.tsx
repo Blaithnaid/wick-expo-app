@@ -4,7 +4,7 @@ import { Calendar } from 'react-native-calendars';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
-// Task type definition
+// Task type 
 interface Task {
   id: string;
   name: string;
@@ -14,28 +14,18 @@ interface Task {
   endTime: string;
   reminderEnabled: boolean;
   category: string;
-  completed: boolean; // Added completed field
+  completed: boolean;
 }
 
-// Category colors mapping
-const categoryColors = {
-  Content: {
-    bg: '#F3EFFC',
-    dot: '#6c5ce7',
-    border: '#6c5ce7'
-  },
-  Social: {
-    bg: '#E6F7F1',
-    dot: '#00b894',
-    border: '#00b894'
-  },
-  Work: {
-    bg: '#E6F2FA',
-    dot: '#0984e3',
-    border: '#0984e3'
-  }
-};
+// Category type 
+interface Category {
+  name: string;
+  bg: string;
+  dot: string;
+  border: string;
+}
 
+// Main Calendar Screen Component
 const CalendarScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [taskName, setTaskName] = useState('');
@@ -48,13 +38,41 @@ const CalendarScreen = () => {
   const [currentMonth, setCurrentMonth] = useState('February');
   const [currentYear, setCurrentYear] = useState('2025');
   
-  // Store all tasks
+  // Category creation
+  const [addCategoryModalVisible, setAddCategoryModalVisible] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [selectedColor, setSelectedColor] = useState('#6c5ce7'); // Default purple
+  
+  // Storing all tasks
   const [tasks, setTasks] = useState<Task[]>([]);
   
   // Store currently selected day to view tasks
   const [selectedCalendarDate, setSelectedCalendarDate] = useState('');
   
-  // Today's date for initial selection
+  // Default categories with pastel colours
+  
+  const [categoryColors, setCategoryColors] = useState<Record<string, Category>>({
+    Content: {
+      name: 'Content',
+      bg: '#F3EFFC',
+      dot: '#6c5ce7',
+      border: '#6c5ce7'
+    },
+    Social: {
+      name: 'Social',
+      bg: '#E6F7F1',
+      dot: '#00b894',
+      border: '#00b894'
+    },
+    Work: {
+      name: 'Work',
+      bg: '#E6F2FA',
+      dot: '#0984e3',
+      border: '#0984e3'
+    }
+  });
+  
+  // Today's date for first selection, date format is YYYY-MM-DD
   const today = new Date();
   const formattedToday = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
 
@@ -68,10 +86,10 @@ const CalendarScreen = () => {
         markedDates[task.date] = { dots: [], marked: true };
       }
       
-      // Add a dot for each category
+      // Add a dot beside category
       markedDates[task.date].dots.push({
         key: task.id,
-        color: categoryColors[task.category as keyof typeof categoryColors]?.dot || '#999'
+        color: categoryColors[task.category]?.dot || '#999'
       });
     });
     
@@ -87,7 +105,8 @@ const CalendarScreen = () => {
     return markedDates;
   };
 
-  // Filter tasks for the selected date
+  // Filter tasks for the selected date, this will be used to show tasks in the calendar
+  // and in the task list below the calendar
   const getTasksForSelectedDate = () => {
     return tasks.filter(task => task.date === selectedCalendarDate);
   };
@@ -107,15 +126,15 @@ const CalendarScreen = () => {
     
     // Create new task
     const newTask: Task = {
-      id: Date.now().toString(), // Simple unique ID
+      id: Date.now().toString(), // 
       name: taskName,
       note: taskNote,
       date: selectedDate || formattedToday, // Use today if no date selected
       startTime,
       endTime,
       reminderEnabled,
-      category: selectedCategory || 'Work', // Default category if none selected
-      completed: false // Initially not completed
+      category: selectedCategory || 'Content', // Default category if none selected
+      completed: false
     };
     
     // Add task to list
@@ -149,6 +168,58 @@ const CalendarScreen = () => {
     setTasks(tasks.map(task => 
       task.id === taskId ? { ...task, completed: !task.completed } : task
     ));
+  };
+  
+  // Close modal without creating a task
+  const handleCloseModal = () => {
+    resetForm();
+    setModalVisible(false);
+  };
+  
+  // Colour options for new categories
+  const colorOptions = [
+    { bg: '#F3EFFC', main: '#6c5ce7' }, // Purple
+    { bg: '#E6F7F1', main: '#00b894' }, // Green
+    { bg: '#E6F2FA', main: '#0984e3' }, // Blue
+    { bg: '#FFEAA7', main: '#fdcb6e' }, // Yellow
+    { bg: '#FFE8E8', main: '#ff7675' }, // Red
+    { bg: '#FFF0F0', main: '#e84393' }, // Pink
+    { bg: '#F1F2F6', main: '#747d8c' }, // Gray
+    { bg: '#FFF3E6', main: '#e67e22' }, // Orange
+  ];
+  
+  // Function to create a new category
+  const handleCreateCategory = () => {
+    if (!newCategoryName.trim()) {
+      alert("Category name is required");
+      return;
+    }
+    
+    // Check if category name already exists
+    if (categoryColors[newCategoryName]) {
+      alert("This category already exists");
+      return;
+    }
+    
+    // Choose background colour based on selected colour
+    const selectedColorObj = colorOptions.find(color => color.main === selectedColor);
+    const bgColor = selectedColorObj?.bg || '#f5f5f5';
+    
+    // Adding a new category
+    setCategoryColors({
+      ...categoryColors,
+      [newCategoryName]: {
+        name: newCategoryName,
+        bg: bgColor,
+        dot: selectedColor,
+        border: selectedColor
+      }
+    });
+    
+    // Close modal and reset
+    setAddCategoryModalVisible(false);
+    setNewCategoryName('');
+    setSelectedColor('#6c5ce7');
   };
   
   // Set initial calendar date when component mounts
@@ -189,17 +260,26 @@ const CalendarScreen = () => {
               <View 
                 className="mb-3 p-3 rounded-lg flex-row items-center justify-between"
                 style={{ 
-                  backgroundColor: categoryColors[item.category as keyof typeof categoryColors]?.bg || '#f5f5f5',
+                  backgroundColor: categoryColors[item.category]?.bg || '#f5f5f5',
                   opacity: item.completed ? 0.7 : 1
                 }}
               >
-                {/* Checkbox for task completion */}
+                {/* Completion Checkbox */}
                 <TouchableOpacity 
+                  className="mr-2" 
                   onPress={() => toggleTaskCompletion(item.id)}
-                  className="mr-2"
                 >
                   <View 
-                    className={`w-6 h-6 rounded-full border-2 items-center justify-center ${item.completed ? 'bg-green-500 border-green-500' : 'border-gray-400'}`}
+                    style={{
+                      width: 24,
+                      height: 24,
+                      borderRadius: 6,
+                      borderWidth: 2,
+                      borderColor: categoryColors[item.category]?.border || '#ccc',
+                      backgroundColor: item.completed ? categoryColors[item.category]?.border : 'white',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
                   >
                     {item.completed && (
                       <Ionicons name="checkmark" size={16} color="white" />
@@ -211,9 +291,11 @@ const CalendarScreen = () => {
                   <View className="flex-row items-center">
                     <View 
                       className="w-3 h-3 rounded-full mr-2"
-                      style={{ backgroundColor: categoryColors[item.category as keyof typeof categoryColors]?.dot || '#999' }}
+                      style={{ backgroundColor: categoryColors[item.category]?.dot || '#999' }}
                     />
-                    <Text className={`font-semibold ${item.completed ? 'line-through text-gray-500' : ''}`}>
+                    <Text 
+                      className={`font-semibold ${item.completed ? 'line-through text-gray-500' : ''}`}
+                    >
                       {item.name}
                     </Text>
                   </View>
@@ -240,39 +322,39 @@ const CalendarScreen = () => {
         )}
       </View>
 
-      {/* Create Task Button - Centered at bottom */}
-      <View className="items-center pb-5 px-4">
+      {/* new rectangle create task button at bottom*/}
+      <View className="pb-8 px-8">
         <TouchableOpacity
-          className="bg-purple-600 rounded-lg py-3 w-full items-center shadow-md"
+          className="bg-purple-600 rounded-lg py-4 shadow-lg items-center"
           onPress={() => setModalVisible(true)}
         >
-          <Text className="text-white font-bold text-lg">Create Task</Text>
+          <Text className="text-white font-bold text-lg">Create New Task</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Task Creation Modal */}
+      {/* task creation modal */}
       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
+        onRequestClose={handleCloseModal}
       >
         <View className="flex-1 justify-center items-center bg-black bg-opacity-50">
           <View className="bg-white rounded-lg w-11/12 max-h-4/5">
+            {/* Close button at top right */}
+            <View className="absolute top-2 right-2 z-10">
+              <TouchableOpacity 
+                className="p-2" 
+                onPress={handleCloseModal}
+              >
+                <Ionicons name="close" size={24} color="#666" />
+              </TouchableOpacity>
+            </View>
+            
             <ScrollView>
-              {/* Modal Header with Close Button */}
-              <View className="p-4 border-b border-gray-200 flex-row justify-between items-center">
-                <TouchableOpacity 
-                  onPress={() => {
-                    resetForm();
-                    setModalVisible(false);
-                  }}
-                  className="p-2"
-                >
-                  <Ionicons name="close" size={24} color="#666" />
-                </TouchableOpacity>
-                <Text className="text-center text-xl font-bold flex-1">Add New Task</Text>
-                <View className="w-8" /> {/* Empty view for centering */}
+              {/* Modal Header */}
+              <View className="p-4 border-b border-gray-200">
+                <Text className="text-center text-xl font-bold">Add New Task</Text>
               </View>
 
               {/* Mini Calendar Header */}
@@ -464,7 +546,7 @@ const CalendarScreen = () => {
                   </View>
                 </View>
 
-                {/* Reminder Toggle */}
+                {/* Reminder Toggle // not working */}
                 <View className="mb-4 flex-row justify-between items-center">
                   <Text className="text-gray-700">Reminds me</Text>
                   <Switch
@@ -475,36 +557,36 @@ const CalendarScreen = () => {
                   />
                 </View>
 
-                {/* Category Selection */}
+                {/* category selection */}
                 <Text className="text-gray-700 mb-2">Select Category</Text>
-                <View className="flex-row mb-4">
-                  <TouchableOpacity 
-                    className={`flex-row items-center bg-purple-100 rounded-full px-4 py-2 mr-2 ${selectedCategory === 'Content' ? 'border border-purple-600' : ''}`}
-                    onPress={() => setSelectedCategory('Content')}
-                  >
-                    <View className="w-4 h-4 rounded-full bg-purple-600 mr-2" />
-                    <Text>Content</Text>
-                  </TouchableOpacity>
-                  
-                  <TouchableOpacity 
-                    className={`flex-row items-center bg-green-100 rounded-full px-4 py-2 mr-2 ${selectedCategory === 'Social' ? 'border border-green-500' : ''}`}
-                    onPress={() => setSelectedCategory('Social')}
-                  >
-                    <View className="w-4 h-4 rounded-full bg-green-500 mr-2" />
-                    <Text>Social</Text>
-                  </TouchableOpacity>
-                  
-                  <TouchableOpacity 
-                    className={`flex-row items-center bg-blue-100 rounded-full px-4 py-2 ${selectedCategory === 'Work' ? 'border border-blue-500' : ''}`}
-                    onPress={() => setSelectedCategory('Work')}
-                  >
-                    <View className="w-4 h-4 rounded-full bg-blue-500 mr-2" />
-                    <Text>Work</Text>
-                  </TouchableOpacity>
+                <View className="flex-row flex-wrap mb-4">
+                  {Object.keys(categoryColors).map((categoryName) => (
+                    <TouchableOpacity 
+                      key={categoryName}
+                      className={`flex-row items-center rounded-full px-4 py-2 mr-2 mb-2 ${
+                        selectedCategory === categoryName ? `border border-${categoryColors[categoryName].border}` : ''
+                      }`}
+                      style={{
+                        backgroundColor: categoryColors[categoryName].bg,
+                        borderColor: selectedCategory === categoryName ? categoryColors[categoryName].border : 'transparent',
+                        borderWidth: selectedCategory === categoryName ? 1 : 0
+                      }}
+                      onPress={() => setSelectedCategory(categoryName)}
+                    >
+                      <View 
+                        className="w-4 h-4 rounded-full mr-2"
+                        style={{ backgroundColor: categoryColors[categoryName].dot }}
+                      />
+                      <Text>{categoryName}</Text>
+                    </TouchableOpacity>
+                  ))}
                 </View>
 
                 {/* Add New Category */}
-                <TouchableOpacity className="flex-row items-center mb-4">
+                <TouchableOpacity 
+                  className="flex-row items-center mb-4"
+                  onPress={() => setAddCategoryModalVisible(true)}
+                >
                   <Text className="text-purple-600 ml-2">+ Add new</Text>
                 </TouchableOpacity>
 
@@ -519,15 +601,88 @@ const CalendarScreen = () => {
                 {/* Cancel Button */}
                 <TouchableOpacity
                   className="bg-gray-200 rounded-lg py-3 mb-4"
-                  onPress={() => {
-                    resetForm();
-                    setModalVisible(false);
-                  }}
+                  onPress={handleCloseModal}
                 >
-                  <Text className="text-gray-700 text-center font-bold">Cancel</Text>
+                  <Text className="text-gray-700 text-center font-medium">Cancel</Text>
                 </TouchableOpacity>
               </View>
             </ScrollView>
+          </View>
+        </View>
+      </Modal>
+      
+      {/* Add Category Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={addCategoryModalVisible}
+        onRequestClose={() => setAddCategoryModalVisible(false)}
+      >
+        <View className="flex-1 justify-center items-center bg-black bg-opacity-50">
+          <View className="bg-white rounded-lg w-11/12 p-4">
+            {/* Modal Header */}
+            <View className="flex-row justify-between items-center mb-4">
+              <Text className="text-xl font-bold">Add New Category</Text>
+              <TouchableOpacity onPress={() => setAddCategoryModalVisible(false)}>
+                <Ionicons name="close" size={24} color="#666" />
+              </TouchableOpacity>
+            </View>
+            
+            {/* Category Name Input */}
+            <View className="mb-4">
+              <Text className="text-gray-500 mb-1">Category Name*</Text>
+              <TextInput
+                className="border-b border-gray-200 py-2"
+                placeholder="Enter category name"
+                value={newCategoryName}
+                onChangeText={setNewCategoryName}
+              />
+            </View>
+            
+            {/* Colour Selection */}
+            <Text className="text-gray-500 mb-2">Select Color</Text>
+            <View className="flex-row flex-wrap mb-4">
+              {colorOptions.map((color, index) => (
+                <TouchableOpacity 
+                  key={index}
+                  className="m-2"
+                  onPress={() => setSelectedColor(color.main)}
+                >
+                  <View 
+                    className={`w-10 h-10 rounded-full ${selectedColor === color.main ? 'border-2 border-gray-400' : ''}`}
+                    style={{ backgroundColor: color.main }}
+                  />
+                </TouchableOpacity>
+              ))}
+            </View>
+            
+            {/* Preview */}
+            <View className="mb-4 p-4 rounded-lg" style={{ backgroundColor: colorOptions.find(c => c.main === selectedColor)?.bg || '#f5f5f5' }}>
+              <Text className="text-gray-500 mb-1">Preview:</Text>
+              <View className="flex-row items-center">
+                <View 
+                  className="w-4 h-4 rounded-full mr-2"
+                  style={{ backgroundColor: selectedColor }}
+                />
+                <Text>{newCategoryName || 'New Category'}</Text>
+              </View>
+            </View>
+            
+            {/* Create Button */}
+            <TouchableOpacity
+              className="bg-purple-600 rounded-lg py-3 mb-2"
+              onPress={handleCreateCategory}
+            >
+              <Text className="text-white text-center font-bold">Create Category</Text>
+            </TouchableOpacity>
+            
+            {/* Cancel Button */}
+            <TouchableOpacity
+              className="bg-gray-200 rounded-lg py-3"
+              onPress={() => setAddCategoryModalVisible(false)}
+            >
+              <Text className="text-gray-700 text-center font-medium">Cancel</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
