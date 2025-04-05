@@ -98,7 +98,7 @@ const CalendarScreen = () => {
       markedDates[selectedCalendarDate] = {
         ...markedDates[selectedCalendarDate],
         selected: true,
-        selectedColor: '#6c5ce7'
+        selectedColor: '#6F6DB2'
       };
     }
     
@@ -325,7 +325,7 @@ const CalendarScreen = () => {
       {/* new rectangle create task button at bottom*/}
       <View className="pb-8 px-8">
         <TouchableOpacity
-          className="bg-purple-600 rounded-lg py-4 shadow-lg items-center"
+          className="bg-[#6F6DB2] rounded-lg py-4 shadow-lg items-center"
           onPress={() => setModalVisible(true)}
         >
           <Text className="text-white font-bold text-lg">Create New Task</Text>
@@ -592,7 +592,7 @@ const CalendarScreen = () => {
 
                 {/* Create Task Button */}
                 <TouchableOpacity
-                  className="bg-purple-600 rounded-lg py-3 mb-4"
+                  className="bg-[#6F6DB2] rounded-lg py-3 mb-4"
                   onPress={handleCreateTask}
                 >
                   <Text className="text-white text-center font-bold">Create Task</Text>
@@ -670,7 +670,7 @@ const CalendarScreen = () => {
             
             {/* Create Button */}
             <TouchableOpacity
-              className="bg-purple-600 rounded-lg py-3 mb-2"
+              className="bg-[#6F6DB2] rounded-lg py-3 mb-2"
               onPress={handleCreateCategory}
             >
               <Text className="text-white text-center font-bold">Create Category</Text>
