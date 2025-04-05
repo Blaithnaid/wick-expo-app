@@ -35,7 +35,7 @@ const CalendarScreen = () => {
   const [endTime, setEndTime] = useState('');
   const [reminderEnabled, setReminderEnabled] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [currentMonth, setCurrentMonth] = useState('February');
+  const [currentMonth, setCurrentMonth] = useState('April'); // placeholder month, need to change to be dynamic
   const [currentYear, setCurrentYear] = useState('2025');
   
   // Category creation
