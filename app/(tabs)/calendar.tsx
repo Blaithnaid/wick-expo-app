@@ -265,7 +265,6 @@ const CalendarScreen = () => {
 				theme={{
 					monthTextColor: "#fff",
 					dayTextColor: "#fff",
-					agendaDayNumColor: "#fff",
 					calendarBackground: colorScheme === "dark" ? "#2E3443" : "#ffffff",
 				}}
 			/>
