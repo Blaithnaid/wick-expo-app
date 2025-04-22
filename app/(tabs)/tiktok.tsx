@@ -1,4 +1,5 @@
 import { View, Text, Image, Pressable, Linking, ScrollView } from "react-native";
+// import { FontAwesome } from "@expo/vector-icons";
 
 const filters = [
   {
@@ -37,3 +38,9 @@ export default function TikTokFiltersPage() {
     </ScrollView>
   );
 }
+
+
+// link as child
+// pressable 
+
+//profiles index for reference

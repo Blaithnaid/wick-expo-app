@@ -4,6 +4,7 @@ import { TouchableOpacity } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useAuthContext } from "@/services/AuthProvider";
 import { FontAwesome } from "@expo/vector-icons";
+import { Link } from "expo-router";
 
 export default function HomeScreen() {
     const colorScheme = useColorScheme().colorScheme;
@@ -25,7 +26,7 @@ export default function HomeScreen() {
 
     const recommendedCards = [
         { name: "Tips & Tricks", color: "bg-purple-500" },
-        { name: "Monetizing", color: "bg-indigo-500" },
+        { name: "Tiktok", color: "bg-indigo-500", route: "/tiktok"},
         { name: "Analytics", color: "bg-gray-500" },
         { name: "Trends", color: "bg-cyan-500" }
     ];
@@ -86,5 +87,5 @@ export default function HomeScreen() {
                 ))}
             </View>
         </ScrollView>
-    );
+    );   
 }
