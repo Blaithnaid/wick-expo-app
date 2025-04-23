@@ -1,5 +1,5 @@
-import React from "react";
 import { useState } from "react";
+import { Pressable } from "react-native";
 import { SafeAreaView, ScrollView, View, Text } from "@/components/Themed";
 import { useAuthContext } from "@/services/AuthProvider";
 import { useFirebaseContext } from "@/services/FirebaseProvider";
@@ -44,6 +44,7 @@ export default function AccountSettings() {
 									width: 64,
 									height: 64,
 									borderRadius: 64,
+									alignSelf: "center",
 								}}
 							/>
 						) : (
@@ -55,6 +56,11 @@ export default function AccountSettings() {
 							/>
 						)}
 					</View>
+					<Pressable className="self-center mt-2">
+						<Text className="text-sm font-bold text-lavender-300 dark:text-lavender-300">
+							Change profile picture
+						</Text>
+					</Pressable>
 					<Text className="text-lg text-center font-bold m-6">
 						Welcome to your account, {auth.profile.displayName}!
 					</Text>
@@ -118,11 +124,14 @@ export default function AccountSettings() {
 						onPress={() => {
 							handlePasswordReset();
 						}}
-						className="dark:bg-gray-600"
+						className="bg-gray-400 dark:bg-gray-600"
 					>
 						<ButtonText className="dark:text-white">Reset Password</ButtonText>
 					</Button>
-					<Button onPress={() => {}} className="dark:bg-iguana-400">
+					<Button
+						onPress={() => {}}
+						className="bg-iguana-400 dark:bg-iguana-400"
+					>
 						<ButtonText className="dark:text-white">Edit Account</ButtonText>
 					</Button>
 				</View>

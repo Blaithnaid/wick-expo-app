@@ -8,7 +8,7 @@ import { FontAwesome } from "@expo/vector-icons";
 export default function HomeScreen() {
 	const colorScheme = useColorScheme().colorScheme;
 	const auth = useAuthContext();
-	const profileImage = "https://placehold.co/400";
+	const profileImage = auth.user?.photoURL || "https://picsum.photos/600";
 
 	const tasks = [
 		{ name: "Brand deal", due: new Date(), color: "bg-purple-500" },
@@ -38,7 +38,7 @@ export default function HomeScreen() {
 				<View className="flex-row items-center">
 					<View className="w-14 h-14 ml-2 rounded-full bg-gray-400 overflow-hidden">
 						<Image
-							source={{ uri: "https://placehold.co/400" }}
+							source={{ uri: profileImage }}
 							style={{ height: "100%", width: "100%" }}
 						/>
 					</View>
@@ -52,12 +52,12 @@ export default function HomeScreen() {
 				<FontAwesome
 					size={24}
 					name="bell"
-					color={colorScheme === "dark" ? "white" : "black"}
+					color={colorScheme === "dark" ? "white" : "gray"}
 					className="mr-4"
 				/>
 			</View>
 
-			<View className="w-[90%] h-1 dark:bg-gray-600 rounded-xl mt-1.5 mb-4" />
+			<View className="w-[90%] h-1 bg-gray-200 dark:bg-gray-600 rounded-xl mt-1.5 mb-4" />
 			<Text className="w-[90%] text-lg font-semibold mb-1.5">
 				Recommended for You
 			</Text>
@@ -72,7 +72,7 @@ export default function HomeScreen() {
 					</View>
 				))}
 			</View>
-			<View className="w-[90%] h-1 dark:bg-gray-600 rounded-xl mt-6 mb-4" />
+			<View className="w-[90%] h-1 bg-gray-200 dark:bg-gray-600 rounded-xl mt-6 mb-4" />
 			{/* Task Progress Section */}
 			<Text className="w-[90%] text-lg font-semibold -mb-px">In progress</Text>
 			<View className="mt-3 w-full max-w-md gap-3 px-5">
@@ -88,10 +88,10 @@ export default function HomeScreen() {
 								<FontAwesome
 									size={14}
 									name="clock-o"
-									color={colorScheme === "dark" ? "white" : "black"}
+									color={"white"}
 									className="mr-1"
 								/>
-								<Text className="inline font-medium -translate-y-0.5">
+								<Text className="text-white inline font-medium -translate-y-0.5">
 									{task.due.toLocaleDateString("en-US", {
 										weekday: "long",
 										day: "numeric",
@@ -103,14 +103,14 @@ export default function HomeScreen() {
 						<FontAwesome
 							size={24}
 							name="chevron-right"
-							color={colorScheme === "dark" ? "white" : "black"}
+							color={"white"}
 							className="mr-px"
 						/>
 					</View>
 				))}
 			</View>
 
-			<View className="w-[90%] h-1 dark:bg-gray-600 rounded-xl mt-6 mb-4" />
+			<View className="w-[90%] h-1 bg-gray-200 dark:bg-gray-600 rounded-xl mt-6 mb-4" />
 			<Text className="w-[90%] text-lg font-semibold mb-2">
 				Monthly progress
 			</Text>

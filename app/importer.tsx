@@ -69,7 +69,7 @@ export default function ImportScreen() {
 						onPress={handleImport}
 						disabled={importing}
 					>
-						<Text className="text-xl font-bold text-center">
+						<Text className="text-white text-xl font-bold text-center">
 							{importing ? "Importing..." : "Import from Instagram"}
 						</Text>
 					</Button>
