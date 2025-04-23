@@ -8,7 +8,6 @@ import { FontAwesome } from "@expo/vector-icons";
 export default function HomeScreen() {
 	const colorScheme = useColorScheme().colorScheme;
 	const auth = useAuthContext();
-	const profileImage = auth.user?.photoURL || "https://picsum.photos/600";
 
 	const tasks = [
 		{ name: "Brand deal", due: new Date(), color: "bg-purple-500" },
@@ -36,11 +35,20 @@ export default function HomeScreen() {
 			{/* Header Section */}
 			<View className="flex-row items-center justify-between w-full max-w-md mt-px mb-4">
 				<View className="flex-row items-center">
-					<View className="w-14 h-14 ml-2 rounded-full bg-gray-400 overflow-hidden">
-						<Image
-							source={{ uri: profileImage }}
-							style={{ height: "100%", width: "100%" }}
-						/>
+					<View className="bg-slate-900 dark:bg-slate-900 overflow-hidden rounded-full w-14 h-14 ml-2 flex items-center justify-center self-center">
+						{auth.user?.photoURL ? (
+							<Image
+								source={{ uri: auth.user?.photoURL }}
+								style={{ height: "100%", width: "100%" }}
+							/>
+						) : (
+							<FontAwesome
+								name="user"
+								size={56}
+								color={"gray"}
+								className="rounded-full"
+							/>
+						)}
 					</View>
 					<View className="ml-3 flex flex-row">
 						<Text className="text-gray-500 text-lg">Hello, </Text>

@@ -6,6 +6,7 @@ import { useFirebaseContext } from "@/services/FirebaseProvider";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Input, InputField } from "@/components/ui/input";
 import { Image } from "expo-image";
+import * as ImagePicker from "expo-image-picker";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { sendPasswordResetEmail } from "firebase/auth";
 
