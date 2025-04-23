@@ -24,6 +24,7 @@ toggleTaskCompleted: (id: string) => void;
 getTasksForDate: (date: string) => Task[];
 }
 
+// this line is creating an empty container for the tasks data
 const TasksContext = createContext<TasksContextType | undefined>(undefined);
 
 
@@ -67,6 +68,11 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
 
     // a hook for using the tasks context, this will be used in the components that need to access the tasks context
     export function useTasks() {
+        const context = useContext(TasksContext); // reaching into the container to grab whats inside basically
+        if (context === undefined) {
+            throw new Error('useTasks must be used within a TasksProvider');
+        }
+        return context;
 
     }
 
@@ -82,5 +88,7 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
 // };
 
 
-
+// think of it like taskscontext is the empty container we created for the data,
+// usecontext() is the function we reach our hand into,
+// context is whatever we pull out of that container
 
