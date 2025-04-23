@@ -113,6 +113,12 @@ function RootLayoutNav() {
 					}}
 				/>
 				<Stack.Screen
+					name="(analytics)"
+					options={{
+						headerShown: false,
+					}}
+				/>
+				<Stack.Screen
 					name="account"
 					options={{
 						presentation: "modal",

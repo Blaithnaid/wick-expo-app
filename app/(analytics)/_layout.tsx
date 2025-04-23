@@ -22,11 +22,10 @@ export default function AnalyticsLayout() {
 				name="index"
 				options={{
 					headerTitle: "Analytics",
-					headerShown: true,
 					headerLeft: () => (
 						<View className="flex-row">
 							<Pressable onPress={() => router.back()}>
-								<Text className="color-iguana-400 dark:color-iguana-400">
+								<Text className="font-semibold text-lg color-iguana-600 dark:color-iguana-400">
 									Back
 								</Text>
 							</Pressable>
