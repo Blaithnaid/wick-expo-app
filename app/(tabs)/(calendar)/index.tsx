@@ -64,7 +64,7 @@ const CalendarScreen = () => {
 	const [selectedColor, setSelectedColor] = useState("#6c5ce7"); // Default purple
 
 	// using the tasks provider to get the tasks and add, delete, toggle tasks
-	const [tasks, addTask, deleteTask, toggleTaskCompletion, getTasksForDate] = useState("");
+	const { tasks, addTask, deleteTask, toggleTaskCompleted, getTasksForDate} = useTasks();
 		
 
 	// Store currently selected day to view tasks
@@ -122,7 +122,7 @@ const CalendarScreen = () => {
 				key: task.id,
 				color: categoryColors[task.category]?.dot || "#999",
 			});
-		}
+		});
 
 	// // get days in the month
 	// const getDaysInMonth = (month: number, year: number) => {
@@ -191,7 +191,7 @@ const CalendarScreen = () => {
 
 			// Add days from previous month
 			for (let i = 0; i < startDay; i++) {
-				const day = daysInPrevMonth - startDay + i + 1;
+				const day = prevMonthDays - startDay + i + 1;
 				const date = new Date(year, month - 1, day);
 				currentWeek.push({
 					day,
@@ -265,6 +265,7 @@ const CalendarScreen = () => {
 
 
 		const handleCreateTask = () => {
+			console.log("Creating task..."); // debugging
 			// Validate required fields
 			if (!taskName || !selectedDate) {
 				alert("Task name and date are required");
@@ -284,10 +285,12 @@ const CalendarScreen = () => {
 				completed: false,
 			};
 
+			console.log("About to add a task:", newTask); // debugging
+
 			// context function instead of the setTasks function
 			addTask(newTask);
 
-			console.log("Task created:", newTask);
+			console.log("Task created:", newTask); // debugging
 
 			// Reset form and close modal
 			resetForm();
@@ -427,7 +430,7 @@ const CalendarScreen = () => {
 									{/* Completion Checkbox */}
 									<TouchableOpacity
 										className="mr-2"
-										onPress={() => toggleTaskCompletion(item.id)}
+										onPress={() => toggleTaskCompleted(item.id)}
 									>
 										<View
 											style={{
@@ -529,7 +532,7 @@ const CalendarScreen = () => {
 
 								{/* Mini Calendar Header */}
 								<View className="flex-row justify-between items-center px-4 py-2">
-									<TouchableOpacity>
+									<TouchableOpacity onPress={goToPreviousMonth}>
 										<Ionicons name="chevron-back" size={24} color="#666" />
 									</TouchableOpacity>
 

@@ -8,6 +8,7 @@ interface Task {
 	id: string;
 	name: string;
 	note: string;
+	date: string;
 	startTime: string;
 	endTime: string;
 	reminderEnabled: boolean;
