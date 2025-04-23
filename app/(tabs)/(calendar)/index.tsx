@@ -31,6 +31,7 @@ interface Task {
 interface Category {
 	name: string;
 	bg: string;
+	bgdark: string;
 	dot: string;
 	border: string;
 }
@@ -68,18 +69,21 @@ const CalendarScreen = () => {
 		Content: {
 			name: "Content",
 			bg: "#F3EFFC",
+			bgdark: "",
 			dot: "#6c5ce7",
 			border: "#6c5ce7",
 		},
 		Social: {
 			name: "Social",
 			bg: "#E6F7F1",
+			bgdark: "",
 			dot: "#00b894",
 			border: "#00b894",
 		},
 		Work: {
 			name: "Work",
 			bg: "#E6F2FA",
+			bgdark: "",
 			dot: "#0984e3",
 			border: "#0984e3",
 		},
@@ -245,14 +249,7 @@ const CalendarScreen = () => {
 	}, [formattedToday]);
 
 	return (
-		<SafeAreaView className="flex-1 dark:bg-oxford-500 bg-white">
-			{/* Main Calendar View */}
-			<View className="px-4 pt-2">
-				<Text className="dark:text-white text-2xl font-bold mb-2">
-					Calendar
-				</Text>
-			</View>
-
+		<SafeAreaView className="h-full flex flex-col justify-between dark:bg-oxford-500 bg-white">
 			<Calendar
 				current={selectedCalendarDate || formattedToday}
 				onDayPress={handleDateSelection}
@@ -270,7 +267,7 @@ const CalendarScreen = () => {
 			/>
 
 			{/* Tasks for selected date */}
-			<View className="flex-1 px-4">
+			<View className="flex-1 px-4 bg-white dark:bg-oxford-400">
 				<Text className="text-lg font-semibold mb-2">
 					Tasks for{" "}
 					{selectedCalendarDate
@@ -279,7 +276,7 @@ const CalendarScreen = () => {
 				</Text>
 
 				{getTasksForSelectedDate().length === 0 ? (
-					<View className="items-center justify-center py-8">
+					<View className="items-center justify-center py-8 bg-oxford-400">
 						<Text className="text-gray-500">No tasks for this date</Text>
 					</View>
 				) : (
@@ -379,7 +376,7 @@ const CalendarScreen = () => {
 				onRequestClose={handleCloseModal}
 			>
 				<View className="flex-1 justify-center items-center bg-black bg-opacity-50">
-					<View className="bg-white rounded-lg w-11/12 max-h-4/5">
+					<View className="bg-white dark:bg-oxford-500 rounded-lg w-11/12 max-h-4/5">
 						{/* Close button at top right */}
 						<View className="absolute top-2 right-2 z-10">
 							<TouchableOpacity className="p-2" onPress={handleCloseModal}>
@@ -593,9 +590,8 @@ const CalendarScreen = () => {
 							<View className="p-4">
 								{/* Task Name */}
 								<View className="mb-4">
-									<Text className="text-gray-500 mb-1">Task name*</Text>
 									<TextInput
-										className="border-b border-gray-200 py-2"
+										className="border-b border-gray-200 dark:border-gray-400 py-2"
 										placeholder="Task name"
 										value={taskName}
 										onChangeText={setTaskName}
@@ -605,7 +601,7 @@ const CalendarScreen = () => {
 								{/* Task Note */}
 								<View className="mb-4">
 									<TextInput
-										className="border-b border-gray-200 py-2"
+										className="border-b border-gray-200 dark:border-gray-400 py-2"
 										placeholder="Type the note here..."
 										value={taskNote}
 										onChangeText={setTaskNote}
@@ -628,7 +624,7 @@ const CalendarScreen = () => {
 								<View className="mb-4 flex-row justify-between">
 									<View className="flex-1 mr-2">
 										<Text className="text-gray-500 mb-1">Start time</Text>
-										<TouchableOpacity className="flex-row items-center border-b border-gray-200 py-2">
+										<TouchableOpacity className="flex-row items-center border-b border-gray-200 dark:border-gray-400 py-2">
 											<TextInput
 												placeholder="HH:MM"
 												value={startTime}
@@ -640,7 +636,7 @@ const CalendarScreen = () => {
 									</View>
 									<View className="flex-1 ml-2">
 										<Text className="text-gray-500 mb-1">End time</Text>
-										<TouchableOpacity className="flex-row items-center border-b border-gray-200 py-2">
+										<TouchableOpacity className="flex-row items-center border-b border-gray-200 dark:border-gray-400 py-2">
 											<TextInput
 												placeholder="HH:MM"
 												value={endTime}
@@ -654,7 +650,7 @@ const CalendarScreen = () => {
 
 								{/* Reminder Toggle // not working */}
 								<View className="mb-4 flex-row justify-between items-center">
-									<Text className="text-gray-700">Reminds me</Text>
+									<Text className="text-gray-700">Remind me</Text>
 									<Switch
 										value={reminderEnabled}
 										onValueChange={setReminderEnabled}
@@ -664,12 +660,12 @@ const CalendarScreen = () => {
 								</View>
 
 								{/* category selection */}
-								<Text className="text-gray-700 mb-2">Select Category</Text>
+								<Text className="text-gray-700 mb-2">Select category</Text>
 								<View className="flex-row flex-wrap mb-4">
 									{Object.keys(categoryColors).map((categoryName) => (
 										<TouchableOpacity
 											key={categoryName}
-											className={`flex-row items-center rounded-full px-4 py-2 mr-2 mb-2 ${
+											className={`flex-row items-center rounded-full py-2 mr-2 mb-2 ${
 												selectedCategory === categoryName
 													? `border border-${categoryColors[categoryName].border}`
 													: ""
@@ -685,12 +681,14 @@ const CalendarScreen = () => {
 											onPress={() => setSelectedCategory(categoryName)}
 										>
 											<View
-												className="w-4 h-4 rounded-full mr-2"
+												className="w-4 h-4 rounded-full mx-2"
 												style={{
 													backgroundColor: categoryColors[categoryName].dot,
 												}}
 											/>
-											<Text>{categoryName}</Text>
+											<Text className="text-black dark:text-white mr-4">
+												{categoryName}
+											</Text>
 										</TouchableOpacity>
 									))}
 								</View>
@@ -715,7 +713,7 @@ const CalendarScreen = () => {
 
 								{/* Cancel Button */}
 								<TouchableOpacity
-									className="bg-gray-200 rounded-lg py-3 mb-4"
+									className="bg-gray-200 dark:bg-gray-600 rounded-lg py-3 mb-4"
 									onPress={handleCloseModal}
 								>
 									<Text className="text-gray-700 text-center font-medium">
@@ -821,4 +819,3 @@ const CalendarScreen = () => {
 };
 
 export default CalendarScreen;
-
