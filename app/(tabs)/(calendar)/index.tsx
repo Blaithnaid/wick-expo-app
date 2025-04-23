@@ -36,6 +36,14 @@ interface Category {
 	border: string;
 }
 
+// some day info for the calendar
+interface DayInfo {
+	day: number;
+	date: Date;
+	currentMonth: boolean;
+	dateString: string;
+}
+
 
 // Main Calendar Screen Component
 const CalendarScreen = () => {
