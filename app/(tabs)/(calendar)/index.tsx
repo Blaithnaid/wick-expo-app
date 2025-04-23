@@ -66,7 +66,11 @@ const CalendarScreen = () => {
 	// using the tasks provider to get the tasks and add, delete, toggle tasks
 	const { tasks, addTask, deleteTask, toggleTaskCompleted, getTasksForDate} = useTasks();
 		
-
+	useEffect(() => {
+		console.log("CalendarScreen loaded");
+		console.log("Tasks array:", tasks);
+		console.log("addTask function available:", !!addTask);
+	}, [tasks, addTask]);
 	// Store currently selected day to view tasks
 	const [selectedCalendarDate, setSelectedCalendarDate] = useState("");
 
@@ -274,7 +278,7 @@ const CalendarScreen = () => {
 
 			// Create new task
 			const newTask: Task = {
-				id: Date.now().toString(), //
+				id: Date.now().toString(), 
 				name: taskName,
 				note: taskNote,
 				date: selectedDate || formattedToday, // Use today if no date selected
@@ -284,11 +288,14 @@ const CalendarScreen = () => {
 				category: selectedCategory || "Content", // Default category if none selected
 				completed: false,
 			};
-
+			console.log("New task object:", newTask);
+    		console.log("addTask function exists?", typeof addTask);
+    		console.log("Current tasks array:", tasks);
 			console.log("About to add a task:", newTask); // debugging
 
 			// context function instead of the setTasks function
 			addTask(newTask);
+			
 
 			console.log("Task created:", newTask); // debugging
 
@@ -298,7 +305,7 @@ const CalendarScreen = () => {
 
 			// Select the date of the new task to show it immediately
 			setSelectedCalendarDate(newTask.date);
-		};
+		}
 
 		const resetForm = () => {
 			setTaskName("");

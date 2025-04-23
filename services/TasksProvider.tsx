@@ -35,8 +35,14 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
 	// maybe can add persistance here if needed like async storage or something
 
 	// this add task function will be used to add a task to the list of tasks
-	const addTask = (task: Task) => {
-		setTasks((currentTasks) => [...currentTasks, task]);
+	const addTask = (task: Task, callback?: () => void) => {
+		setTasks(currentTasks => {
+			const newTasks = [...currentTasks, task];
+			if (callback) {
+				setTimeout(callback, 0);
+			}
+			return newTasks;
+		});
 	};
 
 	// this edit task function will be used to edit a task in the list of tasks
@@ -62,7 +68,7 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
 	// it will filter the tasks based on the start time of the task and return the tasks for that date
 	const getTasksForDate = (date: string) => {
 		return tasks.filter(
-			(task) => new Date(task.startTime).toLocaleDateString() === date,
+			(task) => task.date === date
 		);
 	};
 
