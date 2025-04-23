@@ -57,6 +57,7 @@ export default function HomeScreen() {
 				/>
 			</View>
 
+			<View className="w-[90%] h-1 dark:bg-gray-600 rounded-xl mt-1.5 mb-4" />
 			<Text className="w-[90%] text-lg font-semibold mb-1.5">
 				Recommended for You
 			</Text>
@@ -73,7 +74,7 @@ export default function HomeScreen() {
 			</View>
 			<View className="w-[90%] h-1 dark:bg-gray-600 rounded-xl mt-6 mb-4" />
 			{/* Task Progress Section */}
-			<Text className="w-[90%] text-lg font-semibold mb-1.5">In progress</Text>
+			<Text className="w-[90%] text-lg font-semibold -mb-px">In progress</Text>
 			<View className="mt-3 w-full max-w-md gap-3 px-5">
 				{tasks.map((task, index) => (
 					<View
@@ -110,12 +111,10 @@ export default function HomeScreen() {
 			</View>
 
 			<View className="w-[90%] h-1 dark:bg-gray-600 rounded-xl mt-6 mb-4" />
-			<Text className="w-[90%] text-lg font-semibold mb-1.5">
+			<Text className="w-[90%] text-lg font-semibold mb-2">
 				Monthly progress
 			</Text>
-
-			{/* Monthly Progress Section */}
-			<View className="flex-row flex-wrap justify-between mt-6 px-4 mb-8 w-full">
+			<View className="flex-row flex-wrap justify-between px-4 mb-8 w-full">
 				{monthlyProgress.map((item, index) => (
 					<View
 						key={index}
