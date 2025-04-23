@@ -585,178 +585,6 @@ const CalendarScreen = () => {
 
 
 
-
-
-
-
-
-
-									{/* Calendar Dates - Week 1 */}
-									<View className="flex-row justify-between mb-2">
-										<Text className="text-center text-gray-400 flex-1">31</Text>
-										<Text className="text-center text-gray-400 flex-1">30</Text>
-										<Text className="text-center flex-1">1</Text>
-										<TouchableOpacity
-											className="items-center flex-1"
-											onPress={() => setSelectedDate("2025-02-02")}
-										>
-											<View
-												className={`${selectedDate === "2025-02-02" ? "bg-purple-600" : "bg-white"} rounded-full w-8 h-8 items-center justify-center`}
-											>
-												<Text
-													className={`${selectedDate === "2025-02-02" ? "text-white" : "text-black"} font-bold`}
-												>
-													2
-												</Text>
-											</View>
-										</TouchableOpacity>
-										<TouchableOpacity
-											className="items-center flex-1"
-											onPress={() => setSelectedDate("2025-02-03")}
-										>
-											<View
-												className={`${selectedDate === "2025-02-03" ? "bg-purple-600" : "bg-white"} rounded-full w-8 h-8 items-center justify-center`}
-											>
-												<Text
-													className={`${selectedDate === "2025-02-03" ? "text-white" : "text-black"}`}
-												>
-													3
-												</Text>
-											</View>
-										</TouchableOpacity>
-										<TouchableOpacity
-											className="items-center flex-1"
-											onPress={() => setSelectedDate("2025-02-04")}
-										>
-											<View
-												className={`${selectedDate === "2025-02-04" ? "bg-purple-600" : "bg-white"} rounded-full w-8 h-8 items-center justify-center`}
-											>
-												<Text
-													className={`${selectedDate === "2025-02-04" ? "text-white" : "text-black"}`}
-												>
-													4
-												</Text>
-											</View>
-										</TouchableOpacity>
-										<TouchableOpacity
-											className="items-center flex-1"
-											onPress={() => setSelectedDate("2025-02-05")}
-										>
-											<View
-												className={`${selectedDate === "2025-02-05" ? "bg-purple-600" : "bg-white"} rounded-full w-8 h-8 items-center justify-center`}
-											>
-												<Text
-													className={`${selectedDate === "2025-02-05" ? "text-white" : "text-black"}`}
-												>
-													5
-												</Text>
-											</View>
-										</TouchableOpacity>
-									</View>
-
-									{/* Calendar Dates - Week 2 */}
-									<View className="flex-row justify-between">
-										<TouchableOpacity
-											className="items-center flex-1"
-											onPress={() => setSelectedDate("2025-02-06")}
-										>
-											<View
-												className={`${selectedDate === "2025-02-06" ? "bg-purple-600" : "bg-white"} rounded-full w-8 h-8 items-center justify-center`}
-											>
-												<Text
-													className={`${selectedDate === "2025-02-06" ? "text-white" : "text-black"}`}
-												>
-													6
-												</Text>
-											</View>
-										</TouchableOpacity>
-										<TouchableOpacity
-											className="items-center flex-1"
-											onPress={() => setSelectedDate("2025-02-07")}
-										>
-											<View
-												className={`${selectedDate === "2025-02-07" ? "bg-purple-600" : "bg-white"} rounded-full w-8 h-8 items-center justify-center`}
-											>
-												<Text
-													className={`${selectedDate === "2025-02-07" ? "text-white" : "text-black"}`}
-												>
-													7
-												</Text>
-											</View>
-										</TouchableOpacity>
-										<TouchableOpacity
-											className="items-center flex-1"
-											onPress={() => setSelectedDate("2025-02-08")}
-										>
-											<View
-												className={`${selectedDate === "2025-02-08" ? "bg-purple-600" : "bg-white"} rounded-full w-8 h-8 items-center justify-center`}
-											>
-												<Text
-													className={`${selectedDate === "2025-02-08" ? "text-white" : "text-black"}`}
-												>
-													8
-												</Text>
-											</View>
-										</TouchableOpacity>
-										<TouchableOpacity
-											className="items-center flex-1"
-											onPress={() => setSelectedDate("2025-02-09")}
-										>
-											<View
-												className={`${selectedDate === "2025-02-09" ? "bg-purple-600" : "bg-white"} rounded-full w-8 h-8 items-center justify-center`}
-											>
-												<Text
-													className={`${selectedDate === "2025-02-09" ? "text-white" : "text-black"}`}
-												>
-													9
-												</Text>
-											</View>
-										</TouchableOpacity>
-										<TouchableOpacity
-											className="items-center flex-1"
-											onPress={() => setSelectedDate("2025-02-10")}
-										>
-											<View
-												className={`${selectedDate === "2025-02-10" ? "bg-purple-600" : "bg-white"} rounded-full w-8 h-8 items-center justify-center`}
-											>
-												<Text
-													className={`${selectedDate === "2025-02-10" ? "text-white" : "text-black"}`}
-												>
-													10
-												</Text>
-											</View>
-										</TouchableOpacity>
-										<TouchableOpacity
-											className="items-center flex-1"
-											onPress={() => setSelectedDate("2025-02-11")}
-										>
-											<View
-												className={`${selectedDate === "2025-02-11" ? "bg-purple-600" : "bg-white"} rounded-full w-8 h-8 items-center justify-center`}
-											>
-												<Text
-													className={`${selectedDate === "2025-02-11" ? "text-white" : "text-black"}`}
-												>
-													11
-												</Text>
-											</View>
-										</TouchableOpacity>
-										<TouchableOpacity
-											className="items-center flex-1"
-											onPress={() => setSelectedDate("2025-02-12")}
-										>
-											<View
-												className={`${selectedDate === "2025-02-12" ? "bg-purple-600" : "bg-white"} rounded-full w-8 h-8 items-center justify-center`}
-											>
-												<Text
-													className={`${selectedDate === "2025-02-12" ? "text-white" : "text-black"}`}
-												>
-													12
-												</Text>
-											</View>
-										</TouchableOpacity>
-									</View>
-								</View>
-
 								{/* Form Fields */}
 								<View className="p-4">
 									{/* Task Name */}
@@ -851,8 +679,7 @@ const CalendarScreen = () => {
 														selectedCategory === categoryName
 															? categoryColors[categoryName].border
 															: "transparent",
-													borderWidth:
-														selectedCategory === categoryName ? 1 : 0,
+													borderWidth: selectedCategory === categoryName ? 1 : 0, 
 												}}
 												onPress={() => setSelectedCategory(categoryName)}
 											>
@@ -993,6 +820,6 @@ const CalendarScreen = () => {
 			</SafeAreaView>
 		);
 	};
-};
+
 
 export default CalendarScreen;
