@@ -35,7 +35,7 @@ export default function HomeScreen() {
 			{/* Header Section */}
 			<View className="flex-row items-center justify-between w-full max-w-md mt-px mb-4">
 				<View className="flex-row items-center">
-					<View className="bg-slate-900 dark:bg-slate-900 overflow-hidden rounded-full w-14 h-14 ml-2 flex items-center justify-center self-center">
+					<View className="bg-gray-300 dark:bg-slate-900 overflow-hidden rounded-full w-14 h-14 ml-2 flex items-center justify-center self-center">
 						{auth.user?.photoURL ? (
 							<Image
 								source={{ uri: auth.user?.photoURL }}

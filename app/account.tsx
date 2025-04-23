@@ -9,6 +9,9 @@ import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { sendPasswordResetEmail } from "firebase/auth";
+import { updateProfile } from "firebase/auth";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { doc, updateDoc } from "firebase/firestore";
 
 export default function AccountSettings() {
 	const auth = useAuthContext();
@@ -16,10 +19,51 @@ export default function AccountSettings() {
 	const profile = auth.profile;
 
 	const [didSubmit, setDidSubmit] = useState(false);
+	const [uploading, setUploading] = useState(false);
+	const [photoURL, setPhotoURL] = useState(auth.user?.photoURL || null);
 
 	const handlePasswordReset = async () => {
 		await sendPasswordResetEmail(firebase.myAuth, profile?.email);
 		setDidSubmit(true);
+	};
+
+	const handlePickImage = async () => {
+		if (!auth.user) {
+			console.error("User is not authenticated");
+			return;
+		}
+		const result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ["images"],
+			allowsEditing: true,
+			aspect: [1, 1],
+			quality: 0.7,
+		});
+		if (!result.canceled && result.assets && result.assets.length > 0) {
+			setUploading(true);
+			try {
+				const asset = result.assets[0];
+				const response = await fetch(asset.uri);
+				const blob = await response.blob();
+				const storageRef = ref(
+					firebase.myStorage,
+					`profilePictures/${auth.user?.uid || "defaultUser"}.jpg`,
+				);
+				await uploadBytes(storageRef, blob);
+				const downloadURL = await getDownloadURL(storageRef);
+
+				// Update Auth photoURL
+				await updateProfile(auth.user, { photoURL: downloadURL });
+				setPhotoURL(downloadURL);
+
+				// Update Firestore user doc
+				const userDocRef = doc(firebase.myFS, "users", auth.user.uid);
+				await updateDoc(userDocRef, { photoURL: downloadURL });
+			} catch (e) {
+				console.error("Error uploading image:", e);
+			} finally {
+				setUploading(false);
+			}
+		}
 	};
 
 	if (!auth.profile) {
@@ -37,13 +81,13 @@ export default function AccountSettings() {
 			<ScrollView className="px-12 pt-10">
 				<View className="mb-6">
 					{/* profile picture */}
-					<View className="bg-slate-900 dark:bg-slate-900 overflow-hidden rounded-full size-32 flex items-center justify-center self-center">
-						{auth.user?.photoURL ? (
+					<View className="bg-gray-300 dark:bg-slate-900 overflow-hidden rounded-full size-32 flex items-center justify-center self-center">
+						{photoURL ? (
 							<Image
-								source={{ uri: "https://picsum.photos/300/300" }}
+								source={{ uri: photoURL }}
 								style={{
-									width: 64,
-									height: 64,
+									width: 120,
+									height: 120,
 									borderRadius: 64,
 									alignSelf: "center",
 								}}
@@ -51,15 +95,19 @@ export default function AccountSettings() {
 						) : (
 							<FontAwesome
 								name="user"
-								size={90}
-								color={"#ffffff"}
+								size={120}
+								color={"gray"}
 								className="rounded-full"
 							/>
 						)}
 					</View>
-					<Pressable className="self-center mt-2">
+					<Pressable
+						className="self-center mt-2"
+						onPress={handlePickImage}
+						disabled={uploading}
+					>
 						<Text className="text-sm font-bold text-lavender-300 dark:text-lavender-300">
-							Change profile picture
+							{uploading ? "Uploading..." : "Change profile picture"}
 						</Text>
 					</Pressable>
 					<Text className="text-lg text-center font-bold m-6">
