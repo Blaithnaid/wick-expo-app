@@ -1,6 +1,5 @@
-// this file is going to be used to manage the tasks context for the calendar tab
-// it will provide the tasks and the functions to manage them   
-// it will also provide the functions to add, edit and delete tasks
+// this file is going to be used to manage the tasks context for the calendar tab 
+// tasks provider creates a global state for tasks that can be accessed anywhere in your app
 
 import React, { createContext, useContext, useState, useEffect} from 'react';
 
@@ -34,11 +33,12 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
  
 // maybe can add persistance here if needed like async storage or something
 
-
+// this add task function will be used to add a task to the list of tasks
  const addTask = (task: Task) => {
    setTasks(currentTasks => [...currentTasks, task]);
  };
 
+ // this edit task function will be used to edit a task in the list of tasks
  const editTask = (task: Task) => {
     setTasks(currentTasks => currentTasks.map(t => t.id === task.id ? task : t)
 );
@@ -52,6 +52,8 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
     setTasks(currentTasks => currentTasks.map(task => task.id === id ? { ...task, completed: !task.completed } : task));
     };
     
+    // this function will be used to get the tasks for a specific date
+    // it will filter the tasks based on the start time of the task and return the tasks for that date
     const getTasksForDate = (date: string) => {
     return tasks.filter(task => new Date(task.startTime).toLocaleDateString() === date);
     };
@@ -65,7 +67,7 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
 
     // a hook for using the tasks context, this will be used in the components that need to access the tasks context
     export function useTasks() {
-        
+
     }
 
 
@@ -79,11 +81,6 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
 //   setTasks(currentTasks =>    );
 // };
 
-// function to delete a task from the list
-
-
-// function to toggle the completed state of a task
 
 
 
-// function to get the tasks for a specific date
