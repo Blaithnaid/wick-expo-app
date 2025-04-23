@@ -1,6 +1,7 @@
 import { Text, View } from "@/components/Themed";
 import { Image } from "expo-image";
-import { ScrollView } from "react-native";
+import { Link } from "expo-router";
+import { ScrollView, Pressable } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useAuthContext } from "@/services/AuthProvider";
 import { FontAwesome } from "@expo/vector-icons";
@@ -23,7 +24,7 @@ export default function HomeScreen() {
 	const recommendedCards = [
 		{ name: "Tips & Tricks", color: "bg-purple-500" },
 		{ name: "Monetisation", color: "bg-indigo-500" },
-		{ name: "Analytics", color: "bg-red-500" },
+		{ name: "Analytics", color: "bg-red-500", route: "(analytics)" },
 		{ name: "Trends", color: "bg-cyan-500" },
 	];
 
@@ -51,7 +52,7 @@ export default function HomeScreen() {
 						)}
 					</View>
 					<View className="ml-3 flex flex-row">
-						<Text className="text-gray-500 text-lg">Hello, </Text>
+						<Text className="text-gray-500 text-xl">Hello, </Text>
 						<Text className="text-xl font-semibold text-indigo-600">
 							{auth.profile?.displayName || "Username"}!
 						</Text>
@@ -71,13 +72,15 @@ export default function HomeScreen() {
 			</Text>
 			<View className="flex-row flex-wrap justify-center w-full px-2 gap-2">
 				{recommendedCards.map((card, index) => (
-					<View
-						key={index}
-						className={`${card.color} p-5 rounded-xl items-center shadow-lg w-[48%]`}
-						style={{ elevation: 10 }}
-					>
-						<Text className="text-white text-lg font-bold">{card.name}</Text>
-					</View>
+					<Link asChild key={index} href={`/${card.route || card.name}`}>
+						<Pressable
+							key={index}
+							className={`${card.color} p-5 rounded-xl items-center shadow-lg w-[48%]`}
+							style={{ elevation: 10 }}
+						>
+							<Text className="text-white text-lg font-bold">{card.name}</Text>
+						</Pressable>
+					</Link>
 				))}
 			</View>
 			<View className="w-[90%] h-1 bg-gray-200 dark:bg-gray-600 rounded-xl mt-6 mb-4" />
