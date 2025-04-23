@@ -36,6 +36,7 @@ interface Category {
 	border: string;
 }
 
+
 // Main Calendar Screen Component
 const CalendarScreen = () => {
 	const [modalVisible, setModalVisible] = useState(false);
@@ -62,7 +63,6 @@ const CalendarScreen = () => {
 	const [selectedCalendarDate, setSelectedCalendarDate] = useState("");
 
 	// Default categories with pastel colours
-
 	const [categoryColors, setCategoryColors] = useState<
 		Record<string, Category>
 	>({
@@ -91,7 +91,25 @@ const CalendarScreen = () => {
 
 	// Today's date for first selection, date format is YYYY-MM-DD
 	const today = new Date();
-	const formattedToday = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, "0")}-${today.getDate().toString().padStart(2, "0")}`;
+	const formattedToday = `${today.getFullYear()}-${(today.getMonth() + 1).toString()
+		.padStart(2, "0")}-${today.getDate().toString().padStart(2, "0")}`;
+
+		// get days in the month
+	const getDaysInMonth = (month: number, year: number) => {
+		new Date(year, month + 1, 0).getDate();
+	};
+
+	// State to store the currently viewed date
+	const [viewDate, setViewDate] = useState(new Date());
+
+	// get the days for the current month
+	const generateCalendarDays = () => {
+		const year = viewDate.getFullYear();
+		const month = viewDate.getMonth();
+
+
+
+
 
 	// Generate marked dates object for calendar from tasks
 	const generateMarkedDates = () => {
