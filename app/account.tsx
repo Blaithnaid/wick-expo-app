@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Pressable } from "react-native";
+import { useState, useEffect } from "react";
+import { Pressable, Alert } from "react-native";
 import { SafeAreaView, ScrollView, View, Text } from "@/components/Themed";
 import { useAuthContext } from "@/services/AuthProvider";
 import { useFirebaseContext } from "@/services/FirebaseProvider";
@@ -21,6 +21,15 @@ export default function AccountSettings() {
 	const [didSubmit, setDidSubmit] = useState(false);
 	const [uploading, setUploading] = useState(false);
 	const [photoURL, setPhotoURL] = useState(auth.user?.photoURL || null);
+
+	const [displayName, setDisplayName] = useState(profile?.displayName || "");
+	const [fullName, setFullName] = useState(profile?.fullName || "");
+	const [editLoading, setEditLoading] = useState(false);
+
+	useEffect(() => {
+		setDisplayName(profile?.displayName || "");
+		setFullName(profile?.fullName || "");
+	}, [profile]);
 
 	const handlePasswordReset = async () => {
 		await sendPasswordResetEmail(firebase.myAuth, profile?.email);
@@ -63,6 +72,22 @@ export default function AccountSettings() {
 			} finally {
 				setUploading(false);
 			}
+		}
+	};
+
+	const handleEditAccount = async () => {
+		if (!auth.user) return;
+		setEditLoading(true);
+		try {
+			await updateProfile(auth.user, { displayName });
+			const userDocRef = doc(firebase.myFS, "users", auth.user.uid);
+			await updateDoc(userDocRef, { displayName, fullName });
+			Alert.alert("Success", "Account updated successfully.");
+		} catch (e) {
+			console.error("Error updating account:", e);
+			Alert.alert("Error", "Failed to update account.");
+		} finally {
+			setEditLoading(false);
 		}
 	};
 
@@ -111,7 +136,7 @@ export default function AccountSettings() {
 						</Text>
 					</Pressable>
 					<Text className="text-lg text-center font-bold m-6">
-						Welcome to your account, {auth.profile.displayName}!
+						Welcome to your account, {displayName}!
 					</Text>
 					<View className="mb-4">
 						<Text className="text-md text-gray-700 font-bold mb-1">
@@ -120,8 +145,9 @@ export default function AccountSettings() {
 						<Input variant="outline" size="md">
 							<InputField
 								className="dark:text-gray-200"
-								value={auth.profile.displayName}
-								editable={false}
+								value={displayName}
+								onChangeText={setDisplayName}
+								editable={!editLoading}
 							/>
 							<FontAwesome
 								name="key"
@@ -138,8 +164,9 @@ export default function AccountSettings() {
 						<Input variant="outline" size="md">
 							<InputField
 								className="dark:text-gray-200"
-								value={auth.profile.fullName}
-								editable={false}
+								value={fullName}
+								onChangeText={setFullName}
+								editable={!editLoading}
 							/>
 							<FontAwesome
 								name="key"
@@ -178,10 +205,13 @@ export default function AccountSettings() {
 						<ButtonText className="dark:text-white">Reset Password</ButtonText>
 					</Button>
 					<Button
-						onPress={() => {}}
+						onPress={handleEditAccount}
 						className="bg-iguana-400 dark:bg-iguana-400"
+						disabled={editLoading}
 					>
-						<ButtonText className="dark:text-white">Edit Account</ButtonText>
+						<ButtonText className="dark:text-white">
+							{editLoading ? "Saving..." : "Edit Account"}
+						</ButtonText>
 					</Button>
 				</View>
 			</ScrollView>
