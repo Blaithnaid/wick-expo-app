@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { Text } from "@/components/Themed";
 import {
 	View,
@@ -27,6 +27,16 @@ interface Task {
 	completed: boolean;
 }
 
+inferface TaskContextType {
+	tasks: Task[];
+	addTask: (task: Task) => void;
+	deleteTask: (taskId: string) => void;
+	toggleTaskCompletion: (taskId: string) => void;
+	getTasksForDate: (date: string) => Task[];
+}
+
+const TaskContext = createContext<TaskContextType | undefined>(undefined);
+
 // Category type
 interface Category {
 	name: string;
@@ -36,7 +46,6 @@ interface Category {
 	border: string;
 }
 
-// some day info for the calendar
 interface DayInfo {
 	day: number;
 	date: Date;
