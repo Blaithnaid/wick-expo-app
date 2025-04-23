@@ -20,6 +20,7 @@ import { Text } from "@/components/Themed";
 import { FirebaseProvider } from "@/services/FirebaseProvider";
 import { ProfileProvider } from "@/services/ProfilesProvider";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
+import { TasksProvider } from "@/services/TasksProvider";
 import { StatusBar } from "expo-status-bar";
 
 export {
@@ -64,13 +65,15 @@ function Providers({ children }: { children: React.ReactNode }) {
 		<ActionSheetProvider>
 			<FirebaseProvider>
 				<AuthProvider>
-					<ProfileProvider>
-						<ThemeProvider
-							value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-						>
-							{children}
-						</ThemeProvider>
-					</ProfileProvider>
+					<TasksProvider>
+						<ProfileProvider>
+							<ThemeProvider
+								value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+							>
+								{children}
+							</ThemeProvider>
+						</ProfileProvider>
+					</TasksProvider>
 				</AuthProvider>
 			</FirebaseProvider>
 		</ActionSheetProvider>

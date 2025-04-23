@@ -13,7 +13,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { Calendar } from "react-native-calendars";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { useTasks } from "@/contexts/TasksContext";
+import { useTasks } from "@/contexts/TasksProvider";
 
 // Task type
 interface Task {
