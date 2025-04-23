@@ -1,5 +1,6 @@
 import { View, Text, Image, Pressable, Linking, ScrollView } from "react-native";
-// import { FontAwesome } from "@expo/vector-icons";
+import { Share } from "react-native";
+
 
 const filters = [
   {
@@ -30,12 +31,12 @@ export default function TikTokFiltersPage() {
   for (let i = 0; i < filters.length; i += 2) {
     rows.push(filters.slice(i, i + 2));
   }
-
  
   return (
     <ScrollView className="bg-gray-100 p-4">
-      <Text className="text-3xl font-bold mb-6 text-center">🎬 Try Our TikTok Filters!</Text>
 
+      {/* Header Section */}
+    <Text className="text-3xl font-bold mb-6 text-center animate-pulse">🎬 Try Our TikTok Filters!</Text>
       <Text className="text-lg text-center mb-4">
         Click on the filters below to try them out on TikTok!
       </Text>
