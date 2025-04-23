@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import {useEffect, useState } from "react";
 import { Text } from "@/components/Themed";
 import {
 	View,
@@ -13,6 +13,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { Calendar } from "react-native-calendars";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { useTasks } from "@/contexts/TasksContext";
 
 // Task type
 interface Task {
@@ -27,16 +28,6 @@ interface Task {
 	completed: boolean;
 }
 
-inferface TaskContextType {
-	tasks: Task[];
-	addTask: (task: Task) => void;
-	deleteTask: (taskId: string) => void;
-	toggleTaskCompletion: (taskId: string) => void;
-	getTasksForDate: (date: string) => Task[];
-}
-
-const TaskContext = createContext<TaskContextType | undefined>(undefined);
-
 // Category type
 interface Category {
 	name: string;
@@ -46,12 +37,12 @@ interface Category {
 	border: string;
 }
 
-interface DayInfo {
-	day: number;
-	date: Date;
-	currentMonth: boolean;
-	dateString: string;
-}
+// interface DayInfo {
+// 	day: number;
+// 	date: Date;
+// 	currentMonth: boolean;
+// 	dateString: string;
+// }
 
 
 // Main Calendar Screen Component
@@ -64,8 +55,8 @@ const CalendarScreen = () => {
 	const [endTime, setEndTime] = useState("");
 	const [reminderEnabled, setReminderEnabled] = useState(false);
 	const [selectedCategory, setSelectedCategory] = useState("");
-	const [currentMonth, setCurrentMonth] = useState("April"); // placeholder month, need to change to be dynamic
-	const [currentYear, setCurrentYear] = useState("2025");
+	const [currentMonth, setCurrentMonth] = useState(""); // hopefully this will be dynamic now
+	const [currentYear, setCurrentYear] = useState(""); // hopefully this will be dynamic now too
 	const colorScheme = useColorScheme().colorScheme;
 
 	// Category creation
@@ -73,11 +64,14 @@ const CalendarScreen = () => {
 	const [newCategoryName, setNewCategoryName] = useState("");
 	const [selectedColor, setSelectedColor] = useState("#6c5ce7"); // Default purple
 
-	// Storing all tasks
-	const [tasks, setTasks] = useState<Task[]>([]);
+	// Storing all tasks using the tasks context
+	const [tasks, addTask, deleteTask, toggleTaskCompletion, getTasksForDate] = useState();
 
 	// Store currently selected day to view tasks
 	const [selectedCalendarDate, setSelectedCalendarDate] = useState("");
+
+	// calendar navigation
+	const [viewDate, setViewDate] = useState(new Date());
 
 	// Default categories with pastel colours
 	const [categoryColors, setCategoryColors] = useState<
@@ -116,8 +110,7 @@ const CalendarScreen = () => {
 		new Date(year, month + 1, 0).getDate();
 	};
 
-	// State to store the currently viewed date
-	const [viewDate, setViewDate] = useState(new Date());
+	
 
 	// get the days for the current month
 	const generateCalendarDays = () => {

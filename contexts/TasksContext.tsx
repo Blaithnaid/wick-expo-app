@@ -27,8 +27,7 @@ getTasksForDate: (date: string) => Task[];
 // this line is creating an empty container for the tasks data
 const TasksContext = createContext<TasksContextType | undefined>(undefined);
 
-
-
+// this is the provider component that will wrap the app and provide the tasks context to the rest of the app
 export function TasksProvider({ children }: { children: React.ReactNode }) {
  const [tasks, setTasks] = useState<Task[]>([]);
  
@@ -87,8 +86,16 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
 //   setTasks(currentTasks =>    );
 // };
 
-
+// custom hook
 // think of it like taskscontext is the empty container we created for the data,
 // usecontext() is the function we reach our hand into,
 // context is whatever we pull out of that container
 
+// example of it being used in the homepage could be
+// const homepage = () => {
+//     const { tasks, getTasksForDate } = useTasks();
+
+// return (
+//     <View>
+//       <Text>Tasks for today: {todaysTasks.length}</Text>
+//       {todaysTasks.map(task => (
