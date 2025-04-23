@@ -20,7 +20,7 @@ interface TasksContextType {
 	addTask: (task: Task) => void;
 	editTask: (task: Task) => void;
 	deleteTask: (id: string) => void;
-	toggleTaskCompleted: (id: string) => void;
+	toggleTaskCompletion: (id: string) => void;
 	getTasksForDate: (date: string) => Task[];
 }
 

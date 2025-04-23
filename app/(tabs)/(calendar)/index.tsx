@@ -13,7 +13,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { Calendar } from "react-native-calendars";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { useTasks } from "@/contexts/TasksProvider";
+import { useTasks } from "@/services/TasksProvider";
 
 // Task type
 interface Task {
@@ -63,14 +63,14 @@ const CalendarScreen = () => {
 	const [newCategoryName, setNewCategoryName] = useState("");
 	const [selectedColor, setSelectedColor] = useState("#6c5ce7"); // Default purple
 
-	// Storing all tasks using the tasks context
-	const [tasks, addTask, deleteTask, toggleTaskCompletion, getTasksForDate] =
-		useState();
+	// using the tasks provider to get the tasks and add, delete, toggle tasks
+	const [tasks, addTask, deleteTask, toggleTaskCompletion, getTasksForDate] = useState("");
+		
 
 	// Store currently selected day to view tasks
 	const [selectedCalendarDate, setSelectedCalendarDate] = useState("");
 
-	// calendar navigation
+	// for calendar navigation
 	const [viewDate, setViewDate] = useState(new Date());
 
 	// Default categories with pastel colours
@@ -106,34 +106,37 @@ const CalendarScreen = () => {
 		.toString()
 		.padStart(2, "0")}-${today.getDate().toString().padStart(2, "0")}`;
 
-	// get days in the month
-	const getDaysInMonth = (month: number, year: number) => {
-		new Date(year, month + 1, 0).getDate();
-	};
 
-	// get the days for the current month
-	const generateCalendarDays = () => {
-		const year = viewDate.getFullYear();
-		const month = viewDate.getMonth();
-
-		// Generate marked dates object for calendar from tasks
+		// generate the marked dates object for the calendar from tasks
 		const generateMarkedDates = () => {
 			const markedDates: any = {};
 
-			// Group tasks by date
-			tasks.forEach((task) => {
-				if (!markedDates[task.date]) {
-					markedDates[task.date] = { dots: [], marked: true };
-				}
+		// group the tasks by date
+		tasks.forEach((task) => {
+			if (!markedDates[task.date]) {
+				markedDates[task.date] = { dots: [], marked: true };
+			}
 
-				// Add a dot beside category
-				markedDates[task.date].dots.push({
-					key: task.id,
-					color: categoryColors[task.category]?.dot || "#999",
-				});
+			// add a dot beside the category
+			markedDates[task.date].dots.push({
+				key: task.id,
+				color: categoryColors[task.category]?.dot || "#999",
 			});
+		}
 
-			// If there's a selected date, highlight it
+	// // get days in the month
+	// const getDaysInMonth = (month: number, year: number) => {
+	// 	new Date(year, month + 1, 0).getDate();
+	// };
+
+	// // get the days for the current month
+	// const generateCalendarDays = () => {
+	// 	const year = viewDate.getFullYear();
+	// 	const month = viewDate.getMonth();
+
+		
+
+		// If there's a selected date, highlight it
 			if (selectedCalendarDate) {
 				markedDates[selectedCalendarDate] = {
 					...markedDates[selectedCalendarDate],
@@ -148,7 +151,7 @@ const CalendarScreen = () => {
 		// Filter tasks for the selected date, this will be used to show tasks in the calendar
 		// and in the task list below the calendar
 		const getTasksForSelectedDate = () => {
-			return tasks.filter((task) => task.date === selectedCalendarDate);
+			return getTasksForDate(selectedCalendarDate);
 		};
 
 		const handleDateSelection = (day: any) => {
@@ -156,6 +159,110 @@ const CalendarScreen = () => {
 			setSelectedCalendarDate(dateString);
 			console.log("Selected day:", dateString);
 		};
+
+		// format date YYYY-MM-DD for the calendar
+		const formatDateToString = (date: Date) => {
+			return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
+		};
+
+		//get dAYS IN THE MONTH helper
+		const getDaysInMonth = (year: number, month: number) => new Date(year, month + 1, 0).getDate();
+
+	// get the current month and year
+	const generateCalendarDays = () => {
+		const year = viewDate.getFullYear();
+		const month = viewDate.getMonth();
+
+			// Get first day of month (0 = Sunday, 1 = Monday, etc.)
+			const firstDayOfMonth = new Date(year, month, 1).getDay();
+			// Adjust for Monday as first day of week (0 = Monday, 6 = Sunday)
+			const startDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+			
+
+			// get days in the current month
+			const daysInMonth = getDaysInMonth(year, month);
+
+			// get days of previous month
+			const prevMonthDays = getDaysInMonth(year, month - 1);
+
+			// generate calendar grid with 6 weeks max showing
+			const calendarDays = [];
+			let currentWeek = [];
+
+			// Add days from previous month
+			for (let i = 0; i < startDay; i++) {
+				const day = daysInPrevMonth - startDay + i + 1;
+				const date = new Date(year, month - 1, day);
+				currentWeek.push({
+					day,
+					date,
+					currentMonth: false,
+					dateString: formatDateToString(date)
+				});
+			}
+
+			// Add days from current month
+			for (let i = 1; i <= daysInMonth; i++) { // 1 to 31
+				const date = new Date(year, month, i);
+				currentWeek.push({
+					day: i,
+					date,
+					currentMonth: true,
+					dateString: formatDateToString(date)
+				});
+
+				// Start a new week if it is needed
+			if (currentWeek.length === 7) {
+				calendarDays.push(currentWeek);
+				currentWeek = [];
+			}
+		}
+
+		// Add next month days to complete the grid
+		if (currentWeek.length > 0) {
+			const daysToAdd = 7 - currentWeek.length;
+			for (let i = 1; i <= daysToAdd; i++) {
+				const date = new Date(year, month + 1, i);
+				currentWeek.push({
+					day: i,
+					date,
+					currentMonth: false,
+					dateString: formatDateToString(date)
+				});
+			}
+			calendarDays.push(currentWeek);
+		}
+		
+		return calendarDays;
+	};
+
+
+	// onto the navigation functions 
+	const goToPreviousMonth = () => {
+		const newDate = new Date(viewDate);
+		newDate.setMonth(newDate.getMonth() - 1);
+		setViewDate(newDate);
+		setCurrentMonth(newDate.toLocaleString('default', { month: 'long' }));
+		setCurrentYear(newDate.getFullYear().toString());
+	};
+
+	const goToNextMonth = () => {
+		const newDate = new Date(viewDate);
+		newDate.setMonth(newDate.getMonth() + 1);
+		setViewDate(newDate);
+		setCurrentMonth(newDate.toLocaleString('default', { month: 'long' }));
+		setCurrentYear(newDate.getFullYear().toString());
+	};
+	
+	// Initialize current month and year on component mount
+	useEffect(() => {
+		const now = new Date();
+		setViewDate(now);
+		setCurrentMonth(now.toLocaleString('default', { month: 'long' }));
+		setCurrentYear(now.getFullYear().toString());
+	}, []);
+
+
 
 		const handleCreateTask = () => {
 			// Validate required fields
@@ -177,8 +284,8 @@ const CalendarScreen = () => {
 				completed: false,
 			};
 
-			// Add task to list
-			setTasks([...tasks, newTask]);
+			// context function instead of the setTasks function
+			addTask(newTask);
 
 			console.log("Task created:", newTask);
 
@@ -200,17 +307,17 @@ const CalendarScreen = () => {
 			setSelectedCategory("");
 		};
 
-		const handleDeleteTask = (taskId: string) => {
-			setTasks(tasks.filter((task) => task.id !== taskId));
-		};
+		// const handleDeleteTask = (taskId: string) => {
+		// 	setTasks(tasks.filter((task) => task.id !== taskId));
+		// };
 
-		const toggleTaskCompletion = (taskId: string) => {
-			setTasks(
-				tasks.map((task) =>
-					task.id === taskId ? { ...task, completed: !task.completed } : task,
-				),
-			);
-		};
+		// const toggleTaskCompletion = (taskId: string) => {
+		// 	setTasks(
+		// 		tasks.map((task) =>
+		// 			task.id === taskId ? { ...task, completed: !task.completed } : task,
+		// 		),
+		// 	);
+		// };
 
 		// Close modal without creating a task
 		const handleCloseModal = () => {
@@ -255,11 +362,13 @@ const CalendarScreen = () => {
 				[newCategoryName]: {
 					name: newCategoryName,
 					bg: bgColor,
+					bgdark: "",
 					dot: selectedColor,
 					border: selectedColor,
 				},
 			});
-
+			
+		
 			// Close modal and reset
 			setAddCategoryModalVisible(false);
 			setNewCategoryName("");
@@ -373,7 +482,7 @@ const CalendarScreen = () => {
 										) : null}
 									</View>
 
-									<TouchableOpacity onPress={() => handleDeleteTask(item.id)}>
+									<TouchableOpacity onPress={() => deleteTask(item.id)}>
 										<Ionicons name="trash-outline" size={20} color="#ff6b6b" />
 									</TouchableOpacity>
 								</View>
@@ -429,7 +538,7 @@ const CalendarScreen = () => {
 										<Text className="text-sm text-gray-500">{currentYear}</Text>
 									</View>
 
-									<TouchableOpacity>
+									<TouchableOpacity onPress={goToNextMonth}>
 										<Ionicons name="chevron-forward" size={24} color="#666" />
 									</TouchableOpacity>
 								</View>
@@ -437,28 +546,50 @@ const CalendarScreen = () => {
 								{/* Mini Calendar */}
 								<View className="px-4 pb-2">
 									<View className="flex-row justify-between mb-2">
-										<Text className="text-center text-gray-500 flex-1">
-											Mon
-										</Text>
-										<Text className="text-center text-gray-500 flex-1">
-											Tue
-										</Text>
-										<Text className="text-center text-gray-500 flex-1">
-											Wed
-										</Text>
-										<Text className="text-center text-gray-500 flex-1">
-											Thu
-										</Text>
-										<Text className="text-center text-gray-500 flex-1">
-											Fri
-										</Text>
-										<Text className="text-center text-gray-500 flex-1">
-											Sat
-										</Text>
-										<Text className="text-center text-gray-500 flex-1">
-											Sun
-										</Text>
+										<Text className="text-center text-gray-500 flex-1">Mon</Text>
+										<Text className="text-center text-gray-500 flex-1">Tue</Text>
+										<Text className="text-center text-gray-500 flex-1">Wed</Text>
+										<Text className="text-center text-gray-500 flex-1">Thu</Text>
+										<Text className="text-center text-gray-500 flex-1">Fri</Text>
+										<Text className="text-center text-gray-500 flex-1">Sat</Text>
+										<Text className="text-center text-gray-500 flex-1">Sun</Text>
 									</View>
+
+
+								{/*Dynamic Calendar Dates*/}
+								{generateCalendarDays().map((week, weekIndex) => (
+									<View key={`week-${weekIndex}`} className="flex-row justify-between mb-2">
+										{week.map((day, dayIndex) => (
+											<TouchableOpacity
+												key={`day-${weekIndex}-${dayIndex}`}
+												className="items-center flex-1"
+												onPress={() => setSelectedDate(day.dateString)}
+											>
+												<View
+													className={`${selectedDate === day.dateString ? "bg-purple-600" : "bg-white"} 
+													rounded-full w-8 h-8 items-center justify-center`}
+												>
+													<Text
+														className={`${selectedDate === day.dateString ? "text-white" : 
+															day.currentMonth ? "text-black" : "text-gray-400"}`}
+													>
+														{day.day}
+													</Text>
+												</View>
+											</TouchableOpacity>
+										))}
+									</View>
+								))}
+							</View>
+
+
+
+
+
+
+
+
+
 
 									{/* Calendar Dates - Week 1 */}
 									<View className="flex-row justify-between mb-2">
