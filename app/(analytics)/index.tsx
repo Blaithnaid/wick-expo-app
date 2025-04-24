@@ -3,6 +3,7 @@ import { Button, ButtonText } from "@/components/ui/button";
 import { Input, InputField } from "@/components/ui/input";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
+import { useActionSheet } from "@expo/react-native-action-sheet";
 import { ScrollView, Pressable } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 import FontAwesome from "@expo/vector-icons/FontAwesome6";
@@ -14,6 +15,10 @@ export default function AnalyticsScreen() {
 	const colorScheme = useColorScheme().colorScheme;
 	const [accessToken, setAccessToken] = useState<string | null>(null);
 	const [tokenInput, setTokenInput] = useState<string>("");
+	const { showActionSheetWithOptions } = useActionSheet();
+	const options = ["Clear token", "Cancel"];
+	const destructiveButtonIndex = 0;
+	const cancelButtonIndex = 1;
 
 	useEffect(() => {
 		const fetchAccessToken = async () => {
@@ -34,6 +39,26 @@ export default function AnalyticsScreen() {
 	const clearToken = async () => {
 		setAccessToken(null);
 		await AsyncStorage.removeItem("accessToken");
+	};
+
+	const onPress = () => {
+		showActionSheetWithOptions(
+			{
+				title: "Your token is: " + accessToken,
+				options,
+				destructiveButtonIndex,
+				cancelButtonIndex,
+			},
+			(i?: number) => {
+				switch (i) {
+					case destructiveButtonIndex:
+						clearToken();
+						break;
+					case cancelButtonIndex:
+						break;
+				}
+			},
+		);
 	};
 
 	const barData = [
@@ -75,10 +100,10 @@ export default function AnalyticsScreen() {
 				options={{
 					headerRight: () => (
 						<View className="bg-transparent dark:bg-transparent flex-row">
-							<Pressable onPress={() => setAccessToken(null)}>
+							<Pressable onPress={onPress}>
 								{({ pressed }) => (
 									<FontAwesome
-										name="xmark"
+										name="key"
 										size={25}
 										color={Colors[colorScheme ?? "light"].text}
 										style={{
@@ -95,20 +120,17 @@ export default function AnalyticsScreen() {
 				className="flex-1 h-full w-full bg-white dark:bg-oxford-500"
 				contentContainerClassName="items-center justify-center"
 			>
-				<View className="w-full p-4 bg-gray-300 dark:bg-oxford-300 h-fit items-center justify-center">
-					<Text className="text-lg">Your token is: {accessToken}</Text>
-				</View>
 				<View
 					style={{ alignItems: "center" }}
 					className="w-full px-6 flex flex-col items-center justify-center"
 				>
-					<Text className="text-xl font-bold mt-3 mb-1.5 w-full text-left">
+					<Text className="text-xl font-bold mt-5 mb-1.5 w-full text-left">
 						Your reach this week
 					</Text>
-					<View className="w-full flex justify-center items-center pt-4 py-3 border-2 dark:border-gray-500 rounded-md bg-oxford-50 dark:bg-oxford-600">
+					<View className="w-full flex justify-center items-center pt-4 py-3 border-4 border-gray-300 dark:border-gray-500 rounded-md bg-oxford-50 dark:bg-oxford-600">
 						<View
 							style={{ width: 320 }}
-							className="flex justify-center items-center bg-transparent dark:bg-transparent"
+							className="flex justify-center pt-2 items-center bg-transparent dark:bg-transparent"
 						>
 							<BarChart
 								barWidth={24}
@@ -147,7 +169,45 @@ export default function AnalyticsScreen() {
 					<Text className="text-xl font-bold mt-4 mb-1.5 w-full text-left">
 						Overview
 					</Text>
-					<View className="h-fit w-full flex items-center justify-center pt-4 py-8 border-2 dark:border-gray-500 rounded-md bg-oxford-50 dark:bg-oxford-600"></View>
+					<View className="h-max w-full flex flex-row flex-wrap items-center justify-center gap-2 pt-4 pb-4 px-3 border-4 border-gray-300 dark:border-gray-500 rounded-md bg-oxford-50 dark:bg-oxford-600">
+						<View className="p-6 basis-[48%] rounded-lg flex flex-col items-center justify-center bg-red-400 dark:bg-red-600">
+							<Text className="text-white text-4xl font-bold">one</Text>
+							<Text className="text-white">two</Text>
+						</View>
+						<View className="p-6 basis-[48%] rounded-lg flex items-center justify-center bg-green-400 dark:bg-green-600">
+							<Text className="text-white text-4xl font-bold">one</Text>
+							<Text className="text-white">two</Text>
+						</View>
+						<View className="p-6 basis-[48%] rounded-lg flex items-center justify-center bg-sky-400 dark:bg-sky-600">
+							<Text className="text-white text-4xl font-bold">one</Text>
+							<Text className="text-white">two</Text>
+						</View>
+						<View className="p-6 basis-[48%] rounded-lg flex items-center justify-center bg-orange-400 dark:bg-orange-600">
+							<Text className="text-white text-4xl font-bold">one</Text>
+							<Text className="text-white">two</Text>
+						</View>
+					</View>
+					<Text className="text-xl font-bold mt-4 mb-1.5 w-full text-left">
+						Overview
+					</Text>
+					<View className="h-max w-full flex flex-row flex-wrap items-center justify-center gap-2 mb-24 pt-4 pb-4 px-3 border-4 border-gray-300 dark:border-gray-500 rounded-md bg-oxford-50 dark:bg-oxford-600">
+						<View className="p-6 basis-[48%] rounded-lg flex flex-col items-center justify-center bg-red-400 dark:bg-red-600">
+							<Text className="text-white text-4xl font-bold">one</Text>
+							<Text className="text-white">two</Text>
+						</View>
+						<View className="p-6 basis-[48%] rounded-lg flex items-center justify-center bg-green-400 dark:bg-green-600">
+							<Text className="text-white text-4xl font-bold">one</Text>
+							<Text className="text-white">two</Text>
+						</View>
+						<View className="p-6 basis-[48%] rounded-lg flex items-center justify-center bg-sky-400 dark:bg-sky-600">
+							<Text className="text-white text-4xl font-bold">one</Text>
+							<Text className="text-white">two</Text>
+						</View>
+						<View className="p-6 basis-[48%] rounded-lg flex items-center justify-center bg-orange-400 dark:bg-orange-600">
+							<Text className="text-white text-4xl font-bold">one</Text>
+							<Text className="text-white">two</Text>
+						</View>
+					</View>
 				</View>
 			</ScrollView>
 		</>
