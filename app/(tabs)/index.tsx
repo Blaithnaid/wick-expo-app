@@ -1,7 +1,7 @@
-import { Text, View } from "@/components/Themed";
+import { Text, View, Pressable } from "@/components/Themed";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
-import { ScrollView, Pressable } from "react-native";
+import { ScrollView } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useAuthContext } from "@/services/AuthProvider";
 import { FontAwesome } from "@expo/vector-icons";
@@ -77,6 +77,7 @@ export default function HomeScreen() {
 							key={index}
 							className={`${card.color} p-5 rounded-xl items-center shadow-lg w-[48%]`}
 							style={{ elevation: 10 }}
+							toggle
 						>
 							<Text className="text-white text-lg font-bold">{card.name}</Text>
 						</Pressable>

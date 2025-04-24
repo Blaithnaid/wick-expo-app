@@ -1,4 +1,5 @@
-import { View, Pressable } from "react-native";
+import { Pressable } from "@/components/Themed";
+import { View } from "react-native";
 import { useColorScheme } from "nativewind";
 import { Text } from "@/components/Themed";
 import { router, Stack } from "expo-router";
@@ -24,7 +25,7 @@ export default function AnalyticsLayout() {
 					headerTitle: "Analytics",
 					headerLeft: () => (
 						<View className="flex-row">
-							<Pressable onPress={() => router.back()}>
+							<Pressable toggle onPress={() => router.back()}>
 								<Text className="font-semibold text-lg color-iguana-600 dark:color-iguana-400">
 									Back
 								</Text>
