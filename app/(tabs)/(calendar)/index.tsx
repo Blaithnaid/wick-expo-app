@@ -65,6 +65,7 @@ const CalendarScreen = () => {
 
 	// using the tasks provider to get the tasks and add, delete, toggle tasks
 	const { tasks, addTask, deleteTask, toggleTaskCompleted, getTasksForDate} = useTasks();
+	//const {saving, setSaving} = useState(false); // loading state for the tasks
 		
 	useEffect(() => {
 		console.log("CalendarScreen loaded");
@@ -128,18 +129,7 @@ const CalendarScreen = () => {
 			});
 		});
 
-	// // get days in the month
-	// const getDaysInMonth = (month: number, year: number) => {
-	// 	new Date(year, month + 1, 0).getDate();
-	// };
-
-	// // get the days for the current month
-	// const generateCalendarDays = () => {
-	// 	const year = viewDate.getFullYear();
-	// 	const month = viewDate.getMonth();
-
-		
-
+	
 		// If there's a selected date, highlight it
 			if (selectedCalendarDate) {
 				markedDates[selectedCalendarDate] = {
@@ -268,7 +258,7 @@ const CalendarScreen = () => {
 
 
 
-		const handleCreateTask = () => {
+		const handleCreateTask = async () => {
 			console.log("Creating task..."); // debugging
 			// Validate required fields
 			if (!taskName || !selectedDate) {
@@ -277,8 +267,9 @@ const CalendarScreen = () => {
 			}
 
 			// Create new task
-			const newTask: Task = {
-				id: Date.now().toString(), 
+			try {
+			const newTask = {
+				//id: Date.now().toString(), 
 				name: taskName,
 				note: taskNote,
 				date: selectedDate || formattedToday, // Use today if no date selected
@@ -293,8 +284,10 @@ const CalendarScreen = () => {
     		console.log("Current tasks array:", tasks);
 			console.log("About to add a task:", newTask); // debugging
 
+			
+
 			// context function instead of the setTasks function
-			addTask(newTask);
+			await addTask(newTask);
 			
 
 			console.log("Task created:", newTask); // debugging
@@ -302,10 +295,15 @@ const CalendarScreen = () => {
 			// Reset form and close modal
 			resetForm();
 			setModalVisible(false);
-
 			// Select the date of the new task to show it immediately
 			setSelectedCalendarDate(newTask.date);
+		} catch (error) {
+			console.error("Error creating task:", error); // debugging
+			alert("Failed to create task. Please try again.");
+		} finally {
+			//setSaving(false); // Reset loading state
 		}
+		};
 
 		const resetForm = () => {
 			setTaskName("");
@@ -317,22 +315,34 @@ const CalendarScreen = () => {
 			setSelectedCategory("");
 		};
 
-		// const handleDeleteTask = (taskId: string) => {
-		// 	setTasks(tasks.filter((task) => task.id !== taskId));
-		// };
-
-		// const toggleTaskCompletion = (taskId: string) => {
-		// 	setTasks(
-		// 		tasks.map((task) =>
-		// 			task.id === taskId ? { ...task, completed: !task.completed } : task,
-		// 		),
-		// 	);
-		// };
+		
 
 		// Close modal without creating a task
 		const handleCloseModal = () => {
 			resetForm();
 			setModalVisible(false);
+		};
+
+		// Function to handle task deletion
+		const handleDeleteTask = async (taskId: string) => {
+			try {
+				await deleteTask(taskId);
+				console.log("Task deleted:", taskId); // debugging
+			}
+			catch (error) {
+				console.error("Error deleting task:", error); // debugging
+				alert("Failed to delete task. Please try again.");
+			}
+		};
+
+		// Function to handle task completion toggle
+		const handleToggleTask = async (taskId: string) => {
+			try {
+				await toggleTaskCompleted(taskId);
+			} catch (error) {
+				console.error("Error toggling task completion:", error); // debugging
+				alert("Failed to toggle task completion. Please try again.");
+			}
 		};
 
 		// Colour options for new categories
@@ -437,7 +447,7 @@ const CalendarScreen = () => {
 									{/* Completion Checkbox */}
 									<TouchableOpacity
 										className="mr-2"
-										onPress={() => toggleTaskCompleted(item.id)}
+										onPress={() => handleToggleTask(item.id)}
 									>
 										<View
 											style={{
@@ -492,7 +502,7 @@ const CalendarScreen = () => {
 										) : null}
 									</View>
 
-									<TouchableOpacity onPress={() => deleteTask(item.id)}>
+									<TouchableOpacity onPress={() => handleDeleteTask(item.id)}>
 										<Ionicons name="trash-outline" size={20} color="#ff6b6b" />
 									</TouchableOpacity>
 								</View>
@@ -833,3 +843,5 @@ const CalendarScreen = () => {
 
 
 export default CalendarScreen;
+
+// finally means that this will run no matter what, even if there is an error in the try block
