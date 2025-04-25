@@ -128,7 +128,7 @@ function RootLayoutNav() {
 									}}
 								>
 									<Text className="color-iguana-400 dark:color-iguana-400">
-										Cancel
+										Close
 									</Text>
 								</Pressable>
 							</View>

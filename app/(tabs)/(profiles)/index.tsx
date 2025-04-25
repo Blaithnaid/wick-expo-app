@@ -153,9 +153,9 @@ export default function ProfilesScreen() {
 							data={profiles.profiles}
 							renderItem={({ item }: { item: InstagramProfile }) => (
 								<>
-									<Link href={`/(tabs)/(profiles)/${item.id}`} asChild>
+									<Link href={`/(profiles)/${item.id}`} asChild>
 										<TouchableOpacity>
-											<View className="dark:bg-oxford-400 p-3 w-full flex flex-row items-center justify-center border-y border-oxford-300">
+											<View className="dark:bg-oxford-400 p-3 w-full flex flex-row items-center justify-center border-y border-oxford-100 dark:border-oxford-300">
 												{item.profilePicUrl ? (
 													<Image
 														source={{ uri: item.profilePicUrl }}

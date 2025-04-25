@@ -69,8 +69,8 @@ export default function SettingsScreen() {
 					}
 				}}
 			>
-				<View className="bg-black dark:bg-black overflow-hidden rounded-full size-20 flex items-center justify-center">
-					{auth.user ? (
+				<View className="bg-gray-300 dark:bg-slate-900 overflow-hidden rounded-full size-20 flex items-center justify-center self-center">
+					{auth.user?.photoURL ? (
 						<Image
 							source={{ uri: auth.user.photoURL }}
 							style={{
@@ -82,8 +82,8 @@ export default function SettingsScreen() {
 					) : (
 						<FontAwesome
 							name="user"
-							size={64}
-							color={"#ffffff"}
+							size={80}
+							color={"gray"}
 							className="rounded-full"
 						/>
 					)}
