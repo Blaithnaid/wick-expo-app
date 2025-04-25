@@ -143,78 +143,75 @@ export default function ProfilesScreen() {
 					headerRight: () => (auth.user ? <ProfilesMenu /> : <></>),
 				}}
 			/>
-			<View className="flex-1 items-center h-full w-full">
-				{profiles.profiles.length > 0 ? (
-					<>
-						<Text className="text-2xl font-bold mt-3 mb-2 text-left w-full pl-3">
-							Instagram
-						</Text>
-						<FlatList
-							data={profiles.profiles}
-							renderItem={({ item }: { item: InstagramProfile }) => (
-								<>
-									<Link href={`/(profiles)/${item.id}`} asChild>
-										<TouchableOpacity>
-											<View className="dark:bg-oxford-400 p-3 w-full flex flex-row items-center justify-center border-y border-oxford-100 dark:border-oxford-300">
-												{item.profilePicUrl ? (
-													<Image
-														source={{ uri: item.profilePicUrl }}
-														style={{
-															width: 64,
-															height: 64,
-															borderRadius: 64,
-														}}
-													/>
-												) : (
-													<FontAwesome
-														className=""
-														name="user-circle"
-														size={64}
-														color="gray"
-													/>
-												)}
-												<View className="ml-2 dark:bg-transparent">
-													<Text className="text-black text-xl font-bold dark:text-white my-1">
-														{item.username}
-													</Text>
-													<Text className="text-gray-400 text-md dark:text-white my-1">
-														imported:{" "}
-														{item.whenImported
-															? item.whenImported.toLocaleDateString()
-															: "Unknown"}
-													</Text>
-												</View>
-												<FontAwesome
-													name="chevron-right"
-													size={16}
-													color={"#ffffff"}
-													className="ml-auto pt-2.5"
+			{profiles.profiles.length > 0 ? (
+				<View className="flex-1 items-center h-full w-full">
+					<Text className="text-2xl font-bold mt-3 mb-2 text-left w-full pl-3">
+						Instagram
+					</Text>
+					<FlatList
+						data={profiles.profiles}
+						renderItem={({ item }: { item: InstagramProfile }) => (
+							<>
+								<Link href={`/(profiles)/${item.id}`} asChild>
+									<TouchableOpacity>
+										<View className="dark:bg-oxford-400 p-3 w-full flex flex-row items-center justify-center border-y border-oxford-100 dark:border-oxford-300">
+											{item.profilePicUrl ? (
+												<Image
+													source={{ uri: item.profilePicUrl }}
+													style={{
+														width: 64,
+														height: 64,
+														borderRadius: 64,
+													}}
 												/>
+											) : (
+												<FontAwesome
+													className=""
+													name="user-circle"
+													size={64}
+													color="gray"
+												/>
+											)}
+											<View className="ml-2 dark:bg-transparent">
+												<Text className="text-black text-xl font-bold dark:text-white my-1">
+													{item.username}
+												</Text>
+												<Text className="text-gray-400 text-md dark:text-white my-1">
+													imported:{" "}
+													{item.whenImported
+														? item.whenImported.toLocaleDateString()
+														: "Unknown"}
+												</Text>
 											</View>
-										</TouchableOpacity>
-									</Link>
-								</>
-							)}
-						/>
-					</>
-				) : (
-					<View className="flex-1 items-center justify-center px-5">
-						<FontAwesome
-							name="users"
-							size={80}
-							color={colorScheme === "dark" ? "white" : "black"}
-						/>
-						<View className="mt-4 mb-3 h-[2px] rounded-full w-[55%] bg-slate-400" />
-						<Text className="text-xl text-center w-2/3">
-							You do not have any profiles imported!
-						</Text>
-						<Text className="text-lg text-center">
-							Click the icon in the top left to open the importer and get
-							started!
-						</Text>
-					</View>
-				)}
-			</View>
+											<FontAwesome
+												name="chevron-right"
+												size={16}
+												color={"#ffffff"}
+												className="ml-auto pt-2.5"
+											/>
+										</View>
+									</TouchableOpacity>
+								</Link>
+							</>
+						)}
+					/>
+				</View>
+			) : (
+				<View className="flex-1 items-center justify-center px-5 flex">
+					<FontAwesome
+						name="users"
+						size={80}
+						color={colorScheme === "dark" ? "white" : "black"}
+					/>
+					<View className="mt-4 mb-3 h-0.5 rounded-full w-[55%] bg-slate-400" />
+					<Text className="text-xl text-center w-2/3">
+						You do not have any profiles imported!
+					</Text>
+					<Text className="text-lg text-oxford-400 text-center w-3/4 mt-4">
+						Click the icon in the top left to open the importer and get started!
+					</Text>
+				</View>
+			)}
 		</>
 	);
 }
