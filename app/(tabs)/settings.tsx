@@ -57,60 +57,77 @@ export default function SettingsScreen() {
 	const auth = useAuthContext();
 
 	return (
-		<View className="flex-1 items-center h-full w-full">
-			<Pressable
-				className="bg-oxford-100 dark:bg-oxford-800 my-3 px-4 py-6 w-[95%] rounded-2xl flex flex-row items-center"
-				android_ripple={{ color: "gray" }}
-				onPress={() => {
-					if (!auth.profile) {
-						router.push("/(auth)/register");
-					} else {
-						router.push("/account");
-					}
-				}}
-			>
-				<View className="bg-gray-300 dark:bg-slate-900 overflow-hidden rounded-full size-20 flex items-center justify-center self-center">
-					{auth.user?.photoURL ? (
-						<Image
-							source={{ uri: auth.user.photoURL }}
-							style={{
-								width: 70,
-								height: 70,
-								borderRadius: 64,
-							}}
-						/>
-					) : (
-						<FontAwesome
-							name="user"
-							size={80}
-							color={"gray"}
-							className="rounded-full"
-						/>
-					)}
-				</View>
-				<UView className="ml-3 bg-transparent dark:bg-transparent">
-					<Text className="text-2xl font-bold text-lavender-400 dark:text-lavender-400">
-						{auth.profile ? auth.profile.displayName : "Create account"}
-					</Text>
-					<Text className="text-md text-black dark:text-slate-300">
-						{auth.profile
-							? auth.profile.email
-							: "Tap here to sign up or log in!"}
-					</Text>
-				</UView>
-			</Pressable>
-			<Text className="font-bold text-xl text-left w-full pl-3 my-2.5">
-				Account
-			</Text>
-			<View className="w-full items-center">
-				{auth.profile ? (
+		<View className="flex-1 w-full items-center justify-center bg-white dark:bg-oxford-500">
+			<View className="flex-1 items-center h-full w-full web:max-w-3xl web:self-center web:mx-auto">
+				<Pressable
+					className="bg-oxford-100 dark:bg-oxford-800 my-3 px-4 py-6 w-[95%] rounded-2xl flex flex-row items-center"
+					android_ripple={{ color: "gray" }}
+					onPress={() => {
+						if (!auth.profile) {
+							router.push("/(auth)/register");
+						} else {
+							router.push("/account");
+						}
+					}}
+				>
+					<View className="bg-gray-300 dark:bg-slate-900 overflow-hidden rounded-full size-20 flex items-center justify-center self-center">
+						{auth.user?.photoURL ? (
+							<Image
+								source={{ uri: auth.user.photoURL }}
+								style={{
+									width: 70,
+									height: 70,
+									borderRadius: 64,
+								}}
+							/>
+						) : (
+							<FontAwesome
+								name="user"
+								size={80}
+								color={"gray"}
+								className="rounded-full"
+							/>
+						)}
+					</View>
+					<UView className="ml-3 bg-transparent dark:bg-transparent">
+						<Text className="text-2xl font-bold text-lavender-400 dark:text-lavender-400">
+							{auth.profile ? auth.profile.displayName : "Create account"}
+						</Text>
+						<Text className="text-md text-black dark:text-slate-300">
+							{auth.profile
+								? auth.profile.email
+								: "Tap here to sign up or log in!"}
+						</Text>
+					</UView>
+				</Pressable>
+				<Text className="font-bold text-xl text-left w-full pl-3 my-2.5">
+					Account
+				</Text>
+				<View className="w-full items-center">
+					{auth.profile ? (
+						<Pressable
+							className="dark:bg-oxford-400 bg-neutral-300 p-3 w-full flex flex-row items-start border-t border-oxford-300"
+							android_ripple={{ color: "gray" }}
+							onPress={() => auth.logout()}
+						>
+							<Text className="text-black text-xl dark:text-white my-1">
+								Log out
+							</Text>
+							<FontAwesome
+								name="chevron-right"
+								size={16}
+								color={"#ffffff"}
+								className="ml-auto pt-2.5"
+							/>
+						</Pressable>
+					) : null}
 					<Pressable
-						className="dark:bg-oxford-400 bg-neutral-300 p-3 w-full flex flex-row items-start border-t border-oxford-300"
+						className="dark:bg-oxford-400 bg-neutral-300 p-3 w-full flex flex-row items-start border-y border-oxford-300"
 						android_ripple={{ color: "gray" }}
-						onPress={() => auth.logout()}
+						onPress={() => console.log("Current profile name: ", auth.profile)}
 					>
 						<Text className="text-black text-xl dark:text-white my-1">
-							Log out
+							Debug user info
 						</Text>
 						<FontAwesome
 							name="chevron-right"
@@ -119,26 +136,11 @@ export default function SettingsScreen() {
 							className="ml-auto pt-2.5"
 						/>
 					</Pressable>
-				) : null}
-				<Pressable
-					className="dark:bg-oxford-400 bg-neutral-300 p-3 w-full flex flex-row items-start border-y border-oxford-300"
-					android_ripple={{ color: "gray" }}
-					onPress={() => console.log("Current profile name: ", auth.profile)}
-				>
-					<Text className="text-black text-xl dark:text-white my-1">
-						Debug user info
+					<Text className="font-bold text-xl text-left w-full pl-3 mt-4 my-2.5">
+						Appearance
 					</Text>
-					<FontAwesome
-						name="chevron-right"
-						size={16}
-						color={"#ffffff"}
-						className="ml-auto pt-2.5"
-					/>
-				</Pressable>
-				<Text className="font-bold text-xl text-left w-full pl-3 mt-4 my-2.5">
-					Appearance
-				</Text>
-				<ThemeMenu />
+					<ThemeMenu />
+				</View>
 			</View>
 		</View>
 	);

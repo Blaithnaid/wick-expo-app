@@ -89,7 +89,7 @@ export default function ChatScreen() {
 							</View>
 						</TouchableWithoutFeedback>
 					) : (
-						<View className="flex-1">
+						<View className="flex-1 web:max-w-3xl web:self-center">
 							<View className="flex-1 items-center justify-center px-5">
 								<FontAwesome
 									name="robot"
@@ -108,6 +108,7 @@ export default function ChatScreen() {
 					)
 				) : (
 					<ScrollView
+						className="web:max-w-3xl web:min-w-lg web:self-center"
 						ref={scrollViewRef}
 						onContentSizeChange={() =>
 							scrollViewRef.current?.scrollToEnd({

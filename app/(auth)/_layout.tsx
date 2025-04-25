@@ -23,15 +23,19 @@ export default function AuthLayout() {
 				options={{
 					headerTitle: "Login",
 					headerShown: true,
-					headerLeft: () => (
-						<View className="flex-row">
-							<Pressable onPress={() => router.back()}>
-								<Text className="color-iguana-400 dark:color-iguana-400">
-									Back
-								</Text>
-							</Pressable>
-						</View>
-					),
+					...(Platform.OS === "ios"
+						? {
+								headerLeft: () => (
+									<View className="flex-row">
+										<Pressable onPress={() => router.back()}>
+											<Text className="color-iguana-400 dark:color-iguana-400">
+												Back
+											</Text>
+										</Pressable>
+									</View>
+								),
+							}
+						: {}),
 				}}
 			/>
 			<Stack.Screen
@@ -39,19 +43,23 @@ export default function AuthLayout() {
 				options={{
 					headerTitle: "Register",
 					headerShown: true,
-					headerLeft: () => (
-						<View className="flex-row">
-							<Pressable
-								onPress={() => {
-									router.dismiss();
-								}}
-							>
-								<Text className="color-iguana-400 dark:color-iguana-400">
-									Cancel
-								</Text>
-							</Pressable>
-						</View>
-					),
+					...(Platform.OS === "ios"
+						? {
+								headerLeft: () => (
+									<View className="flex-row">
+										<Pressable
+											onPress={() => {
+												router.dismiss();
+											}}
+										>
+											<Text className="color-iguana-400 dark:color-iguana-400">
+												Cancel
+											</Text>
+										</Pressable>
+									</View>
+								),
+							}
+						: {}),
 				}}
 			/>
 			<Stack.Screen
@@ -59,15 +67,19 @@ export default function AuthLayout() {
 				options={{
 					headerTitle: "Forgot Password",
 					headerShown: true,
-					headerLeft: () => (
-						<View className="flex-row">
-							<Pressable onPress={() => router.back()}>
-								<Text className="color-iguana-400 dark:color-iguana-400">
-									Back
-								</Text>
-							</Pressable>
-						</View>
-					),
+					...(Platform.OS === "ios"
+						? {
+								headerLeft: () => (
+									<View className="flex-row">
+										<Pressable onPress={() => router.back()}>
+											<Text className="color-iguana-400 dark:color-iguana-400">
+												Back
+											</Text>
+										</Pressable>
+									</View>
+								),
+							}
+						: {}),
 				}}
 			/>
 		</Stack>

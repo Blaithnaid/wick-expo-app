@@ -66,7 +66,11 @@ function Providers({ children }: { children: React.ReactNode }) {
 				<AuthProvider>
 					<ProfileProvider>
 						<ThemeProvider
-							value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+							value={
+								colorScheme === "dark"
+									? DarkTheme
+									: DefaultTheme
+							}
 						>
 							{children}
 						</ThemeProvider>
@@ -89,7 +93,8 @@ function RootLayoutNav() {
 						presentation: "modal",
 						headerTitle: "Wickbot Info", // Change the header text
 						headerStyle: {
-							backgroundColor: Colors[colorScheme ?? "light"].headerBackground,
+							backgroundColor:
+								Colors[colorScheme ?? "light"].headerBackground,
 						},
 						headerTintColor: Colors[colorScheme ?? "light"].text,
 					}}
@@ -100,7 +105,8 @@ function RootLayoutNav() {
 						presentation: "modal",
 						headerTitle: "Import a profile", // Change the header text
 						headerStyle: {
-							backgroundColor: Colors[colorScheme ?? "light"].headerBackground,
+							backgroundColor:
+								Colors[colorScheme ?? "light"].headerBackground,
 						},
 						headerTintColor: Colors[colorScheme ?? "light"].text,
 					}}
@@ -124,7 +130,8 @@ function RootLayoutNav() {
 						presentation: "modal",
 						headerTitle: "Your Account",
 						headerStyle: {
-							backgroundColor: Colors[colorScheme ?? "light"].headerBackground,
+							backgroundColor:
+								Colors[colorScheme ?? "light"].headerBackground,
 						},
 						headerLeft: () => (
 							<View className="flex-row">

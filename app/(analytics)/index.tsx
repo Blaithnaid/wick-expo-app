@@ -199,15 +199,15 @@ export default function AnalyticsScreen() {
 										: { color: "black", textAlign: "center", fontSize: 10 }
 								}
 							/>
-							<View className="flex flex-row w-2/3 mt-3 rounded-lg items-center justify-center">
+							<View className="flex flex-row w-2/3 mt-2 rounded-xl overflow-hidden border border-gray-600 items-center justify-center">
 								<Pressable
-									className={`w-1/2 p-2 rounded-l-lg ${selectedWeek === "last" ? "dark:bg-slate-400 bg-slate-200" : ""}`}
+									className={`w-1/2 p-2 rounded-l-lg ${selectedWeek === "last" ? "dark:bg-slate-400 bg-slate-200" : "dark:bg-slate-600 bg-slate-400"}`}
 									onPress={() => setSelectedWeek("last")}
 								>
 									<Text className="text-center">Last Week</Text>
 								</Pressable>
 								<Pressable
-									className={`w-1/2 p-2 rounded-r-lg ${selectedWeek === "this" ? "dark:bg-slate-400 bg-slate-200" : ""}`}
+									className={`w-1/2 p-2 rounded-r-lg ${selectedWeek === "this" ? "dark:bg-slate-400 bg-slate-200" : "dark:bg-slate-600 bg-slate-400"}`}
 									onPress={() => setSelectedWeek("this")}
 								>
 									<Text className="text-center">This Week</Text>
@@ -221,6 +221,7 @@ export default function AnalyticsScreen() {
 					<View className="h-max w-full flex flex-row flex-wrap items-stretch justify-center gap-2 pt-4 pb-4 px-3 border-4 border-gray-300 dark:border-gray-500 rounded-2xl bg-oxford-50 dark:bg-oxford-600">
 						{overviewFigures.map((figure, index) => (
 							<View
+								key={index}
 								className={`py-6 basis-[48%] rounded-lg flex flex-col items-center justify-center ${figure.background}`}
 							>
 								<Text className="text-white text-4xl font-bold">
