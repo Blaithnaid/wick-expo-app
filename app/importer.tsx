@@ -65,7 +65,7 @@ export default function ImportScreen() {
 				</Text>
 				<View className="flex mt-8 flex-row gap-2">
 					<Button
-						className="bg-iguana-500 w-2/3 h-20 px-6 py-2 mb-8"
+						className="bg-iguana-500 w-2/3 rounded-xl h-20 px-6 py-2 mb-8"
 						onPress={handleImport}
 						disabled={importing}
 					>
