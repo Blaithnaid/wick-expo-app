@@ -45,7 +45,7 @@ export default function Login() {
 		<View className="flex-1 w-full items-center justify-center bg-white dark:bg-oxford-500">
 			<SafeAreaView className="web:max-w-3xl web:mx-auto w-full flex-1">
 				<View className="flex-1 justify-between">
-					<View className="pt-32 px-12 w-full">
+					<View className="pt-32 px-8 w-full">
 						<FormControl
 							isInvalid={isEmailInvalid}
 							size="md"

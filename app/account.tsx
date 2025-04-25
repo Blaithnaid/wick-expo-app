@@ -103,7 +103,7 @@ export default function AccountSettings() {
 
 	return (
 		<SafeAreaView className="flex-1 bg-white">
-			<ScrollView className="px-12 pt-10">
+			<ScrollView className="web:max-w-3xl self-center px-12 pt-10">
 				<View className="mb-6">
 					{/* profile picture */}
 					<View className="bg-gray-300 dark:bg-slate-900 overflow-hidden rounded-full size-32 flex items-center justify-center self-center">
@@ -150,7 +150,7 @@ export default function AccountSettings() {
 								editable={!editLoading}
 							/>
 							<FontAwesome
-								name="key"
+								name="address-card"
 								size={20}
 								color={"#ffffff"}
 								className="rounded-full mr-3"
@@ -169,7 +169,7 @@ export default function AccountSettings() {
 								editable={!editLoading}
 							/>
 							<FontAwesome
-								name="key"
+								name="user"
 								size={20}
 								color={"#ffffff"}
 								className="rounded-full mr-3"

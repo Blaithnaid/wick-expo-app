@@ -30,7 +30,7 @@ export default function ForgotPassword() {
 		/^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
 
 	const handleSubmit = async () => {
-		const reset = await sendPasswordResetEmail(auth, email);
+		await sendPasswordResetEmail(auth, email);
 		setDidSubmit(true);
 	};
 
