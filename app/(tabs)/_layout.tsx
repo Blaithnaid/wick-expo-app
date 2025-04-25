@@ -25,6 +25,7 @@ export default function TabLayout() {
 				headerShown: useClientOnlyValue(false, true),
 				tabBarStyle: {
 					backgroundColor: Colors[colorScheme ?? "light"].headerBackground,
+					...(Platform.OS === "web" && { minHeight: 60 }), // Apply minHeight only on web
 				},
 				headerStyle: {
 					backgroundColor: Colors[colorScheme ?? "light"].headerBackground,
