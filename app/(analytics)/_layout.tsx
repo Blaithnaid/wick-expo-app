@@ -1,5 +1,5 @@
 import { Pressable } from "@/components/Themed";
-import { View } from "react-native";
+import { View, Platform } from "react-native";
 import { useColorScheme } from "nativewind";
 import { Text } from "@/components/Themed";
 import { router, Stack } from "expo-router";
@@ -23,15 +23,19 @@ export default function AnalyticsLayout() {
 				name="index"
 				options={{
 					headerTitle: "Analytics",
-					headerLeft: () => (
-						<View className="flex-row">
-							<Pressable toggle onPress={() => router.back()}>
-								<Text className="font-semibold text-lg color-iguana-600 dark:color-iguana-400">
-									Back
-								</Text>
-							</Pressable>
-						</View>
-					),
+					...(Platform.OS === "ios"
+						? {
+								headerLeft: () => (
+									<View className="flex-row">
+										<Pressable toggle onPress={() => router.back()}>
+											<Text className="font-semibold text-lg color-iguana-600 dark:color-iguana-400">
+												Back
+											</Text>
+										</Pressable>
+									</View>
+								),
+							}
+						: {}),
 				}}
 			/>
 		</Stack>

@@ -106,6 +106,7 @@ export default function AnalyticsScreen() {
 										name="key"
 										size={25}
 										color={Colors[colorScheme ?? "light"].text}
+										className="web:mr-6"
 										style={{
 											opacity: pressed ? 0.5 : 1,
 										}}

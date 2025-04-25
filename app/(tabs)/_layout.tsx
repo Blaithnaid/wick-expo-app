@@ -1,7 +1,7 @@
 import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link, Tabs } from "expo-router";
-import { Pressable, Platform } from "react-native";
+import { Pressable, Platform, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -68,10 +68,10 @@ export default function TabLayout() {
 								{({ pressed }) => (
 									<FontAwesome
 										name="info-circle"
-										size={25}
+										size={20}
 										color={Colors[colorScheme ?? "light"].text}
+										className="mr-4"
 										style={{
-											marginRight: 15,
 											opacity: pressed ? 0.5 : 1,
 										}}
 									/>

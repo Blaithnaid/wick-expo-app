@@ -1,4 +1,4 @@
-import { View, Pressable } from "react-native";
+import { View, Pressable, Platform } from "react-native";
 import { useColorScheme } from "nativewind";
 import { Text } from "@/components/Themed";
 import { router, Stack } from "expo-router";

@@ -81,7 +81,9 @@ export default function AnalyticsScreen() {
 		);
 	};
 
-	const barData = [
+	const [selectedWeek, setSelectedWeek] = useState<"this" | "last">("this");
+
+	const barDataThisWeek = [
 		{ value: 283, label: "Mon" },
 		{ value: 240, label: "Tue" },
 		{ value: 350, label: "Wed" },
@@ -90,6 +92,18 @@ export default function AnalyticsScreen() {
 		{ value: 300, label: "Sat" },
 		{ value: 500, label: "Sun" },
 	];
+
+	const barDataLastWeek = [
+		{ value: 180, label: "Mon" },
+		{ value: 210, label: "Tue" },
+		{ value: 220, label: "Wed" },
+		{ value: 300, label: "Thu" },
+		{ value: 320, label: "Fri" },
+		{ value: 200, label: "Sat" },
+		{ value: 350, label: "Sun" },
+	];
+
+	const barData = selectedWeek === "this" ? barDataThisWeek : barDataLastWeek;
 
 	if (!accessToken) {
 		return (
@@ -124,8 +138,9 @@ export default function AnalyticsScreen() {
 								{({ pressed }) => (
 									<FontAwesome
 										name="key"
-										size={25}
+										size={20}
 										color={Colors[colorScheme ?? "light"].text}
+										className="web:mr-6"
 										style={{
 											opacity: pressed ? 0.5 : 1,
 										}}
@@ -184,13 +199,19 @@ export default function AnalyticsScreen() {
 										: { color: "black", textAlign: "center", fontSize: 10 }
 								}
 							/>
-							<View className="flex flex-row w-2/3 rounded-lg items-center justify-center">
-								<View className="w-1/2 p-2 rounded-l-lg">
+							<View className="flex flex-row w-2/3 mt-3 rounded-lg items-center justify-center">
+								<Pressable
+									className={`w-1/2 p-2 rounded-l-lg ${selectedWeek === "last" ? "dark:bg-slate-400 bg-slate-200" : ""}`}
+									onPress={() => setSelectedWeek("last")}
+								>
 									<Text className="text-center">Last Week</Text>
-								</View>
-								<View className="w-1/2 p-2 rounded-r-lg">
-									<Text className="text-center">Last Week</Text>
-								</View>
+								</Pressable>
+								<Pressable
+									className={`w-1/2 p-2 rounded-r-lg ${selectedWeek === "this" ? "dark:bg-slate-400 bg-slate-200" : ""}`}
+									onPress={() => setSelectedWeek("this")}
+								>
+									<Text className="text-center">This Week</Text>
+								</Pressable>
 							</View>
 						</View>
 					</View>
