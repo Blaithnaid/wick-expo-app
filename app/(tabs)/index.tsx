@@ -22,7 +22,6 @@ export default function HomeScreen() {
 	];
 
 	const recommendedCards = [
-		{ name: "Tips & Tricks", color: "bg-purple-500" },
 		{ name: "Monetisation", color: "bg-indigo-500" },
 		{ name: "Analytics", color: "bg-red-500", route: "(analytics)" },
 		{ name: "Trends", color: "bg-cyan-500" },
@@ -74,7 +73,6 @@ export default function HomeScreen() {
 				{recommendedCards.map((card, index) => (
 					<Link asChild key={index} href={`/${card.route || card.name}`}>
 						<Pressable
-							key={index}
 							className={`${card.color} p-5 rounded-xl items-center shadow-lg w-[48%]`}
 							style={{ elevation: 10 }}
 						>
@@ -82,7 +80,18 @@ export default function HomeScreen() {
 						</Pressable>
 					</Link>
 				))}
+
+				{/* Tips & Tricks Button */}
+				<Link asChild href="/tipstricks.tsx">
+				<Pressable
+					className="bg-purple-500 p-5 rounded-xl items-center shadow-lg w-[48%]"
+					style={{ elevation: 10 }}
+				>
+					<Text className="text-white text-lg font-bold">Tips & Tricks</Text>
+				</Pressable>
+				</Link>
 			</View>
+
 			<View className="w-[90%] h-1 bg-gray-200 dark:bg-gray-600 rounded-xl mt-6 mb-4" />
 			{/* Task Progress Section */}
 			<Text className="w-[90%] text-lg font-semibold -mb-px">In progress</Text>
