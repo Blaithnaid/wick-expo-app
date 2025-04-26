@@ -79,27 +79,25 @@ const CalendarScreen = () => {
 	const [viewDate, setViewDate] = useState(new Date());
 
 	// Default categories with pastel colours
-	const [categoryColors, setCategoryColors] = useState<
-		Record<string, Category>
-	>({
+	const [categoryColors, setCategoryColors] = useState<Record<string, Category>>({
 		Content: {
 			name: "Content",
 			bg: "#F3EFFC",
-			bgdark: "4a4676",
+			bgdark: "#4a4676",
 			dot: "#6c5ce7",
 			border: "#6c5ce7",
 		},
 		Social: {
 			name: "Social",
 			bg: "#E6F7F1",
-			bgdark: "2b6b5c",
+			bgdark: "#2b6b5c",
 			dot: "#00b894",
 			border: "#00b894",
 		},
 		Work: {
 			name: "Work",
 			bg: "#E6F2FA",
-			bgdark: "2A5470",
+			bgdark: "#2A5470",
 			dot: "#0984e3",
 			border: "#0984e3",
 		},
@@ -439,8 +437,9 @@ const CalendarScreen = () => {
 								<View
 									className="mb-3 p-3 rounded-lg flex-row items-center justify-between"
 									style={{
-										backgroundColor:
-											categoryColors[item.category]?.bg || "#f5f5f5",
+										backgroundColor: colorScheme === "dark"
+										? categoryColors[item.category]?.bgdark || "#4A4A4A"
+										: categoryColors[item.category]?.bg || "#f5f5f5",
 										opacity: item.completed ? 0.7 : 1,
 									}}
 								>
@@ -701,7 +700,9 @@ const CalendarScreen = () => {
 														: ""
 												}`}
 												style={{
-													backgroundColor: categoryColors[categoryName].bg,
+													backgroundColor: colorScheme === "dark"
+														? categoryColors[categoryName].bgdark || "#4A4A4A"
+														: categoryColors[categoryName].bg,
 													borderColor:
 														selectedCategory === categoryName
 															? categoryColors[categoryName].border
@@ -716,7 +717,7 @@ const CalendarScreen = () => {
 														backgroundColor: categoryColors[categoryName].dot,
 													}}
 												/>
-												<Text className="text-black mr-4">
+												<Text className={colorScheme === "dark" ? "text-white mr-4" : "text-black mr-4"}>
 													{categoryName}
 												</Text>
 											</TouchableOpacity>
@@ -765,6 +766,8 @@ const CalendarScreen = () => {
 				>
 					<View className="flex-1 justify-center items-center bg-black bg-opacity-50">
 						<View className="bg-white dark:bg-gray-800 rounded-lg w-11/12 p-4">
+
+
 							{/* Modal Header */}
 							<View className="flex-row justify-between items-center mb-4">
 								<Text className="text-xl font-bold text-black dark:text-white">Add New Category</Text>
@@ -808,18 +811,22 @@ const CalendarScreen = () => {
 							<View
 								className="mb-4 p-4 rounded-lg"
 								style={{
-									backgroundColor:
-										colorOptions.find((c) => c.main === selectedColor)?.bg ||
-										"#f5f5f5",
-								}}
+									backgroundColor: colorScheme === "dark"
+									? colorOptions.find((c) => c.main === selectedColor)?.bgdark || "#4A4A4A"
+									: colorOptions.find((c) => c.main === selectedColor)?.bg || "#f5f5f5",
+							}}
+								
 							>
-								<Text className="text-gray-700 mb-1">Preview:</Text>
+								<Text className={colorScheme === "dark" ? "text-gray-300 mb-1" : "text-gray-700 mb-1"}>
+        							Preview:
+  									  </Text>
 								<View className="flex-row items-center">
 									<View
 										className="w-4 h-4 rounded-full mr-2"
 										style={{ backgroundColor: selectedColor }}
 									/>
-									<Text className="text-black">{newCategoryName || "New Category"}</Text>
+									<Text className={colorScheme === "dark" ? "text-white" : "text-black"}>
+									{newCategoryName || "New Category"}</Text>
 								</View>
 							</View>
 
