@@ -22,6 +22,32 @@ export default function Trends() {
         X: 'bg-black',
         Twitch: 'bg-purple-700',
       };
+
+	  const calendarEvents = [
+	
+		{ date: "January 1", title: "New Year's Day", desceiption: "Create content celebrating the new year, using hashtags like #NewYearsDay and #HappyNewYear."},	
+		{ date: "February 1", title: "Lunar New Year", idea: "Share festive content, traditions, and celebrations." },
+		{ date: "February 14", title: "Valentine's Day", desceiption: "Share content celebrating love and relationships, using hashtags like #ValentinesDay and #Love."},
+		{ date: "March 17", title: "St. Patrick's Day", desceiption: "Create content celebrating Irish culture and traditions, wearing green, and using hashtags like #StPatricksDay and #LuckOfTheIrish."},
+		{ date: "Mar 30", title: "Mother's Day (Ireland & UK)", idea: "Celebrate your mum with throwbacks, reels, or heartfelt captions." },
+		{ date: "April 1", title: "April Fool's Day", desceiption: "Share funny pranks, jokes, and memes, using hashtags like #AprilFools and #PrankWars."}, 
+		{ date: "April 22", title: "Earth Day", idea: "Share eco-friendly tips, nature photos, and sustainability content." },
+		{ date: "May 1", title: "May Day", idea: "Share spring-themed content, flowers, and outdoor activities." },
+		{ date: "May 4", title: "Star Wars Day", desceiption: "Use 'May the 4th be with you' and star wars related memes and filters"},
+		{ date: "June 1-30", title: "Pride Month", idea: "Celebrate LGBTQ+ voices, use rainbow filters, and share supportive content." },
+		{ date: "June 18", title: "Father's Day", desceiption: "Share content celebrating fathers and father figures, using hashtags like #FathersDay and #DadLife."},
+		{ date: "July 4", title: "Independence Day", desceiption: "Create content celebrating freedom and independence, using hashtags like #IndependenceDay and #FourthofJuly."},
+		{ date: "August 1", title: "International Friendship Day", idea: "Share content celebrating friendships, using hashtags like #FriendshipDay and #Besties." },
+		{ date: "August 26", title: "National Dog Day", idea: "Share cute dog photos, videos, and stories." },
+		{ date: "September 13", title: "International Chocolate Day", idea: "Share chocolate recipes, reviews, and fun facts." },
+		{ date: "October 31", title: "Halloween", desceiption: "Share spooky content, costumes, and Halloween-themed memes, using hashtags like #Halloween and #SpookySeason."},
+		{ date: "December 25", title: "Christmas", desceiption: "Share festive content, holiday traditions, and Christmas-themed memes, using hashtags like #Christmas and #MerryChristmas."},
+		
+		
+	];
+
+	
+		
       
 	return (
 		<ScrollView className="flex-1 px-5 pt-5 bg-white dark:bg-oxford-500">
@@ -30,6 +56,7 @@ export default function Trends() {
 			</Text>
 
 			{trends.map((trend, index) => (
+				
 				<View
 					key={index}
 					className={`rounded-2xl p-5 mb-6 shadow-md ${platformColors[trend.platform] || 'bg-gray-200'}`}
@@ -44,7 +71,11 @@ export default function Trends() {
 						</Text>
 					</View>
 					<Text className="text-white text-base">{trend.description}</Text>
+
+					
 				</View>
+
+				
 			))}
 		</ScrollView>
 	);
