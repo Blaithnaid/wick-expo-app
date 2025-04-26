@@ -1,5 +1,5 @@
 import { View, Text } from "@/components/Themed";
-import { View as UView } from "react-native";
+import { View as RNView } from "react-native";
 import { router } from "expo-router";
 import { Pressable } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -42,7 +42,9 @@ const ThemeMenu = () => {
 			android_ripple={{ color: "gray" }}
 			onPress={onPress}
 		>
-			<Text className="text-black text-xl dark:text-white my-1">Set theme</Text>
+			<Text className="text-black self-center text-xl dark:text-white my-1">
+				Set theme
+			</Text>
 			<FontAwesome
 				name="chevron-right"
 				size={16}
@@ -57,7 +59,7 @@ export default function SettingsScreen() {
 	const auth = useAuthContext();
 
 	return (
-		<View className="flex-1 w-full items-center justify-center bg-white dark:bg-oxford-500">
+		<View className="flex-1 w-full items-center  bg-white dark:bg-oxford-500">
 			<View className="flex-1 items-center h-full w-full web:max-w-3xl web:self-center web:mx-auto">
 				<Pressable
 					className="bg-oxford-100 dark:bg-oxford-800 my-3 px-4 py-6 w-[95%] rounded-2xl flex flex-row items-center"
@@ -70,7 +72,7 @@ export default function SettingsScreen() {
 						}
 					}}
 				>
-					<View className="bg-gray-300 dark:bg-slate-900 overflow-hidden rounded-full size-20 flex items-center justify-center self-center">
+					<View className="bg-gray-300 dark:bg-slate-900 overflow-hidden rounded-full size-20 flex items-center  self-center">
 						{auth.user?.photoURL ? (
 							<Image
 								source={{ uri: auth.user.photoURL }}
@@ -89,16 +91,16 @@ export default function SettingsScreen() {
 							/>
 						)}
 					</View>
-					<UView className="ml-3 bg-transparent dark:bg-transparent">
+					<RNView className="ml-3 bg-transparent dark:bg-transparent">
 						<Text className="text-2xl font-bold text-lavender-400 dark:text-lavender-400">
 							{auth.profile ? auth.profile.displayName : "Create account"}
 						</Text>
-						<Text className="text-md text-black dark:text-slate-300">
+						<Text className="text-md text-black self-center dark:text-slate-300">
 							{auth.profile
 								? auth.profile.email
 								: "Tap here to sign up or log in!"}
 						</Text>
-					</UView>
+					</RNView>
 				</Pressable>
 				<Text className="font-bold text-xl text-left w-full pl-3 my-2.5">
 					Account
@@ -110,7 +112,7 @@ export default function SettingsScreen() {
 							android_ripple={{ color: "gray" }}
 							onPress={() => auth.logout()}
 						>
-							<Text className="text-black text-xl dark:text-white my-1">
+							<Text className="text-black self-center text-xl dark:text-white my-1">
 								Log out
 							</Text>
 							<FontAwesome
@@ -126,7 +128,7 @@ export default function SettingsScreen() {
 						android_ripple={{ color: "gray" }}
 						onPress={() => console.log("Current profile name: ", auth.profile)}
 					>
-						<Text className="text-black text-xl dark:text-white my-1">
+						<Text className="text-black self-center text-xl dark:text-white my-1">
 							Debug user info
 						</Text>
 						<FontAwesome
@@ -140,6 +142,24 @@ export default function SettingsScreen() {
 						Appearance
 					</Text>
 					<ThemeMenu />
+					<Text className="font-bold text-xl text-left w-full pl-3 mt-16 my-2.5">
+						Credits
+					</Text>
+					<View className="dark:bg-oxford-400 bg-neutral-300 p-3 web:rounded-b-xl w-full flex flex-row justify-between items-center border-t border-oxford-300">
+						<Text className="text-black text-center w-full self-center font-light text-xl dark:text-white my-1">
+							Louiza Moran
+						</Text>
+					</View>
+					<View className="dark:bg-oxford-400 bg-neutral-300 p-3 web:rounded-b-xl w-full flex flex-row justify-between items-center border-y border-oxford-300">
+						<Text className="text-black text-center w-full self-center font-light text-xl dark:text-white my-1">
+							Kieran O'Callaghan
+						</Text>
+					</View>
+					<View className="dark:bg-oxford-400 bg-neutral-300 p-3 web:rounded-b-xl w-full flex flex-row justify-between items-center border-b border-oxford-300">
+						<Text className="text-black text-center w-full self-center font-light text-xl dark:text-white my-1">
+							Iarla Sparrow Burke
+						</Text>
+					</View>
 				</View>
 			</View>
 		</View>
