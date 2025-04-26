@@ -7,11 +7,11 @@ import {
 	ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, Link } from "expo-router";
 import { router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import { Pressable, View } from "react-native";
+import { Pressable, View, Platform } from "react-native";
 import "react-native-reanimated";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -30,7 +30,7 @@ export {
 
 export const unstable_settings = {
 	// Ensure that reloading on `/modal` keeps a back button present.
-	initialRouteName: "(tabs)",
+	initialRouteName: "index",
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -101,10 +101,51 @@ function RootLayoutNav() {
 					name="importer"
 					options={{
 						presentation: "modal",
-						headerTitle: "Import a profile", // Change the header text
+						headerTitle: "Import a profile",
+						headerRight: () => (
+							<Link href="/profilemodal" asChild>
+								<Pressable>
+									{({ pressed }) => (
+										<FontAwesome
+											name="info-circle"
+											size={20}
+											color={Colors[colorScheme ?? "light"].text}
+											className="mr-4"
+											style={{
+												opacity: pressed ? 0.5 : 1,
+											}}
+										/>
+									)}
+								</Pressable>
+							</Link>
+						),
 						headerStyle: {
 							backgroundColor: Colors[colorScheme ?? "light"].headerBackground,
 						},
+						headerTintColor: Colors[colorScheme ?? "light"].text,
+					}}
+				/>
+				<Stack.Screen
+					name="profilemodal"
+					options={{
+						presentation: "modal",
+						headerTitle: "How do I get a profile export?",
+						headerStyle: {
+							backgroundColor: Colors[colorScheme ?? "light"].headerBackground,
+						},
+						...(Platform.OS === "ios"
+							? {
+									headerLeft: () => (
+										<View className="flex-row">
+											<Pressable onPress={() => router.dismiss()}>
+												<Text className="color-iguana-400 dark:color-iguana-400">
+													Close
+												</Text>
+											</Pressable>
+										</View>
+									),
+								}
+							: {}),
 						headerTintColor: Colors[colorScheme ?? "light"].text,
 					}}
 				/>
@@ -123,19 +164,19 @@ function RootLayoutNav() {
 						headerStyle: {
 							backgroundColor: Colors[colorScheme ?? "light"].headerBackground,
 						},
-						headerLeft: () => (
-							<View className="flex-row">
-								<Pressable
-									onPress={() => {
-										router.dismiss();
-									}}
-								>
-									<Text className="color-iguana-400 dark:color-iguana-400">
-										Cancel
-									</Text>
-								</Pressable>
-							</View>
-						),
+						...(Platform.OS === "ios"
+							? {
+									headerLeft: () => (
+										<View className="flex-row">
+											<Pressable onPress={() => router.dismiss()}>
+												<Text className="color-iguana-400 dark:color-iguana-400">
+													Close
+												</Text>
+											</Pressable>
+										</View>
+									),
+								}
+							: {}),
 						headerTintColor: Colors[colorScheme ?? "light"].text,
 						animation: "slide_from_bottom",
 					}}

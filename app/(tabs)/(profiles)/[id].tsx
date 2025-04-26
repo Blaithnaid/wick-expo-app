@@ -218,7 +218,7 @@ export default function InstagramProfileViewerScreen() {
 										}}
 										className="dark:bg-lavender-400 bg-lavender-300"
 									>
-										<ButtonText className="dark:text-white text-black">
+										<ButtonText className="dark:text-white text-white">
 											Close
 										</ButtonText>
 									</Button>

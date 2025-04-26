@@ -14,7 +14,6 @@ function TabBarIcon(props: {
 }) {
 	return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
-
 export default function TabLayout() {
 	const colorScheme = useColorScheme().colorScheme;
 
@@ -25,6 +24,7 @@ export default function TabLayout() {
 				headerShown: useClientOnlyValue(false, true),
 				tabBarStyle: {
 					backgroundColor: Colors[colorScheme ?? "light"].headerBackground,
+					...(Platform.OS === "web" && { minHeight: 60 }), // Apply minHeight only on web
 				},
 				headerStyle: {
 					backgroundColor: Colors[colorScheme ?? "light"].headerBackground,
@@ -40,10 +40,11 @@ export default function TabLayout() {
 			}}
 		>
 			<Tabs.Screen
-				name="index"
+				name="(home)"
 				options={{
 					title: "Home",
 					tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+					headerShown: false,
 				}}
 			/>
 			<Tabs.Screen
@@ -68,10 +69,10 @@ export default function TabLayout() {
 								{({ pressed }) => (
 									<FontAwesome
 										name="info-circle"
-										size={25}
+										size={20}
 										color={Colors[colorScheme ?? "light"].text}
+										className="mr-4"
 										style={{
-											marginRight: 15,
 											opacity: pressed ? 0.5 : 1,
 										}}
 									/>
