@@ -71,7 +71,7 @@ export default function HomeScreen() {
 			</Text>
 			<View className="flex-row flex-wrap justify-center w-full px-2 gap-2">
 			
-				<Link href="/trends" asChild>
+				<Link href="/Trends" asChild>
 					<Pressable
 					className="bg-blue-500 p-5 rounded-xl items-center shadow-lg w-[48%]"
 					style={{ elevation: 10 }}
