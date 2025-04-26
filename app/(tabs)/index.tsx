@@ -25,7 +25,6 @@ export default function HomeScreen() {
 		{ name: "Tips & Tricks", color: "bg-purple-500" },
 		{ name: "Monetisation", color: "bg-indigo-500" },
 		{ name: "Analytics", color: "bg-red-500", route: "(analytics)" },
-		{ name: "Trends", color: "bg-cyan-500" },
 	];
 
 	return (
@@ -71,18 +70,30 @@ export default function HomeScreen() {
 				Recommended for You
 			</Text>
 			<View className="flex-row flex-wrap justify-center w-full px-2 gap-2">
+				{/* Trend Button */}
+				<Link href="/trends" asChild>
+					<Pressable
+					className="bg-blue-500 p-5 rounded-xl items-center shadow-lg w-[48%]"
+					style={{ elevation: 10 }}
+					>
+					<Text className="text-white text-lg font-bold">Trends</Text>
+					</Pressable>
+				</Link>
+
+				{/* Your mapped dynamic cards */}
 				{recommendedCards.map((card, index) => (
 					<Link asChild key={index} href={`/${card.route || card.name}`}>
-						<Pressable
-							key={index}
-							className={`${card.color} p-5 rounded-xl items-center shadow-lg w-[48%]`}
-							style={{ elevation: 10 }}
-						>
-							<Text className="text-white text-lg font-bold">{card.name}</Text>
-						</Pressable>
+					<Pressable
+						key={index}
+						className={`${card.color} p-5 rounded-xl items-center shadow-lg w-[48%]`}
+						style={{ elevation: 10 }}
+					>
+						<Text className="text-white text-lg font-bold">{card.name}</Text>
+					</Pressable>
 					</Link>
 				))}
-			</View>
+				</View>
+
 			<View className="w-[90%] h-1 bg-gray-200 dark:bg-gray-600 rounded-xl mt-6 mb-4" />
 			{/* Task Progress Section */}
 			<Text className="w-[90%] text-lg font-semibold -mb-px">In progress</Text>
