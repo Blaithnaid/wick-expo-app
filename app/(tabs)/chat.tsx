@@ -79,10 +79,10 @@ export default function ChatScreen() {
 									size={80}
 									color={colorScheme === "dark" ? "white" : "black"}
 								/>
-								<View className="mt-4 mb-3 h-[2px] rounded-full w-[55%] bg-slate-400" />
 								<Text className="text-xl text-center w-2/3">
 									Send a message to start chatting with Wickbot!
 								</Text>
+								<View className="mt-4 mb-3 h-[2px] rounded-full w-[55%] bg-slate-400" />
 								<Text className="text-lg text-center w-3/4 mt-4">
 									Click the icon in the top right to get some tips!
 								</Text>

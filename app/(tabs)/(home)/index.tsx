@@ -24,12 +24,16 @@ export default function HomeScreen() {
 	const recommendedCards = [
 		{ name: "Tips & Tricks", color: "bg-purple-500" },
 		{ name: "Monetisation", color: "bg-indigo-500" },
-		{ name: "Analytics", color: "bg-red-500", route: "(analytics)" },
+		{
+			name: "Analytics",
+			color: "bg-red-500",
+			route: "(tabs)/(home)/(analytics)",
+		},
 		{ name: "Trends", color: "bg-cyan-500" },
 	];
 
 	return (
-		<View className="w-full min-h-screen">
+		<View className="flex-1 bg-white dark:bg-oxford-500">
 			<ScrollView
 				className="w-full py-4 bg-white max-w-3xl mx-auto dark:bg-oxford-500"
 				contentContainerClassName="items-center"

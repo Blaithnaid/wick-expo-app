@@ -38,7 +38,7 @@ const ThemeMenu = () => {
 
 	return (
 		<Pressable
-			className="dark:bg-oxford-400 bg-neutral-300 p-3 w-full flex flex-row items-start border-y border-oxford-300"
+			className="dark:bg-oxford-400 bg-neutral-300 p-3 web:rounded-xl w-full flex flex-row items-start border-y border-oxford-300"
 			android_ripple={{ color: "gray" }}
 			onPress={onPress}
 		>
@@ -106,7 +106,7 @@ export default function SettingsScreen() {
 				<View className="w-full items-center">
 					{auth.profile ? (
 						<Pressable
-							className="dark:bg-oxford-400 bg-neutral-300 p-3 w-full flex flex-row items-start border-t border-oxford-300"
+							className="dark:bg-oxford-400 bg-neutral-300 p-3 web:rounded-t-xl w-full flex flex-row items-start border-t border-oxford-300"
 							android_ripple={{ color: "gray" }}
 							onPress={() => auth.logout()}
 						>
@@ -122,7 +122,7 @@ export default function SettingsScreen() {
 						</Pressable>
 					) : null}
 					<Pressable
-						className="dark:bg-oxford-400 bg-neutral-300 p-3 w-full flex flex-row items-start border-y border-oxford-300"
+						className="dark:bg-oxford-400 bg-neutral-300 p-3 web:rounded-b-xl w-full flex flex-row items-start border-y border-oxford-300"
 						android_ripple={{ color: "gray" }}
 						onPress={() => console.log("Current profile name: ", auth.profile)}
 					>
