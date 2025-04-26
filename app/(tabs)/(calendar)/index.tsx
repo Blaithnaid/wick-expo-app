@@ -521,8 +521,8 @@ const CalendarScreen = () => {
 				visible={modalVisible}
 				onRequestClose={handleCloseModal}
 			>
-				<View className="flex-1 justify-center items-center bg-black bg-opacity-50">
-					<View className="bg-white dark:bg-oxford-500 rounded-lg w-11/12 max-h-4/5">
+				<SafeAreaView className="flex-1 justify-center items-center bg-black/50">
+					<View className="bg-white dark:bg-oxford-500 rounded-lg w-11/12 max-h-2/3">
 						{/* Close button at top right */}
 						<View className="absolute top-2 right-2 z-10">
 							<TouchableOpacity className="p-2" onPress={handleCloseModal}>
@@ -754,7 +754,7 @@ const CalendarScreen = () => {
 							</View>
 						</ScrollView>
 					</View>
-				</View>
+				</SafeAreaView>
 			</Modal>
 
 			{/* Add Category Modal */}
