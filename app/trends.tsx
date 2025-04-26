@@ -8,10 +8,10 @@ export default function Trends() {
 	const trends = [
 		{ platform: "TikTok", title: "Interactive live streams", description: "Creators will use artificial intelligence to produce original videos, music, and effects, allowing audiences to interact in real time through polls, filters, and dynamic content tailored to viewer feedback." },
 		{ platform: "Instagram", title: "Photo Dumps", description: "Casual, messy photo carousels showing 'real' life moments often unedited, random, and authentic glimpses into someone’s week, trip, or mood, making social media feel more personal again." },
-		{ platform: "YouTube", title: "Day in My Life Vlogs", description: "Personal, chill vlogs that feel authentic and cozy featuring everyday routines, candid thoughts, aesthetic visuals, and subtle storytelling that makes viewers feel like they’re hanging out with a friend."},
+		{ platform: "YouTube", title: "Day in a Life Vlogs", description: "Personal, chill vlogs that feel authentic and cozy featuring everyday routines, candid thoughts, aesthetic visuals, and subtle storytelling that makes viewers feel like they’re hanging out with a friend."},
 		{ platform: "Facebook", title: "Live Streams", description:  "Streamers acting like characters and playing games to keep people engaged, often incorporating storytelling, giveaways, or challenges to boost viewer interaction and community participation." },
 		{ platform: "X", title: "Posting Video Clips", description: "Users are posting short, snappy video clips,from hot takes to highlights and memes to gather interest and drive traffic to their profiles or larger platforms like YouTube or Patreon." },
-		{ platform: "Twitch", title: "Streaming", description: "Big, high energy streams and IRL (in real life) content are trending streamers are engaging with audiences through live chats, spontaneous adventures, and creative content that blurs the line between entertainment and personal connection." },
+		{ platform: "Twitch", title: "Streaming Games", description: "Big, high energy streams and IRL (in real life) content are trending streamers are engaging with audiences through live chats, spontaneous adventures, and creative content that blurs the line between entertainment and personal connection." },
 	];
 
 	const platformColors: Record<string, string> = {
