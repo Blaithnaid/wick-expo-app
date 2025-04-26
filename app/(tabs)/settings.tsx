@@ -1,7 +1,7 @@
 import { View, Text } from "@/components/Themed";
 import { View as RNView } from "react-native";
 import { router } from "expo-router";
-import { Pressable } from "react-native";
+import { Pressable, Platform } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -61,9 +61,11 @@ export default function SettingsScreen() {
 
 	return (
 		<>
-			<Head>
-				<title>Settings | Wick</title>
-			</Head>
+			{Platform.OS === "web" ? (
+				<Head>
+					<title>Settings | Wick</title>
+				</Head>
+			) : null}
 			<View className="flex-1 w-full items-center  bg-white dark:bg-oxford-500">
 				<View className="flex-1 items-center h-full w-full web:max-w-3xl web:self-center web:mx-auto">
 					<Pressable

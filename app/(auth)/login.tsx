@@ -9,7 +9,7 @@ import {
 	FormControlHelper,
 	FormControlHelperText,
 } from "@/components/ui/form-control";
-import { Pressable } from "react-native";
+import { Pressable, Platform } from "react-native";
 import { router } from "expo-router";
 import Head from "expo-router/head";
 import { Input, InputField } from "@/components/ui/input";
@@ -44,9 +44,11 @@ export default function Login() {
 
 	return (
 		<>
-			<Head>
-				<title>Login | Wick</title>
-			</Head>
+			{Platform.OS === "web" ? (
+				<Head>
+					<title>Login | Wick</title>
+				</Head>
+			) : null}
 			<View className="flex-1 w-full items-center justify-center bg-white dark:bg-oxford-500">
 				<SafeAreaView className="web:max-w-3xl web:mx-auto w-full flex-1">
 					<View className="flex-1 justify-between">

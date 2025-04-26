@@ -1,18 +1,18 @@
-import { useState, useEffect } from "react";
-import { Pressable, Alert } from "react-native";
-import { SafeAreaView, ScrollView, View, Text } from "@/components/Themed";
-import { useAuthContext } from "@/services/AuthProvider";
-import { useFirebaseContext } from "@/services/FirebaseProvider";
+import { SafeAreaView, ScrollView, Text, View } from "@/components/Themed";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Input, InputField } from "@/components/ui/input";
+import { useAuthContext } from "@/services/AuthProvider";
+import { useFirebaseContext } from "@/services/FirebaseProvider";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Head from "expo-router/head";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { updateProfile } from "firebase/auth";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { doc, updateDoc } from "firebase/firestore";
-import Head from "expo-router/head";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { useEffect, useState } from "react";
+import { Alert, Pressable, Platform } from "react-native";
 
 export default function AccountSettings() {
 	const auth = useAuthContext();
@@ -104,9 +104,11 @@ export default function AccountSettings() {
 
 	return (
 		<>
-			<Head>
-				<title>Account Settings | Wick</title>
-			</Head>
+			{Platform.OS === "web" ? (
+				<Head>
+					<title>Account Settings | Wick</title>
+				</Head>
+			) : null}
 			<SafeAreaView className="flex-1 bg-white">
 				<ScrollView className="web:max-w-3xl self-center px-12 pt-10">
 					<View className="mb-6">

@@ -4,7 +4,7 @@ import { Input, InputField } from "@/components/ui/input";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { useActionSheet } from "@expo/react-native-action-sheet";
-import { ScrollView, Pressable } from "react-native";
+import { ScrollView, Pressable, Platform } from "react-native";
 import { BarChart } from "react-gifted-charts";
 import FontAwesome from "@expo/vector-icons/FontAwesome6";
 import { Stack } from "expo-router";
@@ -75,9 +75,11 @@ export default function AnalyticsScreen() {
 	if (!accessToken) {
 		return (
 			<>
-				<Head>
-					<title>Analytics | Wick</title>
-				</Head>
+				{Platform.OS === "web" ? (
+					<Head>
+						<title>Analytics | Wick</title>
+					</Head>
+				) : null}
 				<View>
 					<SafeAreaView className="flex-1 h-full w-full items-center justify-center">
 						<Text className="text-2xl">Enter your access token:</Text>
@@ -123,9 +125,11 @@ export default function AnalyticsScreen() {
 					),
 				}}
 			/>
-			<Head>
-				<title>Analytics | Wick</title>
-			</Head>
+			{Platform.OS === "web" ? (
+				<Head>
+					<title>Analytics | Wick</title>
+				</Head>
+			) : null}
 			<View className="flex-1 bg-white dark:bg-oxford-500">
 				<ScrollView
 					className="flex-1 h-full web:max-w-3xl web:mx-auto w-full bg-white dark:bg-oxford-500"

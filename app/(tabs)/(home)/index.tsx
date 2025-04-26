@@ -2,7 +2,7 @@ import { Text, View, Pressable } from "@/components/Themed";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import Head from "expo-router/head";
-import { ScrollView } from "react-native";
+import { ScrollView, Platform } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useAuthContext } from "@/services/AuthProvider";
 import { FontAwesome } from "@expo/vector-icons";
@@ -35,9 +35,11 @@ export default function HomeScreen() {
 
 	return (
 		<>
-			<Head>
-				<title>Home | Wick</title>
-			</Head>
+			{Platform.OS === "web" ? (
+				<Head>
+					<title>Home | Wick</title>
+				</Head>
+			) : null}
 			<View className="flex-1 bg-white dark:bg-oxford-500">
 				<ScrollView
 					className="w-full py-4 bg-white max-w-3xl mx-auto dark:bg-oxford-500"

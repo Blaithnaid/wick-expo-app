@@ -51,9 +51,11 @@ export default function Signup() {
 
 	return (
 		<>
-			<Head>
-				<title>Register | Wick</title>
-			</Head>
+			{Platform.OS === "web" ? (
+				<Head>
+					<title>Register | Wick</title>
+				</Head>
+			) : null}
 			<View className="flex-1 w-full items-center justify-center bg-white dark:bg-oxford-500">
 				<SafeAreaView className="web:max-w-3xl web:mx-auto flex-1 px-4">
 					<View className="flex-1 justify-between">

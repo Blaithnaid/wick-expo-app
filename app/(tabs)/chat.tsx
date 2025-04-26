@@ -66,9 +66,11 @@ export default function ChatScreen() {
 
 	return (
 		<>
-			<Head>
-				<title>Chat | Wick</title>
-			</Head>
+			{Platform.OS === "web" ? (
+				<Head>
+					<title>Chat | Wick</title>
+				</Head>
+			) : null}
 			<SafeAreaView className="flex-1">
 				<KeyboardAvoidingView
 					className="flex-1"

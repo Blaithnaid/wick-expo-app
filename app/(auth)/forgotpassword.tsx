@@ -17,6 +17,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome6";
 import { SafeAreaView, Text, View } from "@/components/Themed";
 import { useFirebaseContext } from "@/services/FirebaseProvider";
 import { sendPasswordResetEmail } from "firebase/auth";
+import { Platform } from "react-native";
 import Head from "expo-router/head";
 
 export default function ForgotPassword() {
@@ -37,9 +38,11 @@ export default function ForgotPassword() {
 
 	return (
 		<>
-			<Head>
-				<title>Forgot Password | Wick</title>
-			</Head>
+			{Platform.OS === "web" ? (
+				<Head>
+					<title>Forgot Password | Wick</title>
+				</Head>
+			) : null}
 			<View className="flex-1 w-full items-center justify-center bg-white dark:bg-oxford-500">
 				<SafeAreaView className="web:max-w-3xl web:mx-auto w-full flex-1">
 					<View className="flex-1 justify-between">

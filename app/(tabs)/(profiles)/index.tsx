@@ -92,9 +92,11 @@ export default function ProfilesScreen() {
 						headerRight: () => (auth.user ? <ProfilesMenu /> : <></>),
 					}}
 				/>
-				<Head>
-					<title>Profile Imports | Wick</title>
-				</Head>
+				{Platform.OS === "web" ? (
+					<Head>
+						<title>Profile Imports | Wick</title>
+					</Head>
+				) : null}
 				<View className="flex-1 items-center justify-center px-5 flex">
 					<FontAwesome
 						name="users"

@@ -3,6 +3,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Stack } from "expo-router";
 import Head from "expo-router/head";
+import { Platform } from "react-native";
 
 export default function ProfilesScreen() {
 	const colorScheme = useColorScheme().colorScheme;
@@ -15,9 +16,11 @@ export default function ProfilesScreen() {
 					headerTitle: "Profiles",
 				}}
 			/>
-			<Head>
-				<title>Profile Imports | Wick</title>
-			</Head>
+			{Platform.OS === "web" ? (
+				<Head>
+					<title>Profile Imports | Wick</title>
+				</Head>
+			) : null}
 			<View className="flex-1 w-full items-center justify-center bg-white dark:bg-oxford-500">
 				<View className="flex-1 max-w-3xl items-center justify-center px-5 flex">
 					<FontAwesome
