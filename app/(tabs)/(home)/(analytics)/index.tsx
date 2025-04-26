@@ -10,6 +10,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome6";
 import { Stack } from "expo-router";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import Colors from "@/constants/Colors";
+import Head from "expo-router/head";
 
 export default function AnalyticsScreen() {
 	const [accessToken, setAccessToken] = useState<string | null>(null);
@@ -108,6 +109,9 @@ export default function AnalyticsScreen() {
 	if (!accessToken) {
 		return (
 			<>
+				<Head>
+					<title>Analytics | Wick</title>
+				</Head>
 				<SafeAreaView className="flex-1 h-full w-full items-center justify-center">
 					<Text className="text-2xl">Enter your access token:</Text>
 					<Input variant="outline" size="md" className="w-3/4 mt-4">
@@ -151,6 +155,9 @@ export default function AnalyticsScreen() {
 					),
 				}}
 			/>
+			<Head>
+				<title>Analytics | Wick</title>
+			</Head>
 			<ScrollView
 				className="flex-1 h-full w-full bg-white dark:bg-oxford-500"
 				contentContainerClassName="items-center justify-center"

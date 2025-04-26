@@ -8,6 +8,7 @@ import { ScrollView, Pressable } from "react-native";
 import { BarChart } from "react-gifted-charts";
 import FontAwesome from "@expo/vector-icons/FontAwesome6";
 import { Stack } from "expo-router";
+import Head from "expo-router/head";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import Colors from "@/constants/Colors";
 
@@ -73,24 +74,29 @@ export default function AnalyticsScreen() {
 
 	if (!accessToken) {
 		return (
-			<View>
-				<SafeAreaView className="flex-1 h-full w-full items-center justify-center">
-					<Text className="text-2xl">Enter your access token:</Text>
-					<Input variant="outline" size="md" className="w-3/4 mt-4">
-						<InputField
-							className="dark:text-gray-200"
-							value={tokenInput}
-							onChangeText={setTokenInput}
-						/>
-					</Input>
-					<Button
-						onPress={handleSend}
-						className="bg-iguana-400 dark:bg-iguana-400 mt-4"
-					>
-						<ButtonText className="dark:text-white">Set token</ButtonText>
-					</Button>
-				</SafeAreaView>
-			</View>
+			<>
+				<Head>
+					<title>Analytics | Wick</title>
+				</Head>
+				<View>
+					<SafeAreaView className="flex-1 h-full w-full items-center justify-center">
+						<Text className="text-2xl">Enter your access token:</Text>
+						<Input variant="outline" size="md" className="w-3/4 mt-4">
+							<InputField
+								className="dark:text-gray-200"
+								value={tokenInput}
+								onChangeText={setTokenInput}
+							/>
+						</Input>
+						<Button
+							onPress={handleSend}
+							className="bg-iguana-400 dark:bg-iguana-400 mt-4"
+						>
+							<ButtonText className="dark:text-white">Set token</ButtonText>
+						</Button>
+					</SafeAreaView>
+				</View>
+			</>
 		);
 	}
 
@@ -117,6 +123,9 @@ export default function AnalyticsScreen() {
 					),
 				}}
 			/>
+			<Head>
+				<title>Analytics | Wick</title>
+			</Head>
 			<View className="flex-1 bg-white dark:bg-oxford-500">
 				<ScrollView
 					className="flex-1 h-full web:max-w-3xl web:mx-auto w-full bg-white dark:bg-oxford-500"

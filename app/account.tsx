@@ -12,6 +12,7 @@ import { sendPasswordResetEmail } from "firebase/auth";
 import { updateProfile } from "firebase/auth";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { doc, updateDoc } from "firebase/firestore";
+import Head from "expo-router/head";
 
 export default function AccountSettings() {
 	const auth = useAuthContext();
@@ -102,119 +103,126 @@ export default function AccountSettings() {
 	}
 
 	return (
-		<SafeAreaView className="flex-1 bg-white">
-			<ScrollView className="web:max-w-3xl self-center px-12 pt-10">
-				<View className="mb-6">
-					{/* profile picture */}
-					<View className="bg-gray-300 dark:bg-slate-900 overflow-hidden rounded-full size-32 flex items-center justify-center self-center">
-						{photoURL ? (
-							<Image
-								source={{ uri: photoURL }}
-								style={{
-									width: 120,
-									height: 120,
-									borderRadius: 64,
-									alignSelf: "center",
-								}}
-							/>
-						) : (
-							<FontAwesome
-								name="user"
-								size={120}
-								color={"gray"}
-								className="rounded-full"
-							/>
-						)}
-					</View>
-					<Pressable
-						className="self-center mt-2"
-						onPress={handlePickImage}
-						disabled={uploading}
-					>
-						<Text className="text-sm font-bold text-lavender-300 dark:text-lavender-300">
-							{uploading ? "Uploading..." : "Change profile picture"}
+		<>
+			<Head>
+				<title>Account Settings | Wick</title>
+			</Head>
+			<SafeAreaView className="flex-1 bg-white">
+				<ScrollView className="web:max-w-3xl self-center px-12 pt-10">
+					<View className="mb-6">
+						{/* profile picture */}
+						<View className="bg-gray-300 dark:bg-slate-900 overflow-hidden rounded-full size-32 flex items-center justify-center self-center">
+							{photoURL ? (
+								<Image
+									source={{ uri: photoURL }}
+									style={{
+										width: 120,
+										height: 120,
+										borderRadius: 64,
+										alignSelf: "center",
+									}}
+								/>
+							) : (
+								<FontAwesome
+									name="user"
+									size={120}
+									color={"gray"}
+									className="rounded-full"
+								/>
+							)}
+						</View>
+						<Pressable
+							className="self-center mt-2"
+							onPress={handlePickImage}
+							disabled={uploading}
+						>
+							<Text className="text-sm font-bold text-lavender-300 dark:text-lavender-300">
+								{uploading ? "Uploading..." : "Change profile picture"}
+							</Text>
+						</Pressable>
+						<Text className="text-lg text-center font-bold m-6">
+							Welcome to your account, {displayName}!
 						</Text>
-					</Pressable>
-					<Text className="text-lg text-center font-bold m-6">
-						Welcome to your account, {displayName}!
-					</Text>
-					<View className="mb-4">
-						<Text className="text-md text-gray-700 font-bold mb-1">
-							Username
-						</Text>
-						<Input variant="outline" size="md">
-							<InputField
-								className="dark:text-gray-200"
-								value={displayName}
-								onChangeText={setDisplayName}
-								editable={!editLoading}
-							/>
-							<FontAwesome
-								name="address-card"
-								size={20}
-								color={"#ffffff"}
-								className="rounded-full mr-3"
-							/>
-						</Input>
+						<View className="mb-4">
+							<Text className="text-md text-gray-700 font-bold mb-1">
+								Username
+							</Text>
+							<Input variant="outline" size="md">
+								<InputField
+									className="dark:text-gray-200"
+									value={displayName}
+									onChangeText={setDisplayName}
+									editable={!editLoading}
+								/>
+								<FontAwesome
+									name="address-card"
+									size={20}
+									color={"#ffffff"}
+									className="rounded-full mr-3"
+								/>
+							</Input>
+						</View>
+						<View className="mb-4">
+							<Text className="text-md text-gray-700 font-bold mb-1">
+								Full Name
+							</Text>
+							<Input variant="outline" size="md">
+								<InputField
+									className="dark:text-gray-200"
+									value={fullName}
+									onChangeText={setFullName}
+									editable={!editLoading}
+								/>
+								<FontAwesome
+									name="user"
+									size={20}
+									color={"#ffffff"}
+									className="rounded-full mr-3"
+								/>
+							</Input>
+						</View>
+						<View className="mb-4">
+							<Text className="text-md text-gray-700 dark:text-gray-200 font-bold mb-1">
+								Email
+							</Text>
+							<Input variant="outline" size="md">
+								<InputField
+									className="dark:text-gray-200"
+									value={auth.profile.email}
+									editable={false}
+								/>
+								<FontAwesome
+									name="envelope"
+									size={20}
+									color={"#ffffff"}
+									className="rounded-full mr-3"
+								/>
+							</Input>
+						</View>
 					</View>
-					<View className="mb-4">
-						<Text className="text-md text-gray-700 font-bold mb-1">
-							Full Name
-						</Text>
-						<Input variant="outline" size="md">
-							<InputField
-								className="dark:text-gray-200"
-								value={fullName}
-								onChangeText={setFullName}
-								editable={!editLoading}
-							/>
-							<FontAwesome
-								name="user"
-								size={20}
-								color={"#ffffff"}
-								className="rounded-full mr-3"
-							/>
-						</Input>
+					<View className="w-3/4 gap-8 self-center">
+						<Button
+							onPress={() => {
+								handlePasswordReset();
+							}}
+							className="bg-gray-400 dark:bg-gray-600"
+						>
+							<ButtonText className="dark:text-white">
+								Reset Password
+							</ButtonText>
+						</Button>
+						<Button
+							onPress={handleEditAccount}
+							className="bg-iguana-400 dark:bg-iguana-400"
+							disabled={editLoading}
+						>
+							<ButtonText className="dark:text-white">
+								{editLoading ? "Saving..." : "Edit Account"}
+							</ButtonText>
+						</Button>
 					</View>
-					<View className="mb-4">
-						<Text className="text-md text-gray-700 dark:text-gray-200 font-bold mb-1">
-							Email
-						</Text>
-						<Input variant="outline" size="md">
-							<InputField
-								className="dark:text-gray-200"
-								value={auth.profile.email}
-								editable={false}
-							/>
-							<FontAwesome
-								name="envelope"
-								size={20}
-								color={"#ffffff"}
-								className="rounded-full mr-3"
-							/>
-						</Input>
-					</View>
-				</View>
-				<View className="w-3/4 gap-8 self-center">
-					<Button
-						onPress={() => {
-							handlePasswordReset();
-						}}
-						className="bg-gray-400 dark:bg-gray-600"
-					>
-						<ButtonText className="dark:text-white">Reset Password</ButtonText>
-					</Button>
-					<Button
-						onPress={handleEditAccount}
-						className="bg-iguana-400 dark:bg-iguana-400"
-						disabled={editLoading}
-					>
-						<ButtonText className="dark:text-white">
-							{editLoading ? "Saving..." : "Edit Account"}
-						</ButtonText>
-					</Button>
-				</View>
-			</ScrollView>
-		</SafeAreaView>
+				</ScrollView>
+			</SafeAreaView>
+		</>
 	);
 }

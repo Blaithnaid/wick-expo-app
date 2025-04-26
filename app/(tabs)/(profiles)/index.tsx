@@ -1,14 +1,15 @@
-import { View, Text } from "@/components/Themed";
-import { Pressable, FlatList, Platform, TouchableOpacity } from "react-native";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Stack, Link } from "expo-router";
-import { useAuthContext } from "@/services/AuthProvider";
-import { useColorScheme } from "@/hooks/useColorScheme";
-import { Image } from "expo-image";
-import { InstagramProfile } from "@/constants/Instagram";
-import { useActionSheet } from "@expo/react-native-action-sheet";
-import { useProfiles } from "@/services/ProfilesProvider";
+import { Text, View } from "@/components/Themed";
 import Colors from "@/constants/Colors";
+import { InstagramProfile } from "@/constants/Instagram";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { useAuthContext } from "@/services/AuthProvider";
+import { useProfiles } from "@/services/ProfilesProvider";
+import { useActionSheet } from "@expo/react-native-action-sheet";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Image } from "expo-image";
+import { Link, Stack } from "expo-router";
+import Head from "expo-router/head";
+import { FlatList, Platform, Pressable, TouchableOpacity } from "react-native";
 
 const ProfilesMenu = () => {
 	const profiles = useProfiles();
@@ -91,6 +92,9 @@ export default function ProfilesScreen() {
 						headerRight: () => (auth.user ? <ProfilesMenu /> : <></>),
 					}}
 				/>
+				<Head>
+					<title>Profile Imports | Wick</title>
+				</Head>
 				<View className="flex-1 items-center justify-center px-5 flex">
 					<FontAwesome
 						name="users"
