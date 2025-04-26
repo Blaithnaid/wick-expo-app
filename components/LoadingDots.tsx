@@ -4,12 +4,17 @@ import { useRef, useEffect } from "react";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
 export function LoadingDots(props: { interval: number; size: number }) {
-	const dotAnims = [0, 1, 2].map(() => useRef(new Animated.Value(0)).current);
 	const colorScheme = useColorScheme().colorScheme;
 
+	const dotAnimRefs = [
+		useRef(new Animated.Value(0)),
+		useRef(new Animated.Value(0)),
+		useRef(new Animated.Value(0)),
+	];
+	const dotAnims = dotAnimRefs.map((ref) => ref.current);
+
 	useEffect(() => {
-		// Use resetBeforeIteration: false to avoid pausing before looping back
-		Animated.loop(
+		const animation = Animated.loop(
 			Animated.sequence([
 				Animated.timing(dotAnims[0], {
 					toValue: 1,
@@ -52,9 +57,19 @@ export function LoadingDots(props: { interval: number; size: number }) {
 					easing: Easing.inOut(Easing.ease),
 				}),
 			]),
-			{ resetBeforeIteration: false }
-		).start();
-	}, [dotAnims, props.interval]);
+			{ resetBeforeIteration: false },
+		);
+		animation.start();
+		return () => {
+			try {
+				if (animation && typeof animation.stop === "function") {
+					animation.stop();
+				}
+			} catch (error) {
+				console.warn("Animation cleanup error suppressed:", error);
+			}
+		};
+	}, [props.interval, dotAnims]);
 
 	const Dot = (index: number) => (
 		<Animated.View

@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, Platform } from "react-native";
 import { LoadingDots } from "@/components/LoadingDots";
 
 export default function ChatBubble({
@@ -17,11 +17,13 @@ export default function ChatBubble({
 			}`}
 		>
 			{!text ? (
-				<LoadingDots interval={300} size={8} />
+				Platform.OS !== "web" ? (
+					<LoadingDots interval={300} size={8} />
+				) : (
+					<Text className="text-black dark:text-white text-lg">. . .</Text>
+				)
 			) : (
-				<Text className="text-black dark:text-white text-lg">
-					{text}
-				</Text>
+				<Text className="text-black dark:text-white text-lg">{text}</Text>
 			)}
 		</View>
 	);

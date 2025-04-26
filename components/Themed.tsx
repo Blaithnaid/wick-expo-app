@@ -3,6 +3,7 @@
  * https://docs.expo.io/guides/color-schemes/
  */
 
+import { useState, useEffect, forwardRef } from "react";
 import {
 	Text as DefaultText,
 	View as DefaultView,
@@ -87,14 +88,21 @@ export function ScrollView(props: ViewProps) {
 	);
 }
 
-export function Pressable(props: ViewProps) {
-	const { className, ...otherProps } = props;
+export const Pressable = forwardRef<
+	any,
+	ViewProps & { toggle?: boolean; onPress?: () => void }
+>(({ className, toggle, onPress, ...otherProps }, ref) => {
+	const [isPressed, setIsPressed] = useState(false);
+
 	return (
 		<DefaultPressable
-			className={`bg-white dark:bg-oxford-500 ${
-				className ? className + " " : ""
-			}`}
+			ref={ref}
+			className={`${className ? className + " " : ""}`}
+			style={toggle && isPressed ? { opacity: 0.5 } : undefined}
+			onPressIn={() => toggle && setIsPressed(true)}
+			onPressOut={() => toggle && setIsPressed(false)}
+			onPress={onPress}
 			{...otherProps}
 		/>
 	);
-}
+});

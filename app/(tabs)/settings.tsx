@@ -1,12 +1,13 @@
 import { View, Text } from "@/components/Themed";
-import { View as UView } from "react-native";
+import { View as RNView } from "react-native";
 import { router } from "expo-router";
-import { Pressable } from "react-native";
+import { Pressable, Platform } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useAuthContext } from "@/services/AuthProvider";
 import { Image } from "expo-image";
+import Head from "expo-router/head";
 
 const ThemeMenu = () => {
 	const colorScheme = useColorScheme().colorScheme;
@@ -38,11 +39,13 @@ const ThemeMenu = () => {
 
 	return (
 		<Pressable
-			className="dark:bg-oxford-400 bg-neutral-300 p-3 w-full flex flex-row items-start border-y border-oxford-300"
+			className="dark:bg-oxford-400 bg-neutral-300 p-3 web:rounded-xl w-full flex flex-row items-start border-y border-oxford-300"
 			android_ripple={{ color: "gray" }}
 			onPress={onPress}
 		>
-			<Text className="text-black text-xl dark:text-white my-1">Set theme</Text>
+			<Text className="text-black self-center text-xl dark:text-white my-1">
+				Set theme
+			</Text>
 			<FontAwesome
 				name="chevron-right"
 				size={16}
@@ -57,89 +60,118 @@ export default function SettingsScreen() {
 	const auth = useAuthContext();
 
 	return (
-		<View className="flex-1 items-center h-full w-full">
-			<Pressable
-				className="bg-oxford-100 dark:bg-oxford-800 my-3 px-4 py-6 w-[95%] rounded-2xl flex flex-row items-center"
-				android_ripple={{ color: "gray" }}
-				onPress={() => {
-					if (!auth.profile) {
-						router.push("/(auth)/register");
-					} else {
-						router.push("/account");
-					}
-				}}
-			>
-				<View className="bg-black dark:bg-black overflow-hidden rounded-full size-20 flex items-center justify-center">
-					{auth.user ? (
-						<Image
-							source={{ uri: auth.user.photoURL }}
-							style={{
-								width: 70,
-								height: 70,
-								borderRadius: 64,
-							}}
-						/>
-					) : (
-						<FontAwesome
-							name="user"
-							size={64}
-							color={"#ffffff"}
-							className="rounded-full"
-						/>
-					)}
-				</View>
-				<UView className="ml-3 bg-transparent dark:bg-transparent">
-					<Text className="text-2xl font-bold text-lavender-400 dark:text-lavender-400">
-						{auth.profile ? auth.profile.displayName : "Create account"}
-					</Text>
-					<Text className="text-md text-black dark:text-slate-300">
-						{auth.profile
-							? auth.profile.email
-							: "Tap here to sign up or log in!"}
-					</Text>
-				</UView>
-			</Pressable>
-			<Text className="font-bold text-xl text-left w-full pl-3 my-2.5">
-				Account
-			</Text>
-			<View className="w-full items-center">
-				{auth.profile ? (
+		<>
+			{Platform.OS === "web" ? (
+				<Head>
+					<title>Settings | Wick</title>
+				</Head>
+			) : null}
+			<View className="flex-1 w-full items-center  bg-white dark:bg-oxford-500">
+				<View className="flex-1 items-center h-full w-full web:max-w-3xl web:self-center web:mx-auto">
 					<Pressable
-						className="dark:bg-oxford-400 bg-neutral-300 p-3 w-full flex flex-row items-start border-t border-oxford-300"
+						className="bg-oxford-100 dark:bg-oxford-800 my-3 px-4 py-6 w-[95%] rounded-2xl flex flex-row items-center"
 						android_ripple={{ color: "gray" }}
-						onPress={() => auth.logout()}
+						onPress={() => {
+							if (!auth.profile) {
+								router.push("/(auth)/register");
+							} else {
+								router.push("/account");
+							}
+						}}
 					>
-						<Text className="text-black text-xl dark:text-white my-1">
-							Log out
-						</Text>
-						<FontAwesome
-							name="chevron-right"
-							size={16}
-							color={"#ffffff"}
-							className="ml-auto pt-2.5"
-						/>
+						<View className="bg-gray-300 dark:bg-slate-900 overflow-hidden rounded-full size-20 flex items-center  self-center">
+							{auth.user?.photoURL ? (
+								<Image
+									source={{ uri: auth.user.photoURL }}
+									style={{
+										width: 70,
+										height: 70,
+										borderRadius: 64,
+									}}
+								/>
+							) : (
+								<FontAwesome
+									name="user"
+									size={80}
+									color={"gray"}
+									className="rounded-full"
+								/>
+							)}
+						</View>
+						<RNView className="ml-3 bg-transparent dark:bg-transparent">
+							<Text className="text-2xl font-bold text-lavender-400 dark:text-lavender-400">
+								{auth.profile ? auth.profile.displayName : "Create account"}
+							</Text>
+							<Text className="text-md text-black self-center dark:text-slate-300">
+								{auth.profile
+									? auth.profile.email
+									: "Tap here to sign up or log in!"}
+							</Text>
+						</RNView>
 					</Pressable>
-				) : null}
-				<Pressable
-					className="dark:bg-oxford-400 bg-neutral-300 p-3 w-full flex flex-row items-start border-y border-oxford-300"
-					android_ripple={{ color: "gray" }}
-					onPress={() => console.log("Current profile name: ", auth.profile)}
-				>
-					<Text className="text-black text-xl dark:text-white my-1">
-						Debug user info
+					<Text className="font-bold text-xl text-left w-full pl-3 my-2.5">
+						Account
 					</Text>
-					<FontAwesome
-						name="chevron-right"
-						size={16}
-						color={"#ffffff"}
-						className="ml-auto pt-2.5"
-					/>
-				</Pressable>
-				<Text className="font-bold text-xl text-left w-full pl-3 mt-4 my-2.5">
-					Appearance
-				</Text>
-				<ThemeMenu />
+					<View className="w-full items-center">
+						{auth.profile ? (
+							<Pressable
+								className="dark:bg-oxford-400 bg-neutral-300 p-3 web:rounded-t-xl w-full flex flex-row items-start border-t border-oxford-300"
+								android_ripple={{ color: "gray" }}
+								onPress={() => auth.logout()}
+							>
+								<Text className="text-black self-center text-xl dark:text-white my-1">
+									Log out
+								</Text>
+								<FontAwesome
+									name="chevron-right"
+									size={16}
+									color={"#ffffff"}
+									className="ml-auto pt-2.5"
+								/>
+							</Pressable>
+						) : null}
+						<Pressable
+							className="dark:bg-oxford-400 bg-neutral-300 p-3 web:rounded-b-xl w-full flex flex-row items-start border-y border-oxford-300"
+							android_ripple={{ color: "gray" }}
+							onPress={() =>
+								console.log("Current profile name: ", auth.profile)
+							}
+						>
+							<Text className="text-black self-center text-xl dark:text-white my-1">
+								Debug user info
+							</Text>
+							<FontAwesome
+								name="chevron-right"
+								size={16}
+								color={"#ffffff"}
+								className="ml-auto pt-2.5"
+							/>
+						</Pressable>
+						<Text className="font-bold text-xl text-left w-full pl-3 mt-4 my-2.5">
+							Appearance
+						</Text>
+						<ThemeMenu />
+						<Text className="font-bold text-xl text-left w-full pl-3 mt-16 my-2.5">
+							Credits
+						</Text>
+						<View className="dark:bg-oxford-400 bg-neutral-300 p-3 web:rounded-t-xl w-full flex flex-row justify-between items-center border-t border-oxford-300">
+							<Text className="text-black text-center w-full self-center font-light text-xl dark:text-white my-1">
+								Louiza Moran
+							</Text>
+						</View>
+						<View className="dark:bg-oxford-400 bg-neutral-300 p-3 w-full flex flex-row justify-between items-center border-y border-oxford-300">
+							<Text className="text-black text-center w-full self-center font-light text-xl dark:text-white my-1">
+								Kieran O'Callaghan
+							</Text>
+						</View>
+						<View className="dark:bg-oxford-400 bg-neutral-300 p-3 web:rounded-b-xl w-full flex flex-row justify-between items-center border-b border-oxford-300">
+							<Text className="text-black text-center w-full self-center font-light text-xl dark:text-white my-1">
+								Iarla Sparrow Burke
+							</Text>
+						</View>
+					</View>
+				</View>
 			</View>
-		</View>
+		</>
 	);
 }

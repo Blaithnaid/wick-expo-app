@@ -13,9 +13,6 @@
 	"jest": {
 		"preset": "jest-expo"
 	},
-	"overrides": {
-		"@react-aria/utils": "3.27.0"
-	},
 	"dependencies": {
 		"@expo/html-elements": "^0.4.2",
 		"@expo/react-native-action-sheet": "^4.1.1",
@@ -36,6 +33,7 @@
 		"@react-native-async-storage/async-storage": "1.23.1",
 		"@react-navigation/native": "^7.0.14",
 		"ajv": "^8.17.1",
+		"@react-spring/web": "^9.7.5",
 		"axios": "^1.7.9",
 		"babel-plugin-module-resolver": "^5.0.2",
 		"expo": "~52.0.46",
@@ -48,6 +46,7 @@
 		"expo-haptics": "~14.0.1",
 		"expo-image": "~2.0.7",
 		"expo-image-picker": "~16.0.6",
+		"expo-linear-gradient": "~14.0.2",
 		"expo-linking": "~7.0.4",
 		"expo-router": "~4.0.20",
 		"expo-splash-screen": "~0.29.24",
@@ -64,6 +63,8 @@
 		"react-native-markdown-display": "^7.0.2",
 		"react-native-modal": "^14.0.0-rc.1",
 		"react-native-paper": "^5.13.1",
+		"react-gifted-charts": "^0.0.12",
+		"react-native-gifted-charts": "^1.4.60",
 		"react-native-reanimated": "~3.16.1",
 		"react-native-safe-area-context": "4.12.0",
 		"react-native-screens": "~4.4.0",
