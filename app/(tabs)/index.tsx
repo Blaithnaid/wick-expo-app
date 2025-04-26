@@ -70,7 +70,7 @@ export default function HomeScreen() {
 				Recommended for You
 			</Text>
 			<View className="flex-row flex-wrap justify-center w-full px-2 gap-2">
-				{/* Trend Button */}
+			
 				<Link href="/trends" asChild>
 					<Pressable
 					className="bg-blue-500 p-5 rounded-xl items-center shadow-lg w-[48%]"
@@ -80,7 +80,6 @@ export default function HomeScreen() {
 					</Pressable>
 				</Link>
 
-				{/* Your mapped dynamic cards */}
 				{recommendedCards.map((card, index) => (
 					<Link asChild key={index} href={`/${card.route || card.name}`}>
 					<Pressable
