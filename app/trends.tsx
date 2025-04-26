@@ -14,15 +14,15 @@ export default function Trends() {
 		{ platform: "Twitch", title: "Streaming", description: "Big, high energy streams and IRL (in real life) content are trending streamers are engaging with audiences through live chats, spontaneous adventures, and creative content that blurs the line between entertainment and personal connection." },
 	];
 
-	const platformColors = {
-		TikTok: "bg-blue-500",
-		Instagram: "bg-purple-500",
-		YouTube: "bg-red-500",
-        Facebook: "bg-green-500",
-        X: "bg-yellow-500",
-        Twitch: "bg-blue-500"
-	};
-
+	const platformColors: Record<string, string> = {
+        TikTok: 'bg-pink-500',
+        Instagram: 'bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500',
+        YouTube: 'bg-red-600',
+        Facebook: 'bg-blue-600',
+        X: 'bg-black',
+        Twitch: 'bg-purple-700',
+      };
+      
 	return (
 		<ScrollView className="flex-1 px-5 pt-5 bg-white dark:bg-oxford-500">
 			<Text className="text-4xl font-extrabold text-center mb-8 text-black dark:text-white">
