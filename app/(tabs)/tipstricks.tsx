@@ -41,7 +41,7 @@ const groupedTips = [
         thumbnail: 'https://img.youtube.com/vi/ZyJsH9X0MXY/0.jpg',
       },
       {
-        tip: '19 Things to Know Before Starting TikTok.',
+        tip: '19 TIps Before Starting TikTok.',
         videoUrl: 'https://youtu.be/ICU-j1pItlA?si=NOY-OgKfMMi9Spqm',
         thumbnail: 'https://img.youtube.com/vi/ICU-j1pItlA/0.jpg',
       },
@@ -71,12 +71,12 @@ const groupedTips = [
         thumbnail: 'https://img.youtube.com/vi/zH3eaMHVZs4/0.jpg',
       },
       {
-        tip: 'Use end screens and cards to promote other videos.',
+        tip: 'End screens/cards to promote other videos.',
         videoUrl: 'https://youtu.be/2Te4-B1wHAI?si=v63-TUIg34T2CoHw',
         thumbnail: 'https://img.youtube.com/vi/2Te4-B1wHAI/0.jpg',
       },
       {
-        tip: 'Optimize video titles and descriptions for SEO.',
+        tip: 'Optimize video titles & descriptions for SEO.',
         videoUrl: 'https://youtu.be/-uE4WxFX5XY?si=F4gOcUQz-EGa1E2r',
         thumbnail: 'https://img.youtube.com/vi/-uE4WxFX5XY/0.jpg',
       },
@@ -177,61 +177,75 @@ export default function TipsAndTricks() {
               }}
             >
               {group.videos.map((video, idx) => (
-                <Animated.View
-                  key={idx}
-                  style={{
-                    transform: [{ translateY: animations[index].translateY }],
-                    opacity: animations[index].opacity,
-                    marginRight: idx === group.videos.length - 1 ? 0 : 16, // Remove margin for the last video
-                    alignItems: 'center',
-                    backgroundColor: colorScheme.colorScheme === 'dark' ? '#2c2c2c' : '#f0f0f0',
-                    borderRadius: 8,
-                    overflow: 'hidden',
-                    width: 200,
-                  }}
-                >
-                  <Image
-                    source={{ uri: video.thumbnail }}
-                    style={{
-                      width: 192,
-                      height: 112,
-                      resizeMode: 'cover',
-                    }}
-                  />
-                  <View style={{ padding: 12 }}>
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: 'bold',
-                        textAlign: 'center',
-                        marginBottom: 8,
-                        color: textColor,
-                      }}
-                    >
-                      {video.tip}
-                    </Text>
-                    <Pressable
-                      onPress={() => Linking.openURL(video.videoUrl)}
-                      style={{
-                        backgroundColor: '#007bff',
-                        borderRadius: 8,
-                        paddingVertical: 8,
-                        paddingHorizontal: 16,
-                      }}
-                    >
-                      <Text
-                        style={{
-                          color: 'white',
-                          fontWeight: 'bold',
-                          textAlign: 'center',
-                        }}
-                      >
-                        🎥 Watch Video
-                      </Text>
-                    </Pressable>
-                  </View>
-                </Animated.View>
-              ))}
+  <Animated.View
+    key={idx}
+    style={{
+      transform: [{ translateY: animations[index].translateY }],
+      opacity: animations[index].opacity,
+      marginRight: idx === group.videos.length - 1 ? 0 : 16, // Remove margin for the last video
+      alignItems: 'center',
+      backgroundColor: colorScheme.colorScheme === 'dark' ? '#2c2c2c' : '#f0f0f0',
+      borderRadius: 8,
+      overflow: 'hidden',
+      width: 200,
+    }}
+  >
+    <Image
+      source={{ uri: video.thumbnail }}
+      style={{
+        width: 192,
+        height: 112,
+        resizeMode: 'cover',
+      }}
+    />
+    <View
+      style={{
+        padding: 12,
+        flex: 1,
+        justifyContent: 'space-between', // Distribute space between title and button
+      }}
+    >
+      {/* Title Container with Fixed Height */}
+      <View
+        style={{
+          minHeight: 40, // Ensure consistent height for all titles
+          justifyContent: 'center', // Center the text vertically
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 16,
+            fontWeight: 'bold',
+            textAlign: 'center',
+            marginBottom: 8,
+            color: textColor,
+          }}
+        >
+          {video.tip}
+        </Text>
+      </View>
+      <Pressable
+        onPress={() => Linking.openURL(video.videoUrl)}
+        style={{
+          backgroundColor: '#007bff',
+          borderRadius: 8,
+          paddingVertical: 8,
+          paddingHorizontal: 16,
+        }}
+      >
+        <Text
+          style={{
+            color: 'white',
+            fontWeight: 'bold',
+            textAlign: 'center',
+          }}
+        >
+          🎥 Watch Video
+        </Text>
+      </Pressable>
+    </View>
+  </Animated.View>
+))}
             </ScrollView>
           </View>
         ))}
