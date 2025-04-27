@@ -1,39 +1,98 @@
-import { View, Text, ScrollView, Image, Pressable, Linking, Animated } from 'react-native';
+import { ScrollView, Image, Pressable, Linking, Animated, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEffect, useRef } from 'react';
-import { LinearGradient } from 'expo-linear-gradient';
+import { useColorScheme } from '@/hooks/useColorScheme'; // Import the color scheme hook
+import { Text, View } from "@/components/Themed";
 
-const tips = [
+const { width } = Dimensions.get('window'); // Get screen width for responsive design
+
+const groupedTips = [
   {
     platform: 'Instagram',
-    tip: 'Use Reels and optimize hashtags.',
-    videoUrl: 'https://www.youtube.com/watch?v=insta_tips_456',
-    thumbnail: 'https://img.youtube.com/vi/insta_tips_456/0.jpg',
-    color: 'instagram',
+    videos: [
+      {
+        tip: 'Use Reels & optimize hashtags.',
+        videoUrl: 'https://youtu.be/rGJGmTIS5L0?si=pGrEQN5i4JD6djb1',
+        thumbnail: 'https://img.youtube.com/vi/rGJGmTIS5L0/0.jpg',
+      },
+      {
+        tip: 'Making Aesthetic Posts.',
+        videoUrl: 'https://youtu.be/EDS9sJFFBS8?si=RnjR0lbr2SqmpGrS',
+        thumbnail: 'https://img.youtube.com/vi/EDS9sJFFBS8/0.jpg',
+      },
+      {
+        tip: 'How to Gain Followers.',
+        videoUrl: 'https://youtu.be/7Eiqe_sShQg?si=mNDqMzT6Rz5d1c-v',
+        thumbnail: 'https://img.youtube.com/vi/7Eiqe_sShQg/0.jpg',
+      },
+      {
+        tip: 'Learning the Instagram Algorithm.',
+        videoUrl: 'https://youtu.be/aZH3c9NNqGs?si=3eyyFPyDRa6T9cyt',
+        thumbnail: 'https://img.youtube.com/vi/aZH3c9NNqGs/0.jpg',
+      },
+    ],
   },
   {
     platform: 'TikTok',
-    tip: 'Post consistently and use trending sounds!',
-    videoUrl: 'https://www.youtube.com/watch?v=tiktok_tips_123',
-    thumbnail: 'https://img.youtube.com/vi/tiktok_tips_123/0.jpg',
-    color: 'bg-black',
+    videos: [
+      {
+        tip: 'Grow your TikTok account.',
+        videoUrl: 'https://youtu.be/ZyJsH9X0MXY?si=PZo47XODleIqf2iU',
+        thumbnail: 'https://img.youtube.com/vi/ZyJsH9X0MXY/0.jpg',
+      },
+      {
+        tip: '19 Things to Know Before Starting TikTok.',
+        videoUrl: 'https://youtu.be/ICU-j1pItlA?si=NOY-OgKfMMi9Spqm',
+        thumbnail: 'https://img.youtube.com/vi/ICU-j1pItlA/0.jpg',
+      },
+      {
+        tip: 'Gaining Followers on TikTok.',
+        videoUrl: 'https://youtu.be/xbWFG_ECUhc?si=tD9uM2Bp6xIuYAnF',
+        thumbnail: 'https://img.youtube.com/vi/xbWFG_ECUhc/0.jpg',
+      },
+      {
+        tip: 'How to Monitise your TikTok account.',
+        videoUrl: 'https://youtu.be/YyLsCYBjUzI?si=zD_N8eF5GGHiEpfJ',
+        thumbnail: 'https://img.youtube.com/vi/YyLsCYBjUzI/0.jpg',
+      },
+    ],
   },
   {
     platform: 'YouTube',
-    tip: 'Engage in the first 15 seconds and use good thumbnails!',
-    videoUrl: 'https://www.youtube.com/watch?v=youtube_tips_789',
-    thumbnail: 'https://img.youtube.com/vi/youtube_tips_789/0.jpg',
-    color: 'bg-red-600',
+    videos: [
+      {
+        tip: '10 Youtube Short Hacks!',
+        videoUrl: 'https://youtu.be/agC7mcC7WoQ?si=1epj-7yXJQR9tXp7',
+        thumbnail: 'https://img.youtube.com/vi/agC7mcC7WoQ/0.jpg',
+      },
+      {
+        tip: 'Youtube Gear Checklist.',
+        videoUrl: 'https://youtu.be/zH3eaMHVZs4?si=zfcy8C0VLq4LRUmd',
+        thumbnail: 'https://img.youtube.com/vi/zH3eaMHVZs4/0.jpg',
+      },
+      {
+        tip: 'Use end screens and cards to promote other videos.',
+        videoUrl: 'https://youtu.be/2Te4-B1wHAI?si=v63-TUIg34T2CoHw',
+        thumbnail: 'https://img.youtube.com/vi/2Te4-B1wHAI/0.jpg',
+      },
+      {
+        tip: 'Optimize video titles and descriptions for SEO.',
+        videoUrl: 'https://youtu.be/-uE4WxFX5XY?si=F4gOcUQz-EGa1E2r',
+        thumbnail: 'https://img.youtube.com/vi/-uE4WxFX5XY/0.jpg',
+      },
+    ],
   },
 ];
 
 export default function TipsAndTricks() {
-  const animations = useRef(tips.map(() => ({
+  const animations = useRef(groupedTips.map(() => ({
     translateY: new Animated.Value(50),
     opacity: new Animated.Value(0),
   }))).current;
 
   const blogAnimations = useRef([new Animated.Value(1), new Animated.Value(1), new Animated.Value(1)]).current;
+
+  const colorScheme = useColorScheme(); // Detect system theme (light or dark)
 
   useEffect(() => {
     const animationsList = animations.map((anim, index) =>
@@ -70,80 +129,128 @@ export default function TipsAndTricks() {
     }).start();
   };
 
+  const backgroundColor = colorScheme.colorScheme === 'dark' ? '#1e1e1e' : '#ffffff'; // Match dark mode grayish color
+  const textColor = colorScheme.colorScheme === 'dark' ? '#ffffff' : '#000000';
+
   return (
-    <SafeAreaView className="flex-1 bg-white dark:bg-oxford-500">
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor }}>
+      <ScrollView contentContainerStyle={{ padding: 16, flexGrow: 1 }}>
         {/* Header */}
-        <Text className="text-3xl font-extrabold text-white text-center mb-8 py-2 px-6 rounded-lg border-4 border-green-600 shadow-lg bg-gradient-to-r from-green-500 to-teal-600">
+        <Text
+          style={{
+            fontSize: 24,
+            fontWeight: 'bold',
+            textAlign: 'center',
+            marginBottom: 16,
+            color: textColor,
+          }}
+        >
           🚀 Social Media Tips & Tricks
         </Text>
 
-        {tips.map((item, index) => {
-          const animationStyle = {
-            transform: [{ translateY: animations[index].translateY }],
-            opacity: animations[index].opacity,
-          };
-
-          // For Instagram specific styling
-          if (item.color === 'instagram') {
-            return (
-              <Animated.View key={index} style={[animationStyle]}>
-                <LinearGradient
-                  colors={['#f09433', '#e6683c', '#dc2743', '#cc2366', '#bc1888']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  className="mb-8 rounded-2xl overflow-hidden shadow-lg border-4 border-green-600"
+        {groupedTips.map((group, index) => (
+          <View
+            key={index}
+            style={{
+              marginBottom: 24,
+              width: '100%',
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: 'bold',
+                textAlign: 'center',
+                marginBottom: 12,
+                color: textColor,
+              }}
+            >
+              {group.platform}
+            </Text>
+            <ScrollView
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{
+                flexDirection: 'row',
+                alignItems: 'flex-start', // Ensure proper alignment
+                paddingHorizontal: 16,
+              }}
+            >
+              {group.videos.map((video, idx) => (
+                <Animated.View
+                  key={idx}
+                  style={{
+                    transform: [{ translateY: animations[index].translateY }],
+                    opacity: animations[index].opacity,
+                    marginRight: idx === group.videos.length - 1 ? 0 : 16, // Remove margin for the last video
+                    alignItems: 'center',
+                    backgroundColor: colorScheme.colorScheme === 'dark' ? '#2c2c2c' : '#f0f0f0',
+                    borderRadius: 8,
+                    overflow: 'hidden',
+                    width: 200,
+                  }}
                 >
                   <Image
-                    source={{ uri: item.thumbnail }}
-                    className="w-full h-48"
-                    resizeMode="cover"
+                    source={{ uri: video.thumbnail }}
+                    style={{
+                      width: 192,
+                      height: 112,
+                      resizeMode: 'cover',
+                    }}
                   />
-                  <View className="p-4">
-                    <Text className="text-xl font-bold text-white">{item.platform}</Text>
-                    <Text className="text-white/80 my-2">{item.tip}</Text>
-                    <Pressable
-                      onPress={() => Linking.openURL(item.videoUrl)}
-                      className="bg-white mt-4 rounded-full py-2 px-4"
+                  <View style={{ padding: 12 }}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                        marginBottom: 8,
+                        color: textColor,
+                      }}
                     >
-                      <Text className="text-center text-black font-semibold">🎥 Watch Video</Text>
+                      {video.tip}
+                    </Text>
+                    <Pressable
+                      onPress={() => Linking.openURL(video.videoUrl)}
+                      style={{
+                        backgroundColor: '#007bff',
+                        borderRadius: 8,
+                        paddingVertical: 8,
+                        paddingHorizontal: 16,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontWeight: 'bold',
+                          textAlign: 'center',
+                        }}
+                      >
+                        🎥 Watch Video
+                      </Text>
                     </Pressable>
                   </View>
-                </LinearGradient>
-              </Animated.View>
-            );
-          }
-
-          // For other platforms
-          return (
-            <Animated.View key={index} style={[animationStyle]}>
-              <View className={`mb-8 rounded-2xl overflow-hidden shadow-lg border-4 border-green-600 ${item.color}`}>
-                <Image
-                  source={{ uri: item.thumbnail }}
-                  className="w-full h-48"
-                  resizeMode="cover"
-                />
-                <View className="p-4">
-                  <Text className="text-xl font-bold text-white">{item.platform}</Text>
-                  <Text className="text-white/80 my-2">{item.tip}</Text>
-                  <Pressable
-                    onPress={() => Linking.openURL(item.videoUrl)}
-                    className="bg-white mt-4 rounded-full py-2 px-4"
-                  >
-                    <Text className="text-center text-black font-semibold">🎥 Watch Video</Text>
-                  </Pressable>
-                </View>
-              </View>
-            </Animated.View>
-          );
-        })}
+                </Animated.View>
+              ))}
+            </ScrollView>
+          </View>
+        ))}
 
         {/* Recommended Blogs */}
-        <Text className="text-2xl font-bold text-black dark:text-white mt-10 mb-4 text-center">
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: 'bold',
+            textAlign: 'center',
+            marginTop: 24,
+            marginBottom: 16,
+            color: textColor,
+          }}
+        >
           📝 Recommended Blogs
         </Text>
 
-        <View className="space-y-6 mb-10">
+        <View style={{ width: '100%', alignItems: 'center', marginBottom: 24 }}>
           {/* Blog 1 */}
           <Animated.View style={{ transform: [{ scale: blogAnimations[0] }] }}>
             <Pressable
@@ -152,16 +259,18 @@ export default function TipsAndTricks() {
               }
               onPressIn={() => handlePressIn(0)}
               onPressOut={() => handlePressOut(0)}
-              className="bg-blue-600 rounded-lg shadow-lg transform transition-all duration-300 border-4 border-green-600"
+              style={{
+                backgroundColor: '#007bff',
+                borderRadius: 8,
+                padding: 16,
+                marginBottom: 16,
+                width: width * 0.9,
+                alignItems: 'center',
+              }}
             >
-              <View className="flex-row items-center p-4">
-                <View className="bg-white rounded-full p-2 mr-4">
-                  <Text className="text-2xl text-blue-600">📈</Text> {/* Icon for Blog */}
-                </View>
-                <Text className="text-white font-semibold text-lg">
-                  How to Drive Organic Growth on Social Media
-                </Text>
-              </View>
+              <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>
+                📈 How to Drive Organic Growth on Social Media
+              </Text>
             </Pressable>
           </Animated.View>
 
@@ -173,37 +282,38 @@ export default function TipsAndTricks() {
               }
               onPressIn={() => handlePressIn(1)}
               onPressOut={() => handlePressOut(1)}
-              className="bg-green-600 rounded-lg shadow-lg transform transition-all duration-300 border-4 border-green-600"
+              style={{
+                backgroundColor: '#28a745',
+                borderRadius: 8,
+                padding: 16,
+                marginBottom: 16,
+                width: width * 0.9,
+                alignItems: 'center',
+              }}
             >
-              <View className="flex-row items-center p-4">
-                <View className="bg-white rounded-full p-2 mr-4">
-                  <Text className="text-2xl text-green-600">🔥</Text> {/* Icon for Blog */}
-                </View>
-                <Text className="text-white font-semibold text-lg">
-                  The Art of Engagement for Social Media Growth
-                </Text>
-              </View>
+              <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>
+                🔥 The Art of Engagement for Social Media Growth
+              </Text>
             </Pressable>
           </Animated.View>
 
           {/* Blog 3 */}
           <Animated.View style={{ transform: [{ scale: blogAnimations[2] }] }}>
             <Pressable
-              onPress={() =>
-                Linking.openURL('https://buffer.com/resources/')
-              }
+              onPress={() => Linking.openURL('https://buffer.com/resources/')}
               onPressIn={() => handlePressIn(2)}
               onPressOut={() => handlePressOut(2)}
-              className="bg-purple-600 rounded-lg shadow-lg transform transition-all duration-300 border-4 border-green-600"
+              style={{
+                backgroundColor: '#6f42c1',
+                borderRadius: 8,
+                padding: 16,
+                width: width * 0.9,
+                alignItems: 'center',
+              }}
             >
-              <View className="flex-row items-center p-4">
-                <View className="bg-white rounded-full p-2 mr-4">
-                  <Text className="text-2xl text-purple-600">📊</Text> {/* Icon for Blog */}
-                </View>
-                <Text className="text-white font-semibold text-lg">
-                  Buffer Resources for Social Media Growth
-                </Text>
-              </View>
+              <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>
+                📊 Buffer Resources for Social Media Growth
+              </Text>
             </Pressable>
           </Animated.View>
         </View>
