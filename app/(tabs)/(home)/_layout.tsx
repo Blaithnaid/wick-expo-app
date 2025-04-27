@@ -25,6 +25,13 @@ export default function TabLayout() {
 					headerShown: true,
 				}}
 			/>
+			<Stack.Screen
+				name="tiktok"
+				options={{
+					title: "TikTok Filters",
+					headerShown: true,
+				}}
+			/>
 		</Stack>
 	);
 }

@@ -25,7 +25,11 @@ export default function HomeScreen() {
 
 	const recommendedCards = [
 		{ name: "Tips & Tricks", color: "bg-purple-500" },
-		{ name: "Monetisation", color: "bg-indigo-500" },
+		{
+			name: "Filters",
+			color: "bg-indigo-500",
+			route: "(tabs)/(home)/tiktok",
+		},
 		{
 			name: "Analytics",
 			color: "bg-red-500",
@@ -68,7 +72,9 @@ export default function HomeScreen() {
 								)}
 							</View>
 							<View className="ml-3 flex flex-row">
-								<Text className="text-gray-500 text-xl">Hello, </Text>
+								<Text className="text-gray-500 text-xl">
+									Hello,{" "}
+								</Text>
 								<Text className="text-xl font-semibold text-indigo-600">
 									{auth.profile?.displayName || "Username"}!
 								</Text>
@@ -87,7 +93,11 @@ export default function HomeScreen() {
 					</Text>
 					<View className="flex-row flex-wrap justify-center w-full px-2 gap-2">
 						{recommendedCards.map((card, index) => (
-							<Link asChild key={index} href={`/${card.route || card.name}`}>
+							<Link
+								asChild
+								key={index}
+								href={`/${card.route || card.name}`}
+							>
 								<Pressable
 									key={index}
 									className={`${card.color} p-5 rounded-xl items-center shadow-lg w-[48%]`}
@@ -119,8 +129,13 @@ export default function HomeScreen() {
 									style={{
 										backgroundColor:
 											categories[task.category]?.[
-												colorScheme === "dark" ? "bgdark" : "bg"
-											] || (colorScheme === "dark" ? "#f5f5f5" : "#2E3443"),
+												colorScheme === "dark"
+													? "bgdark"
+													: "bg"
+											] ||
+											(colorScheme === "dark"
+												? "#f5f5f5"
+												: "#2E3443"),
 										elevation: 10,
 									}}
 								>
@@ -132,7 +147,11 @@ export default function HomeScreen() {
 											<FontAwesome
 												size={14}
 												name="clock-o"
-												color={colorScheme === "dark" ? "white" : "black"}
+												color={
+													colorScheme === "dark"
+														? "white"
+														: "black"
+												}
 												className="mr-1"
 											/>
 											<Text className="inline font-medium -translate-y-0.5">
