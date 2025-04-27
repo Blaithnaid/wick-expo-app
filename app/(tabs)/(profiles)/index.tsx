@@ -211,7 +211,7 @@ export default function ProfilesScreen() {
 					/>
 					<View className="mt-4 mb-3 h-0.5 rounded-full w-[55%] bg-slate-400" />
 					<Text className="text-xl text-center w-2/3">
-						You do not have any profiles imported!
+						You do not have any Instagram profiles imported!
 					</Text>
 					<Text className="text-lg text-oxford-400 text-center w-3/4 mt-4">
 						Click the icon in the top left to open the importer and get started!

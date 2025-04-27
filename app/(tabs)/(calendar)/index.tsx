@@ -18,15 +18,6 @@ import Head from "expo-router/head";
 import { FontAwesome } from "@expo/vector-icons";
 import { useTasks } from "@/services/TasksProvider";
 
-// Category type
-interface Category {
-	name: string;
-	bg: string;
-	bgdark: string;
-	dot: string;
-	border: string;
-}
-
 // Main Calendar Screen Component
 const CalendarScreen = () => {
 	const [modalVisible, setModalVisible] = useState(false);
@@ -41,15 +32,16 @@ const CalendarScreen = () => {
 	const [currentYear, setCurrentYear] = useState("");
 	const colorScheme = useColorScheme().colorScheme;
 
-	// Category creation
-	const [addCategoryModalVisible, setAddCategoryModalVisible] = useState(false);
-	const [newCategoryName, setNewCategoryName] = useState("");
-	const [selectedColor, setSelectedColor] = useState("#6c5ce7"); // Default purple
-
 	// using the tasks provider to get the tasks and add, delete, toggle tasks
-	const { tasks, addTask, deleteTask, toggleTaskCompleted, getTasksForDate } =
-		useTasks();
-	//const {saving, setSaving} = useState(false); // loading state for the tasks
+	const {
+		tasks,
+		addTask,
+		deleteTask,
+		toggleTaskCompleted,
+		getTasksForDate,
+		categories,
+		addCategory,
+	} = useTasks();
 
 	useEffect(() => {
 		console.log("CalendarScreen loaded");
@@ -60,33 +52,6 @@ const CalendarScreen = () => {
 
 	// for calendar navigation
 	const [viewDate, setViewDate] = useState(new Date());
-
-	// Default categories with pastel colours
-	const [categoryColors, setCategoryColors] = useState<
-		Record<string, Category>
-	>({
-		Content: {
-			name: "Content",
-			bg: "#F3EFFC",
-			bgdark: "#4a4676",
-			dot: "#6c5ce7",
-			border: "#6c5ce7",
-		},
-		Social: {
-			name: "Social",
-			bg: "#E6F7F1",
-			bgdark: "#2b6b5c",
-			dot: "#00b894",
-			border: "#00b894",
-		},
-		Work: {
-			name: "Work",
-			bg: "#E6F2FA",
-			bgdark: "#2A5470",
-			dot: "#0984e3",
-			border: "#0984e3",
-		},
-	});
 
 	// Today's date for first selection, date format is YYYY-MM-DD
 	const today = new Date();
@@ -107,7 +72,7 @@ const CalendarScreen = () => {
 			// add a dot beside the category
 			markedDates[task.date].dots.push({
 				key: task.id,
-				color: categoryColors[task.category]?.dot || "#999",
+				color: categories[task.category]?.dot || "#999",
 			});
 		});
 
@@ -159,7 +124,7 @@ const CalendarScreen = () => {
 		console.log("Selected day:", dateString);
 		console.log(
 			"Task IDs for selected date:",
-			tasksForDate.map((task) => task.id),
+			tasksForDate.map((task) => task.id)
 		);
 	};
 
@@ -348,54 +313,6 @@ const CalendarScreen = () => {
 		}
 	};
 
-	// Colour options for new categories
-	const colorOptions = [
-		{ bg: "#F3EFFC", bgdark: "#4A4676", main: "#6c5ce7" }, // Purple
-		{ bg: "#E6F7F1", bgdark: "#2B6B5C", main: "#00b894" }, // Green
-		{ bg: "#E6F2FA", bgdark: "#2A5470", main: "#0984e3" }, // Blue
-		{ bg: "#FFEAA7", bgdark: "#7A6B3C", main: "#fdcb6e" }, // Yellow
-		{ bg: "#FFE8E8", bgdark: "#7A4B4B", main: "#ff7675" }, // Red
-		{ bg: "#FFF0F0", bgdark: "#7A4465", main: "#e84393" }, // Pink
-		{ bg: "#F1F2F6", bgdark: "#4A4D53", main: "#747d8c" }, // Gray
-		{ bg: "#FFF3E6", bgdark: "#7A5B3C", main: "#e67e22" }, // Orange
-	];
-
-	// Function to create a new category
-	const handleCreateCategory = () => {
-		if (!newCategoryName.trim()) {
-			alert("Category name is required");
-			return;
-		}
-
-		// Check if category name already exists
-		if (categoryColors[newCategoryName]) {
-			alert("This category already exists");
-			return;
-		}
-
-		// Choose background colour based on selected colour
-		const selectedColorObj = colorOptions.find(
-			(color) => color.main === selectedColor,
-		);
-
-		// Adding a new category
-		setCategoryColors({
-			...categoryColors,
-			[newCategoryName]: {
-				name: newCategoryName,
-				bg: selectedColorObj?.bg || "#f5f5f5",
-				bgdark: selectedColorObj?.bgdark || "#4A4A4A",
-				dot: selectedColor,
-				border: selectedColor,
-			},
-		});
-
-		// Close modal and reset
-		setAddCategoryModalVisible(false);
-		setNewCategoryName("");
-		setSelectedColor("#6c5ce7");
-	};
-
 	// Set initial calendar date when component mounts
 	useEffect(() => {
 		setSelectedCalendarDate(formattedToday);
@@ -408,7 +325,9 @@ const CalendarScreen = () => {
 					headerTitle: "Calendar",
 					headerRight: () => (
 						<View className="dark:bg-transparent bg-transparent flex-row">
-							<TouchableOpacity onPress={() => setModalVisible(true)}>
+							<TouchableOpacity
+								onPress={() => setModalVisible(true)}
+							>
 								<Text className="font-semibold text-lg color-iguana-600 web:mr-4 dark:color-iguana-400">
 									New
 								</Text>
@@ -436,14 +355,19 @@ const CalendarScreen = () => {
 								minWidth: 600,
 								alignSelf: "center",
 							}),
-							backgroundColor: colorScheme === "dark" ? "#2E3443" : "#ffffff",
+							backgroundColor:
+								colorScheme === "dark" ? "#2E3443" : "#ffffff",
 							marginBottom: 10,
 							...(Platform.OS === "ios" && { marginTop: -60 }), // iOS specific padding
-							...(Platform.OS === "android" && { marginTop: -25 }), // Android specific padding
+							...(Platform.OS === "android" && {
+								marginTop: -25,
+							}), // Android specific padding
 						}}
 						theme={{
-							monthTextColor: colorScheme === "dark" ? "#fff" : "#000",
-							dayTextColor: colorScheme === "dark" ? "#fff" : "#000",
+							monthTextColor:
+								colorScheme === "dark" ? "#fff" : "#000",
+							dayTextColor:
+								colorScheme === "dark" ? "#fff" : "#000",
 							calendarBackground:
 								colorScheme === "dark" ? "#2E3443" : "#ffffff",
 						}}
@@ -475,15 +399,20 @@ const CalendarScreen = () => {
 										style={{
 											backgroundColor:
 												colorScheme === "dark"
-													? categoryColors[item.category]?.bgdark || "#4A4A4A"
-													: categoryColors[item.category]?.bg || "#f5f5f5",
+													? categories[item.category]
+															?.bgdark ||
+													  "#4A4A4A"
+													: categories[item.category]
+															?.bg || "#f5f5f5",
 											opacity: item.completed ? 0.7 : 1,
 										}}
 									>
 										{/* Completion Checkbox */}
 										<TouchableOpacity
 											className="mr-2"
-											onPress={() => handleToggleTask(item.id)}
+											onPress={() =>
+												handleToggleTask(item.id)
+											}
 										>
 											<View
 												style={{
@@ -492,16 +421,26 @@ const CalendarScreen = () => {
 													borderRadius: 6,
 													borderWidth: 2,
 													borderColor:
-														categoryColors[item.category]?.border || "#ccc",
-													backgroundColor: item.completed
-														? categoryColors[item.category]?.border
-														: "white",
+														categories[
+															item.category
+														]?.border || "#ccc",
+													backgroundColor:
+														item.completed
+															? categories[
+																	item
+																		.category
+															  ]?.border
+															: "white",
 													alignItems: "center",
 													justifyContent: "center",
 												}}
 											>
 												{item.completed && (
-													<FontAwesome name="check" size={16} color="white" />
+													<FontAwesome
+														name="check"
+														size={16}
+														color="white"
+													/>
 												)}
 											</View>
 										</TouchableOpacity>
@@ -512,12 +451,16 @@ const CalendarScreen = () => {
 													className="w-3 h-3 rounded-full mr-2"
 													style={{
 														backgroundColor:
-															categoryColors[item.category]?.dot || "#999",
+															categories[
+																item.category
+															]?.dot || "#999",
 													}}
 												/>
 												<Text
 													className={`font-semibold ${
-														item.completed ? "line-through text-gray-500" : ""
+														item.completed
+															? "line-through text-gray-500"
+															: ""
 													}`}
 												>
 													{item.name}
@@ -527,7 +470,9 @@ const CalendarScreen = () => {
 											{item.note ? (
 												<Text
 													className={`text-gray-600 ml-5 mt-1 ${
-														item.completed ? "line-through" : ""
+														item.completed
+															? "line-through"
+															: ""
 													}`}
 												>
 													{item.note}
@@ -537,12 +482,18 @@ const CalendarScreen = () => {
 											{item.startTime || item.endTime ? (
 												<Text className="text-gray-600 ml-5 mt-1">
 													{item.startTime}{" "}
-													{item.endTime ? `- ${item.endTime}` : ""}
+													{item.endTime
+														? `- ${item.endTime}`
+														: ""}
 												</Text>
 											) : null}
 										</View>
 
-										<TouchableOpacity onPress={() => handleDeleteTask(item.id)}>
+										<TouchableOpacity
+											onPress={() =>
+												handleDeleteTask(item.id)
+											}
+										>
 											<FontAwesome
 												className="mr-2"
 												name="trash-o"
@@ -567,8 +518,15 @@ const CalendarScreen = () => {
 							<View className="bg-white dark:bg-oxford-500 web:max-w-3xl web:mx-auto rounded-lg w-11/12 max-h-2/3">
 								{/* Close button at top right */}
 								<View className="absolute top-2 right-2 z-10">
-									<TouchableOpacity className="p-2" onPress={handleCloseModal}>
-										<FontAwesome name="close" size={24} color="#666" />
+									<TouchableOpacity
+										className="p-2"
+										onPress={handleCloseModal}
+									>
+										<FontAwesome
+											name="close"
+											size={24}
+											color="#666"
+										/>
 									</TouchableOpacity>
 								</View>
 
@@ -582,18 +540,28 @@ const CalendarScreen = () => {
 
 									{/* Mini Calendar Header */}
 									<View className="flex-row justify-between items-center px-4 py-2">
-										<TouchableOpacity onPress={goToPreviousMonth}>
-											<FontAwesome name="chevron-left" size={24} color="#666" />
+										<TouchableOpacity
+											onPress={goToPreviousMonth}
+										>
+											<FontAwesome
+												name="chevron-left"
+												size={24}
+												color="#666"
+											/>
 										</TouchableOpacity>
 
 										<View className="items-center">
-											<Text className="text-lg font-bold">{currentMonth}</Text>
+											<Text className="text-lg font-bold">
+												{currentMonth}
+											</Text>
 											<Text className="text-sm text-gray-500">
 												{currentYear}
 											</Text>
 										</View>
 
-										<TouchableOpacity onPress={goToNextMonth}>
+										<TouchableOpacity
+											onPress={goToNextMonth}
+										>
 											<FontAwesome
 												name="chevron-right"
 												size={24}
@@ -629,41 +597,53 @@ const CalendarScreen = () => {
 										</View>
 
 										{/*Dynamic Calendar Dates*/}
-										{generateCalendarDays().map((week, weekIndex) => (
-											<View
-												key={`week-${weekIndex}`}
-												className="flex-row justify-between mb-2"
-											>
-												{week.map((day, dayIndex) => (
-													<TouchableOpacity
-														key={`day-${weekIndex}-${dayIndex}`}
-														className="items-center flex-1"
-														onPress={() => setSelectedDate(day.dateString)}
-													>
-														<View
-															className={`${
-																selectedDate === day.dateString
-																	? "bg-purple-600"
-																	: "bg-white dark:bg-gray-600"
-															} 
-													rounded-full w-8 h-8 items-center justify-center`}
-														>
-															<Text
-																className={`${
-																	selectedDate === day.dateString
-																		? "text-white"
-																		: day.currentMonth
-																			? "text-black dark:text-gray-400"
-																			: "text-gray-400 dark:text-gray-400"
-																}`}
+										{generateCalendarDays().map(
+											(week, weekIndex) => (
+												<View
+													key={`week-${weekIndex}`}
+													className="flex-row justify-between mb-2"
+												>
+													{week.map(
+														(day, dayIndex) => (
+															<TouchableOpacity
+																key={`day-${weekIndex}-${dayIndex}`}
+																className="items-center flex-1"
+																onPress={() =>
+																	setSelectedDate(
+																		day.dateString
+																	)
+																}
 															>
-																{day.day}
-															</Text>
-														</View>
-													</TouchableOpacity>
-												))}
-											</View>
-										))}
+																<View
+																	className={`${
+																		selectedDate ===
+																		day.dateString
+																			? "bg-purple-600"
+																			: "bg-white dark:bg-gray-600"
+																	} 
+													rounded-full w-8 h-8 items-center justify-center`}
+																>
+																	<Text
+																		className={`${
+																			selectedDate ===
+																			day.dateString
+																				? "text-white"
+																				: day.currentMonth
+																				? "text-black dark:text-gray-400"
+																				: "text-gray-400 dark:text-gray-400"
+																		}`}
+																	>
+																		{
+																			day.day
+																		}
+																	</Text>
+																</View>
+															</TouchableOpacity>
+														)
+													)}
+												</View>
+											)
+										)}
 									</View>
 
 									{/* Form Fields */}
@@ -692,27 +672,43 @@ const CalendarScreen = () => {
 										{/* Time Pickers */}
 										<View className="mb-4 flex-row justify-between">
 											<View className="flex-1 mr-2">
-												<Text className="text-gray-500 mb-1">Start time</Text>
+												<Text className="text-gray-500 mb-1">
+													Start time
+												</Text>
 												<TouchableOpacity className="flex-row items-center border-b border-gray-200 dark:border-gray-400 py-2">
 													<TextInput
 														placeholder="HH:MM"
 														value={startTime}
-														onChangeText={setStartTime}
+														onChangeText={
+															setStartTime
+														}
 														className="flex-1 text-black dark:text-white"
 													/>
-													<FontAwesome name="clock-o" size={20} color="#666" />
+													<FontAwesome
+														name="clock-o"
+														size={20}
+														color="#666"
+													/>
 												</TouchableOpacity>
 											</View>
 											<View className="flex-1 ml-2">
-												<Text className="text-gray-500 mb-1">End time</Text>
+												<Text className="text-gray-500 mb-1">
+													End time
+												</Text>
 												<TouchableOpacity className="flex-row items-center border-b border-gray-200 dark:border-gray-400 py-2">
 													<TextInput
 														placeholder="HH:MM"
 														value={endTime}
-														onChangeText={setEndTime}
+														onChangeText={
+															setEndTime
+														}
 														className="flex-1 text-black dark:text-white"
 													/>
-													<FontAwesome name="clock-o" size={20} color="#666" />
+													<FontAwesome
+														name="clock-o"
+														size={20}
+														color="#666"
+													/>
 												</TouchableOpacity>
 											</View>
 										</View>
@@ -734,54 +730,81 @@ const CalendarScreen = () => {
 										{/* </View> */}
 
 										{/* category selection */}
-										<Text className="text-gray-700 mb-2">Select category</Text>
+										<Text className="text-gray-700 mb-2">
+											Select category
+										</Text>
 										<View className="flex-row flex-wrap mb-4">
-											{Object.keys(categoryColors).map((categoryName) => (
-												<TouchableOpacity
-													key={categoryName}
-													className={`flex-row items-center rounded-full py-2 mr-2 mb-2 ${
-														selectedCategory === categoryName
-															? `border border-${categoryColors[categoryName].border}`
-															: ""
-													}`}
-													style={{
-														backgroundColor:
-															colorScheme === "dark"
-																? categoryColors[categoryName].bgdark ||
-																	"#4A4A4A"
-																: categoryColors[categoryName].bg,
-														borderColor:
-															selectedCategory === categoryName
-																? categoryColors[categoryName].border
-																: "transparent",
-														borderWidth:
-															selectedCategory === categoryName ? 1 : 0,
-													}}
-													onPress={() => setSelectedCategory(categoryName)}
-												>
-													<View
-														className="w-4 h-4 rounded-full mx-2"
+											{Object.keys(categories).map(
+												(categoryName) => (
+													<TouchableOpacity
+														key={categoryName}
+														className={`flex-row items-center rounded-full py-2 mr-2 mb-2 ${
+															selectedCategory ===
+															categoryName
+																? `border border-${categories[categoryName].border}`
+																: ""
+														}`}
 														style={{
-															backgroundColor: categoryColors[categoryName].dot,
+															backgroundColor:
+																colorScheme ===
+																"dark"
+																	? categories[
+																			categoryName
+																	  ]
+																			.bgdark ||
+																	  "#4A4A4A"
+																	: categories[
+																			categoryName
+																	  ].bg,
+															borderColor:
+																selectedCategory ===
+																categoryName
+																	? categories[
+																			categoryName
+																	  ].border
+																	: "transparent",
+															borderWidth:
+																selectedCategory ===
+																categoryName
+																	? 1
+																	: 0,
 														}}
-													/>
-													<Text
-														className={
-															colorScheme === "dark"
-																? "text-white mr-4"
-																: "text-black mr-4"
+														onPress={() =>
+															setSelectedCategory(
+																categoryName
+															)
 														}
 													>
-														{categoryName}
-													</Text>
-												</TouchableOpacity>
-											))}
+														<View
+															className="w-4 h-4 rounded-full mx-2"
+															style={{
+																backgroundColor:
+																	categories[
+																		categoryName
+																	].dot,
+															}}
+														/>
+														<Text
+															className={
+																colorScheme ===
+																"dark"
+																	? "text-white mr-4"
+																	: "text-black mr-4"
+															}
+														>
+															{categoryName}
+														</Text>
+													</TouchableOpacity>
+												)
+											)}
 										</View>
 
 										{/* Add New Category */}
 										<TouchableOpacity
 											className="flex-row items-center mb-4"
-											onPress={() => setAddCategoryModalVisible(true)}
+											onPress={() =>
+												setModalVisible(true)
+											}
 										>
 											<Text className="text-purple-600 dark:text-purple-400 ml-2">
 												+ Add new
@@ -801,133 +824,6 @@ const CalendarScreen = () => {
 								</ScrollView>
 							</View>
 						</SafeAreaView>
-					</Modal>
-
-					{/* Add Category Modal */}
-					<Modal
-						animationType="slide"
-						transparent={true}
-						visible={addCategoryModalVisible}
-						onRequestClose={() => setAddCategoryModalVisible(false)}
-					>
-						<View className="flex-1 justify-center items-center bg-black/50">
-							<View className="bg-white dark:bg-gray-800 web:max-w-2xl web:mx-auto rounded-lg w-11/12 p-4">
-								{/* Modal Header */}
-								<View className="flex-row justify-between items-center mb-4">
-									<Text className="text-xl font-bold text-black dark:text-white">
-										Add New Category
-									</Text>
-									<TouchableOpacity
-										onPress={() => setAddCategoryModalVisible(false)}
-									>
-										<FontAwesome
-											name="close"
-											size={24}
-											color={colorScheme === "dark" ? "#fff" : "#666"}
-										/>
-									</TouchableOpacity>
-								</View>
-
-								{/* Category Name Input */}
-								<View className="mb-4">
-									<Text className="text-gray-500 dark:text-gray-300 mb-1">
-										Category Name*
-									</Text>
-									<TextInput
-										className="border-b border-gray-200 dark:border-gray-400 py-2 text-black dark:text-white"
-										placeholder="Enter category name"
-										placeholderTextColor={
-											colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
-										}
-										value={newCategoryName}
-										onChangeText={setNewCategoryName}
-									/>
-								</View>
-
-								{/* Colour Selection */}
-								<Text className="text-gray-500 dark:text-gray-300 mb-2">
-									Select Color
-								</Text>
-								<View className="flex-row flex-wrap mb-4">
-									{colorOptions.map((color, index) => (
-										<TouchableOpacity
-											key={index}
-											className="m-2"
-											onPress={() => setSelectedColor(color.main)}
-										>
-											<View
-												className={`w-10 h-10 rounded-full ${
-													selectedColor === color.main
-														? "border-2 border-gray-400 dark:border-white"
-														: ""
-												}`}
-												style={{
-													backgroundColor: color.main,
-												}}
-											/>
-										</TouchableOpacity>
-									))}
-								</View>
-
-								{/* Preview */}
-								<View
-									className="mb-4 p-4 rounded-lg"
-									style={{
-										backgroundColor:
-											colorScheme === "dark"
-												? colorOptions.find((c) => c.main === selectedColor)
-														?.bgdark || "#4A4A4A"
-												: colorOptions.find((c) => c.main === selectedColor)
-														?.bg || "#f5f5f5",
-									}}
-								>
-									<Text
-										className={
-											colorScheme === "dark"
-												? "text-gray-300 mb-1"
-												: "text-gray-700 mb-1"
-										}
-									>
-										Preview:
-									</Text>
-									<View className="flex-row items-center">
-										<View
-											className="w-4 h-4 rounded-full mr-2"
-											style={{
-												backgroundColor: selectedColor,
-											}}
-										/>
-										<Text
-											className={
-												colorScheme === "dark" ? "text-white" : "text-black"
-											}
-										>
-											{newCategoryName || "New Category"}
-										</Text>
-									</View>
-								</View>
-
-								{/* Create Button */}
-								<TouchableOpacity
-									className="bg-[#6F6DB2] rounded-lg py-3 mb-2"
-									onPress={handleCreateCategory}
-								>
-									<Text className="text-white text-center font-bold">
-										Create Category
-									</Text>
-								</TouchableOpacity>
-
-								{/* Cancel Button */}
-								<TouchableOpacity
-									className="bg-gray-200 dark:bg-gray-700 rounded-lg py-3"
-									onPress={() => setAddCategoryModalVisible(false)}
-								>
-									<Text className="text-gray-700 dark:text-gray-200 text-center font-medium">
-										Cancel
-									</Text>
-								</TouchableOpacity>
-							</View>
-						</View>
 					</Modal>
 				</SafeAreaView>
 			</View>

@@ -2,6 +2,7 @@ import { Text, View, Pressable } from "@/components/Themed";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import Head from "expo-router/head";
+import { useTasks } from "@/services/TasksProvider";
 import { ScrollView, Platform } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useAuthContext } from "@/services/AuthProvider";
@@ -10,16 +11,16 @@ import { FontAwesome } from "@expo/vector-icons";
 export default function HomeScreen() {
 	const colorScheme = useColorScheme().colorScheme;
 	const auth = useAuthContext();
+	const { tasks, categories } = useTasks();
+	const inProgressTasks = tasks.filter((task) => !task.completed);
 
-	const tasks = [
-		{ name: "Brand deal", due: new Date(), color: "bg-purple-500" },
-		{ name: "Instructional video", due: new Date(), color: "bg-blue-500" },
-		{ name: "Room tour", due: new Date(), color: "bg-yellow-500" },
-	];
+	// Calculate monthly progress from tasks
+	const doneCount = tasks.filter((task) => task.completed).length;
+	const inProgressCount = tasks.filter((task) => !task.completed).length;
 
 	const monthlyProgress = [
-		{ name: "Done", value: 22, color: "bg-green-400" },
-		{ name: "In Progress", value: 7, color: "bg-orange-400" },
+		{ name: "Done", value: doneCount, color: "bg-green-400" },
+		{ name: "In Progress", value: inProgressCount, color: "bg-orange-400" },
 	];
 
 	const recommendedCards = [
@@ -52,7 +53,10 @@ export default function HomeScreen() {
 								{auth.user?.photoURL ? (
 									<Image
 										source={{ uri: auth.user?.photoURL }}
-										style={{ height: "100%", width: "100%" }}
+										style={{
+											height: "100%",
+											width: "100%",
+										}}
 									/>
 								) : (
 									<FontAwesome
@@ -77,7 +81,6 @@ export default function HomeScreen() {
 							className="mr-4"
 						/>
 					</View>
-
 					<View className="w-[90%] h-1 bg-gray-200 dark:bg-gray-600 rounded-xl mt-1.5 mb-4" />
 					<Text className="w-[90%] text-lg font-semibold mb-1.5">
 						Recommended for You
@@ -103,43 +106,44 @@ export default function HomeScreen() {
 					<Text className="w-[90%] text-lg font-semibold -mb-px">
 						In progress
 					</Text>
-					<View className="mt-3 w-full gap-3 px-8">
-						{tasks.map((task, index) => (
-							<View
-								key={index}
-								className={`relative flex flex-row items-center justify-between ${task.color} py-2 px-3 rounded-xl shadow-lg shadow-${task.color} transform scale-105`}
-								style={{ elevation: 10 }}
-							>
-								<View className="bg-transparent dark:bg-transparent flex flex-col">
-									<Text className="text-white text-lg font-bold">
-										{task.name}
-									</Text>
-									<View className="bg-transparent dark:bg-transparent text-white flex flex-row mt-2 text-sm">
-										<FontAwesome
-											size={14}
-											name="clock-o"
-											color={"white"}
-											className="mr-1"
-										/>
-										<Text className="text-white inline font-medium -translate-y-0.5">
-											{task.due.toLocaleDateString("en-US", {
-												weekday: "long",
-												day: "numeric",
-												month: "long",
-											})}
+					<View className="mt-3 w-full gap-3 px-4">
+						{inProgressTasks.length === 0 ? (
+							<Text className="text-gray-500">
+								Good job! You have no pending tasks.
+							</Text>
+						) : (
+							inProgressTasks.map((task) => (
+								<View
+									key={task.id}
+									className={`relative flex flex-row items-center justify-between py-2 px-3 rounded-xl shadow-lg`}
+									style={{
+										backgroundColor:
+											categories[task.category]?.[
+												colorScheme === "dark" ? "bgdark" : "bg"
+											] || (colorScheme === "dark" ? "#f5f5f5" : "#2E3443"),
+										elevation: 10,
+									}}
+								>
+									<View className="bg-transparent dark:bg-transparent flex flex-col">
+										<Text className="text-black dark:text-white text-lg font-bold">
+											{task.name}
 										</Text>
+										<View className="bg-transparent dark:bg-transparent text-black dark:text-white flex flex-row mt-2 text-sm">
+											<FontAwesome
+												size={14}
+												name="clock-o"
+												color={colorScheme === "dark" ? "white" : "black"}
+												className="mr-1"
+											/>
+											<Text className="inline font-medium -translate-y-0.5">
+												{task.date}
+											</Text>
+										</View>
 									</View>
 								</View>
-								<FontAwesome
-									size={24}
-									name="chevron-right"
-									color={"white"}
-									className="mr-px"
-								/>
-							</View>
-						))}
+							))
+						)}
 					</View>
-
 					<View className="w-[90%] h-1 bg-gray-200 dark:bg-gray-600 rounded-xl mt-6 mb-4" />
 					<Text className="w-[90%] text-lg font-semibold mb-2">
 						Monthly progress

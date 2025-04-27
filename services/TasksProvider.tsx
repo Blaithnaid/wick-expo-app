@@ -33,6 +33,14 @@ interface Task {
 	//userId?: string;
 }
 
+interface Category {
+	name: string;
+	bg: string;
+	bgdark: string;
+	dot: string;
+	border: string;
+}
+
 interface TasksContextType {
 	tasks: Task[];
 	addTask: (task: Omit<Task, "id">) => Promise<void>; // async function to add tasks that doesnt return a value
@@ -40,6 +48,8 @@ interface TasksContextType {
 	deleteTask: (id: string) => Promise<void>;
 	toggleTaskCompleted: (id: string) => Promise<void>;
 	getTasksForDate: (date: string) => Task[];
+	categories: Record<string, Category>;
+	addCategory: (category: Category) => void;
 	//loading: boolean; // Add loading state
 }
 
@@ -49,7 +59,29 @@ const TasksContext = createContext<TasksContextType | undefined>(undefined);
 // this is the provider component that will wrap the app and provide the tasks context to the rest of the app
 export function TasksProvider({ children }: { children: React.ReactNode }) {
 	const [tasks, setTasks] = useState<Task[]>([]);
-	//const [loading, setLoading] = useState(true); // Loading state
+	const [categories, setCategories] = useState<Record<string, Category>>({
+		Content: {
+			name: "Content",
+			bg: "#F3EFFC",
+			bgdark: "#4a4676",
+			dot: "#6c5ce7",
+			border: "#6c5ce7",
+		},
+		Social: {
+			name: "Social",
+			bg: "#E6F7F1",
+			bgdark: "#2b6b5c",
+			dot: "#00b894",
+			border: "#00b894",
+		},
+		Work: {
+			name: "Work",
+			bg: "#E6F2FA",
+			bgdark: "#2A5470",
+			dot: "#0984e3",
+			border: "#0984e3",
+		},
+	});
 
 	const auth = useAuthContext(); // Get the user from the AuthProvider
 	const firebase = useFirebaseContext(); // Get the firebase instance from the FirebaseProvider
@@ -166,6 +198,10 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
 		return tasks.filter((task) => task.date === date);
 	};
 
+	const addCategory = (category: Category) => {
+		setCategories((prev) => ({ ...prev, [category.name]: category }));
+	};
+
 	return (
 		<TasksContext.Provider
 			value={{
@@ -175,6 +211,8 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
 				deleteTask,
 				toggleTaskCompleted,
 				getTasksForDate,
+				categories,
+				addCategory,
 				//loading
 			}}
 		>
