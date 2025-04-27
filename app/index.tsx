@@ -1,6 +1,11 @@
 // app/index.tsx
-import { Redirect } from "expo-router";
+import { Redirect, Stack } from "expo-router";
 
 export default function Index() {
-	return <Redirect href="/(tabs)/(home)" />;
+	return (
+		<>
+			<Stack.Screen options={{ headerShown: false }} />
+			<Redirect href="/(tabs)/(home)" />
+		</>
+	);
 }
