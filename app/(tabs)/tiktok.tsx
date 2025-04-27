@@ -131,8 +131,9 @@ export default function TikTokFiltersPage() {
 
   return (
     <ScrollView 
-      className="bg-white dark:bg-oxford-500 flex-1"
+      className="bg-white dark:bg-oxford-500"
       contentContainerStyle={{ padding: 16 }}
+      contentContainerClassName="flex-1 justify-center items-center"
     >
       {Platform.OS === "web" ? (
         <Head>

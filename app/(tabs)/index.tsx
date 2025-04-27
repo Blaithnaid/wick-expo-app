@@ -1,6 +1,6 @@
-import { ScrollView, Text, View } from "@/components/Themed";
+import {Text, View } from "@/components/Themed";
 import { Image } from "expo-image";
-import { TouchableOpacity } from "react-native";
+import { ScrollView, TouchableOpacity } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useAuthContext } from "@/services/AuthProvider";
 import { FontAwesome } from "@expo/vector-icons";
@@ -32,7 +32,7 @@ export default function HomeScreen() {
     ];
 
     return (
-        <ScrollView className="flex-1 w-full px-5 py-4 flex items-center">
+        <ScrollView className="flex-1 w-full px-5 py-4 flex bg-white dark:bg-oxford-500" contentContainerClassName="items-center">
             {/* Header Section */}
             <View className="flex-row items-center justify-between w-full max-w-md">
                 <View className="flex-row items-center">
@@ -54,7 +54,7 @@ export default function HomeScreen() {
                     <View key={index} className={`relative ${task.color} p-5 rounded-xl shadow-lg shadow-${task.color} transform scale-105`} style={{ elevation: 10 }}>
                         <Text className="text-white text-lg font-bold">{task.name}</Text>
                         <View className="w-full bg-white h-3 rounded-full mt-2 overflow-hidden">
-                            <View className={`h-3 ${task.color} rounded-full`} style={{ width: `${task.progress}%`,transition: 'width 0.5s ease-in-out' }} />
+                            <View className={`h-3 ${task.color} transition-all rounded-full`} style={{ width: `${task.progress}%` }} />
                         </View>
                         <Text className="text-white mt-2 text-sm">{task.progress}% Completed</Text>
                         <TouchableOpacity className="absolute top-2 right-2 bg-white px-2 py-1 rounded-full">
