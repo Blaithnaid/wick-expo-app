@@ -98,6 +98,14 @@ export default function TabLayout() {
 					tabBarIcon: ({ color }) => <TabBarIcon name="gear" color={color} />,
 				}}
 			/>
+			<Tabs.Screen
+				name="(tiktok)"
+				options={{
+					title: "TikTok",
+					tabBarIcon: ({ color }) => <TabBarIcon name="circle" color={color} />,
+				}}
+			/>
+
 		</Tabs>
 	);
 }
