@@ -505,7 +505,7 @@ const CalendarScreen = () => {
 			</View>
 
 			{/* new rectangle create task button at bottom*/}
-			<View className="pb-8 px-8">
+			<View className="pb-8 px-8 flex-1 flex items-center justify-center">
 				<TouchableOpacity
 					className="bg-[#6F6DB2] rounded-lg py-4 shadow-lg items-center"
 					onPress={() => setModalVisible(true)}
@@ -591,8 +591,8 @@ const CalendarScreen = () => {
 															selectedDate === day.dateString
 																? "text-white"
 																: day.currentMonth
-																	? "text-black dark: text-gray-400"
-																	: "text-gray-400 dark: text-gray-400"
+																	? "text-black dark:text-gray-400"
+																	: "text-gray-400 dark:text-gray-400"
 														}`}
 													>
 														{day.day}
@@ -609,7 +609,7 @@ const CalendarScreen = () => {
 								{/* Task Name */}
 								<View className="mb-4">
 									<TextInput
-										className="border-b border-gray-200 dark:border-gray-400 py-2"
+										className="border-b text-black dark:text-white border-gray-200 dark:border-gray-400 py-2"
 										placeholder="Task name"
 										value={taskName}
 										onChangeText={setTaskName}
@@ -619,7 +619,7 @@ const CalendarScreen = () => {
 								{/* Task Note */}
 								<View className="mb-4">
 									<TextInput
-										className="border-b border-gray-200 dark:border-gray-400 py-2"
+										className="border-b text-black dark:text-white border-gray-200 dark:border-gray-400 py-2"
 										placeholder="Type the note here..."
 										value={taskNote}
 										onChangeText={setTaskNote}
@@ -647,7 +647,7 @@ const CalendarScreen = () => {
 												placeholder="HH:MM"
 												value={startTime}
 												onChangeText={setStartTime}
-												className="flex-1"
+												className="flex-1 text-black dark:text-white"
 											/>
 											<Ionicons name="time-outline" size={20} color="#666" />
 										</TouchableOpacity>
@@ -659,7 +659,7 @@ const CalendarScreen = () => {
 												placeholder="HH:MM"
 												value={endTime}
 												onChangeText={setEndTime}
-												className="flex-1"
+												className="flex-1 text-black dark:text-white"
 											/>
 											<Ionicons name="time-outline" size={20} color="#666" />
 										</TouchableOpacity>
