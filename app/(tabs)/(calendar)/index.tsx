@@ -403,19 +403,19 @@ const CalendarScreen = () => {
 		<>
 			<Stack.Screen
 				options={{
-					headerTitle: "ABABABABA",
+					headerTitle: "Calendar",
 					headerRight: () => (
 						<View className="dark:bg-transparent bg-transparent flex-row">
 							<TouchableOpacity onPress={() => setModalVisible(true)}>
 								<Text className="font-semibold text-lg color-iguana-600 dark:color-iguana-400">
-									Back
+									New
 								</Text>
 							</TouchableOpacity>
 						</View>
 					),
 				}}
 			/>
-			<SafeAreaView className="h-full flex flex-col justify-between dark:bg-oxford-500 bg-white">
+			<SafeAreaView className="h-full flex flex-col justify-start dark:bg-oxford-500 bg-white">
 				<Calendar
 					current={selectedCalendarDate || formattedToday}
 					onDayPress={handleDateSelection}
@@ -435,7 +435,7 @@ const CalendarScreen = () => {
 
 				{/* Tasks for selected date */}
 				<View className="h-max bg-white dark:bg-oxford-400">
-					<Text className="w-full text-lg text-center py-2 bg-gray-300 dark:bg-oxford-600 font-semibold">
+					<Text className="w-full text-lg text-center py-2 bg-gray-300 dark:bg-oxford-600 font-bold">
 						Tasks for{" "}
 						{selectedCalendarDate
 							? formatDate(new Date(selectedCalendarDate))
@@ -532,18 +532,6 @@ const CalendarScreen = () => {
 							)}
 						/>
 					)}
-				</View>
-
-				{/* new rectangle create task button at bottom*/}
-				<View className="h-64 pb-8 px-8 flex-1 flex justify-self-end items-center justify-center">
-					<TouchableOpacity
-						className="bg-[#6F6DB2] rounded-lg py-4 shadow-lg items-center"
-						onPress={() => setModalVisible(true)}
-					>
-						<Text className="text-white font-bold text-lg px-4">
-							Create New Task
-						</Text>
-					</TouchableOpacity>
 				</View>
 
 				{/* task creation modal */}
@@ -775,16 +763,6 @@ const CalendarScreen = () => {
 									>
 										<Text className="text-white text-center font-bold">
 											Create Task
-										</Text>
-									</TouchableOpacity>
-
-									{/* Cancel Button */}
-									<TouchableOpacity
-										className="bg-gray-200 dark:bg-gray-600 rounded-lg py-3 mb-4"
-										onPress={handleCloseModal}
-									>
-										<Text className="text-gray-700 text-center font-medium">
-											Cancel
 										</Text>
 									</TouchableOpacity>
 								</View>

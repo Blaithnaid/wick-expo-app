@@ -15,7 +15,7 @@ export default function CalendarLayout() {
 				},
 			}}
 		>
-			<Stack.Screen name="index" />
+			<Stack.Screen name="index" options={{ headerShown: true }} />
 		</Stack>
 	);
 }
