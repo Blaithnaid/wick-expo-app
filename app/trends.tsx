@@ -48,6 +48,24 @@ export default function Trends() {
 		
 	];
 
+	
+	const pastelMonthColors = [
+		'bg-rose-200',
+		'bg-sky-200',
+		'bg-lime-200',
+		'bg-orange-200',
+		'bg-indigo-200',
+		'bg-emerald-200',
+		'bg-violet-200',
+		'bg-yellow-200',
+		'bg-teal-200',
+		'bg-pink-200',
+		'bg-blue-200',
+		'bg-green-200',
+	  ];
+	  
+	  
+
 	const isDarkMode = colorScheme === "dark";
 
 
@@ -87,21 +105,8 @@ export default function Trends() {
 					<Text className="text-white text-base">{trend.description}</Text>
 				</View>	
 			))}
-			{/* <Text className="text 3xl font-extrabold text-white mt-10 mb-4">
-			📅 Viral Events Calendar
-			</Text> */}
-
-			{/* {calendarEvents.map((event, index) => (
-				<View key={index} className="mb-4 p-4 bg-oxford-400 rounded-2xl shadow-sm">
-					<Text className="text-sm text-white mb-1 font-medium">
-						{event.date}
-					</Text>
-					<Text className="text-lg text-white font-bold">
-						{event.title}
-					</Text>
-					<Text className="text-white">{event.description}</Text>
-				</View>
-			))} */}
+			
+			
 
 <Text className="text-3xl font-extrabold text-white mt-10 mb-4">
 				📅 Monthly Viral Events
@@ -123,14 +128,23 @@ export default function Trends() {
 						style={{ width : 300 }} 
 						className="px-3">
 
-							<Text className="text-2xl text-white font-bold mb-4">{
+							<Text className="text-2xl text-black font-bold mb-4">{
 							month}
 
 							</Text>
 
 							<ScrollView showsVerticalScrollIndicator={false}>
 							{events.map((event, index) => (
-								<View key={index} className="mb-4 p-4 bg-oxford-400 rounded-2xl shadow-sm">
+								<View 
+								key={index} 
+								className={`mb-4 p-4 rounded-2xl shadow-sm ${
+									pastelMonthColors[monthOrder.indexOf(month)] || 'bg-oxford-400'
+								  }`}
+								  
+
+
+							  >
+							  
 									<Text className="text-sm text-white mb-1 font-medium">
 										{event.date}
 									</Text>
