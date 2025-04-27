@@ -415,7 +415,7 @@ const CalendarScreen = () => {
 					),
 				}}
 			/>
-			<SafeAreaView className="h-full flex flex-col justify-start dark:bg-oxford-500 bg-white">
+			<SafeAreaView className="h-full pb-0 flex-1 flex flex-col justify-start dark:bg-oxford-500 bg-white">
 				<Calendar
 					current={selectedCalendarDate || formattedToday}
 					onDayPress={handleDateSelection}
@@ -434,7 +434,7 @@ const CalendarScreen = () => {
 				/>
 
 				{/* Tasks for selected date */}
-				<View className="h-max bg-white dark:bg-oxford-400">
+				<View className="flex-1 bg-white dark:bg-oxford-400">
 					<Text className="w-full text-lg text-center py-2 bg-gray-300 dark:bg-oxford-600 font-bold">
 						Tasks for{" "}
 						{selectedCalendarDate
@@ -443,8 +443,10 @@ const CalendarScreen = () => {
 					</Text>
 
 					{getTasksForSelectedDate().length === 0 ? (
-						<View className="h-max items-center justify-center py-8 bg-white dark:bg-oxford-400">
-							<Text className="text-gray-500">No tasks for this date</Text>
+						<View className="flex-1 items-center justify-center bg-white dark:bg-oxford-400">
+							<Text className="text-lg text-gray-500">
+								There are no tasks for this date.
+							</Text>
 						</View>
 					) : (
 						<FlatList
