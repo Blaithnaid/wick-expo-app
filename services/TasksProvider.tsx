@@ -2,8 +2,21 @@
 // tasks provider creates a global state for tasks that can be accessed anywhere in your app
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { useFirebaseContext } from "@/services/FirebaseProvider"; 
-import { collection, arrayUnion, arrayRemove, getDocs, addDoc, deleteDoc, updateDoc, query, orderBy, where, onSnapshot, doc } from "firebase/firestore"; // Import Firestore functions
+import { useFirebaseContext } from "@/services/FirebaseProvider";
+import {
+	collection,
+	arrayUnion,
+	arrayRemove,
+	getDocs,
+	addDoc,
+	deleteDoc,
+	updateDoc,
+	query,
+	orderBy,
+	where,
+	onSnapshot,
+	doc,
+} from "firebase/firestore"; // Import Firestore functions
 import { useAuthContext } from "@/services/AuthProvider"; // Import the AuthProvider
 
 // task types
@@ -22,7 +35,7 @@ interface Task {
 
 interface TasksContextType {
 	tasks: Task[];
-	addTask: (task: Omit<Task, 'id'>) =>Promise< void>; // async function to add tasks that doesnt return a value
+	addTask: (task: Omit<Task, "id">) => Promise<void>; // async function to add tasks that doesnt return a value
 	editTask: (task: Task) => Promise<void>; // async function to edit tasks that doesnt return a value
 	deleteTask: (id: string) => Promise<void>;
 	toggleTaskCompleted: (id: string) => Promise<void>;
@@ -43,12 +56,11 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
 
 	// maybe can add persistance here if needed like async storage or something
 	useEffect(() => {
-        if (!auth.user) {
-            setTasks([]);
-           // setLoading(false);
-            return;
-        }
-		
+		if (!auth.user) {
+			setTasks([]);
+			// setLoading(false);
+			return;
+		}
 
 		// firestore not trigging the onsnapshot updaye, maybe cos of arrayUnion
 		const userDocRef = doc(firebase.myFS, "users", auth.user.uid); // Get the user document reference
@@ -58,105 +70,100 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
 			setTasks(userData?.tasks || []); // Set the tasks state to the user tasks or an empty array
 		});
 
-		return () => unsubscribe(); 
+		return () => unsubscribe();
 	}, [auth.user, firebase.myFS]); // Run this effect when the user changes or the firebase instance changes
-		
-
-
 
 	// this add task function will be used to add a task to the list of tasks, no longer need callback
-	const addTask = async (task: Omit<Task, 'id'>) => { 
+	const addTask = async (task: Omit<Task, "id">) => {
 		if (!auth.user) return; // If the user is not logged in, do nothing
 
 		const newTask = {
 			...task,
+			id: Date.now().toString(), // <-- Add this line
 			createdAt: new Date().toISOString(),
 			reminderEnabled: task.reminderEnabled ?? false,
 			category: task.category ?? "default",
-			completed: false
+			completed: false,
 		};
 		try {
-            const userDocRef = doc(firebase.myFS, "users", auth.user.uid);
-            await updateDoc(userDocRef, {
-                tasks: arrayUnion(newTask)
-            });
-        } catch (error) {
-            console.error("Error adding task:", error);
-            throw error;
-        }
-    };
+			const userDocRef = doc(firebase.myFS, "users", auth.user.uid);
+			await updateDoc(userDocRef, {
+				tasks: arrayUnion(newTask),
+			});
+		} catch (error) {
+			console.error("Error adding task:", error);
+			throw error;
+		}
+	};
 
 	const deleteTask = async (taskId: string) => {
-        if (!auth.user) return;
+		if (!auth.user) return;
 
-        const taskToDelete = tasks.find(t => t.id === taskId);
-        if (!taskToDelete) return;
+		const taskToDelete = tasks.find((t) => t.id === taskId);
+		if (!taskToDelete) return;
 
-        try {
-            const userDocRef = doc(firebase.myFS, "users", auth.user.uid);
-            await updateDoc(userDocRef, {
-                tasks: arrayRemove(taskToDelete)
-            });
-        } catch (error) {
-            console.error("Error deleting task:", error);
-            throw error;
-        }
-    };
+		try {
+			const userDocRef = doc(firebase.myFS, "users", auth.user.uid);
+			await updateDoc(userDocRef, {
+				tasks: arrayRemove(taskToDelete),
+			});
+		} catch (error) {
+			console.error("Error deleting task:", error);
+			throw error;
+		}
+	};
 
 	const toggleTaskCompleted = async (taskId: string) => {
-        if (!auth.user) return;
+		if (!auth.user) return;
 
-        const taskToUpdate = tasks.find(t => t.id === taskId);
-        if (!taskToUpdate) return;
+		const taskToUpdate = tasks.find((t) => t.id === taskId);
+		if (!taskToUpdate) return;
 
-        const updatedTask = {
-            ...taskToUpdate,
-            completed: !taskToUpdate.completed
-        };
+		const updatedTask = {
+			...taskToUpdate,
+			completed: !taskToUpdate.completed,
+		};
 
-        try {
-            const userDocRef = doc(firebase.myFS, "users", auth.user.uid);
-            // Remove old task and add updated one
-            await updateDoc(userDocRef, {
-                tasks: arrayRemove(taskToUpdate)
-            });
-            await updateDoc(userDocRef, {
-                tasks: arrayUnion(updatedTask)
-            });
-        } catch (error) {
-            console.error("Error updating task:", error);
-            throw error;
-        }
-    };
-	
+		try {
+			const userDocRef = doc(firebase.myFS, "users", auth.user.uid);
+			// Remove old task and add updated one
+			await updateDoc(userDocRef, {
+				tasks: arrayRemove(taskToUpdate),
+			});
+			await updateDoc(userDocRef, {
+				tasks: arrayUnion(updatedTask),
+			});
+		} catch (error) {
+			console.error("Error updating task:", error);
+			throw error;
+		}
+	};
+
 	const editTask = async (task: Task) => {
-        if (!auth.user) return;
+		if (!auth.user) return;
 
-        const oldTask = tasks.find(t => t.id === task.id);
-        if (!oldTask) return;
+		const oldTask = tasks.find((t) => t.id === task.id);
+		if (!oldTask) return;
 
-        try {
-            const userDocRef = doc(firebase.myFS, "users", auth.user.uid);
-            // Remove old task and add updated one
-            await updateDoc(userDocRef, {
-                tasks: arrayRemove(oldTask)
-            });
-            await updateDoc(userDocRef, {
-                tasks: arrayUnion(task)
-            });
-        } catch (error) {
-            console.error("Error editing task:", error);
-            throw error;
-        }
-    };
-
-	
+		try {
+			const userDocRef = doc(firebase.myFS, "users", auth.user.uid);
+			// Remove old task and add updated one
+			await updateDoc(userDocRef, {
+				tasks: arrayRemove(oldTask),
+			});
+			await updateDoc(userDocRef, {
+				tasks: arrayUnion(task),
+			});
+		} catch (error) {
+			console.error("Error editing task:", error);
+			throw error;
+		}
+	};
 
 	// this function will be used to get the tasks for a specific date
 	// it will filter the tasks based on the start time of the task and return the tasks for that date
 	const getTasksForDate = (date: string) => {
-		return tasks.filter(task => task.date === date
-		);
+		return tasks.filter((task) => task.date === date);
 	};
 
 	return (
@@ -185,7 +192,6 @@ export function useTasks() {
 	return context;
 }
 
-
 // custom hook
 // think of it like taskscontext is the empty container we created for the data,
 // usecontext() is the function we reach our hand into,
@@ -201,6 +207,4 @@ export function useTasks() {
 //       {todaysTasks.map(task => (
 
 // Promise resolves to a void, indicates async function, automatically notifies when the operation is done
-// taskprovider wraps the app and uses UseEffect to listen for firestore changes 
-
-
+// taskprovider wraps the app and uses UseEffect to listen for firestore changes
