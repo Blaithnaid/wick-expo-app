@@ -84,6 +84,45 @@ const groupedTips = [
   },
 ];
 
+const bestTimesToPost = [
+  {
+    platform: 'TikTok',
+    times: {
+      Monday: '10 AM - 12 PM',
+      Tuesday: '2 PM - 4 PM',
+      Wednesday: '1 PM - 3 PM',
+      Thursday: '4 PM - 6 PM',
+      Friday: '6 PM - 8 PM',
+      Saturday: '9 AM - 11 AM',
+      Sunday: '3 PM - 5 PM',
+    },
+  },
+  {
+    platform: 'YouTube',
+    times: {
+      Monday: '12 PM - 2 PM',
+      Tuesday: '3 PM - 5 PM',
+      Wednesday: '5 PM - 7 PM',
+      Thursday: '6 PM - 8 PM',
+      Friday: '7 PM - 9 PM',
+      Saturday: '10 AM - 12 PM',
+      Sunday: '4 PM - 6 PM',
+    },
+  },
+  {
+    platform: 'Instagram',
+    times: {
+      Monday: '9 AM - 11 AM',
+      Tuesday: '11 AM - 1 PM',
+      Wednesday: '2 PM - 4 PM',
+      Thursday: '3 PM - 5 PM',
+      Friday: '5 PM - 7 PM',
+      Saturday: '8 AM - 10 AM',
+      Sunday: '6 PM - 8 PM',
+    },
+  },
+];
+
 export default function TipsAndTricks() {
   const animations = useRef(groupedTips.map(() => ({
     translateY: new Animated.Value(50),
@@ -148,6 +187,19 @@ export default function TipsAndTricks() {
           🚀 Social Media Tips & Tricks
         </Text>
 
+        {/* Best Times to Post Carousel */}
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: 'bold',
+            textAlign: 'center',
+            marginBottom: 16,
+            color: textColor,
+          }}
+        >
+        
+
+        {/* Grouped Tips */}
         {groupedTips.map((group, index) => (
           <View
             key={index}
@@ -177,75 +229,75 @@ export default function TipsAndTricks() {
               }}
             >
               {group.videos.map((video, idx) => (
-  <Animated.View
-    key={idx}
-    style={{
-      transform: [{ translateY: animations[index].translateY }],
-      opacity: animations[index].opacity,
-      marginRight: idx === group.videos.length - 1 ? 0 : 16, // Remove margin for the last video
-      alignItems: 'center',
-      backgroundColor: colorScheme.colorScheme === 'dark' ? '#2c2c2c' : '#f0f0f0',
-      borderRadius: 8,
-      overflow: 'hidden',
-      width: 200,
-    }}
-  >
-    <Image
-      source={{ uri: video.thumbnail }}
-      style={{
-        width: 192,
-        height: 112,
-        resizeMode: 'cover',
-      }}
-    />
-    <View
-      style={{
-        padding: 12,
-        flex: 1,
-        justifyContent: 'space-between', // Distribute space between title and button
-      }}
-    >
-      {/* Title Container with Fixed Height */}
-      <View
-        style={{
-          minHeight: 40, // Ensure consistent height for all titles
-          justifyContent: 'center', // Center the text vertically
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 16,
-            fontWeight: 'bold',
-            textAlign: 'center',
-            marginBottom: 8,
-            color: textColor,
-          }}
-        >
-          {video.tip}
-        </Text>
-      </View>
-      <Pressable
-        onPress={() => Linking.openURL(video.videoUrl)}
-        style={{
-          backgroundColor: '#007bff',
-          borderRadius: 8,
-          paddingVertical: 8,
-          paddingHorizontal: 16,
-        }}
-      >
-        <Text
-          style={{
-            color: 'white',
-            fontWeight: 'bold',
-            textAlign: 'center',
-          }}
-        >
-          🎥 Watch Video
-        </Text>
-      </Pressable>
-    </View>
-  </Animated.View>
-))}
+                <Animated.View
+                  key={idx}
+                  style={{
+                    transform: [{ translateY: animations[index].translateY }],
+                    opacity: animations[index].opacity,
+                    marginRight: idx === group.videos.length - 1 ? 0 : 16, // Remove margin for the last video
+                    alignItems: 'center',
+                    backgroundColor: colorScheme.colorScheme === 'dark' ? '#2c2c2c' : '#f0f0f0',
+                    borderRadius: 8,
+                    overflow: 'hidden',
+                    width: 200,
+                  }}
+                >
+                  <Image
+                    source={{ uri: video.thumbnail }}
+                    style={{
+                      width: 192,
+                      height: 112,
+                      resizeMode: 'cover',
+                    }}
+                  />
+                  <View
+                    style={{
+                      padding: 12,
+                      flex: 1,
+                      justifyContent: 'space-between', // Distribute space between title and button
+                    }}
+                  >
+                    {/* Title Container with Fixed Height */}
+                    <View
+                      style={{
+                        minHeight: 40, // Ensure consistent height for all titles
+                        justifyContent: 'center', // Center the text vertically
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: 'bold',
+                          textAlign: 'center',
+                          marginBottom: 8,
+                          color: textColor,
+                        }}
+                      >
+                        {video.tip}
+                      </Text>
+                    </View>
+                    <Pressable
+                      onPress={() => Linking.openURL(video.videoUrl)}
+                      style={{
+                        backgroundColor: '#007bff',
+                        borderRadius: 8,
+                        paddingVertical: 8,
+                        paddingHorizontal: 16,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontWeight: 'bold',
+                          textAlign: 'center',
+                        }}
+                      >
+                        🎥 Watch Video
+                      </Text>
+                    </Pressable>
+                  </View>
+                </Animated.View>
+              ))}
             </ScrollView>
           </View>
         ))}
@@ -331,6 +383,74 @@ export default function TipsAndTricks() {
             </Pressable>
           </Animated.View>
         </View>
+
+        📅 Best Times to Post
+        </Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            flexDirection: 'row',
+            paddingHorizontal: 16,
+          }}
+        >
+          {bestTimesToPost.map((platform, index) => (
+            <View
+              key={index}
+              style={{
+                backgroundColor: colorScheme.colorScheme === 'dark' ? '#2c2c2c' : '#f0f0f0',
+                borderRadius: 12,
+                padding: 16,
+                marginRight: 16,
+                width: width * 0.8, // Responsive width
+                shadowColor: '#000',
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 5,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  marginBottom: 12,
+                  color: textColor,
+                }}
+              >
+                {platform.platform}
+              </Text>
+              {Object.entries(platform.times).map(([day, time], idx) => (
+                <View
+                  key={idx}
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginBottom: 8,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: 'bold',
+                      color: textColor,
+                    }}
+                  >
+                    {day}:
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: textColor,
+                    }}
+                  >
+                    {time}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          ))}
+        </ScrollView>
       </ScrollView>
     </SafeAreaView>
   );
