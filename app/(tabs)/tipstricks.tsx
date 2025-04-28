@@ -377,8 +377,8 @@ export default function TipsAndTricks() {
         </Animated.View>
       </View>
 
-      {/* Best Times to Post Carousel */}
-      <Text
+     {/* Best Times to Post Carousel */}
+     <Text
         style={{
           fontSize: 20,
           fontWeight: 'bold',
@@ -403,55 +403,93 @@ export default function TipsAndTricks() {
           <View
             key={index}
             style={{
-              backgroundColor: colorScheme.colorScheme === 'dark' ? '#1a1a1a' : '#f0f0f0', // Darker background for contrast
-              borderRadius: 12,
-              padding: 16,
+              backgroundColor: colorScheme.colorScheme === 'dark' ? '#1a1a1a' : '#ffffff',
+              borderRadius: 16,
+              padding: 20,
               marginRight: 16,
               width: width * 0.8,
               shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.3,
-              shadowRadius: 4,
-              elevation: 5,
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.2,
+              shadowRadius: 8,
+              elevation: 8,
+              borderWidth: 1,
+              borderColor: colorScheme.colorScheme === 'dark' ? '#333' : '#eee',
             }}
           >
-            <Text
-              style={{
-                fontSize: 18,
-                fontWeight: 'bold',
-                textAlign: 'center',
-                marginBottom: 12,
-                color: textColor,
-              }}
-            >
-              {platform.platform}
-            </Text>
+            {/* Platform Header with Icon */}
+            <View style={{ 
+              flexDirection: 'row', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              marginBottom: 16,
+              backgroundColor: platform.platform === 'TikTok' ? '#00F2EA' : 
+                             platform.platform === 'Instagram' ? '#E4405F' : 
+                             '#FF0000',
+              padding: 12,
+              borderRadius: 12,
+            }}>
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: 'white',
+                  textShadowColor: 'rgba(0, 0, 0, 0.3)',
+                  textShadowOffset: { width: 1, height: 1 },
+                  textShadowRadius: 3,
+                }}
+              >
+                {platform.platform === 'TikTok' ? '🎵 ' : 
+                 platform.platform === 'Instagram' ? '📸 ' : 
+                 '▶️ '}
+                {platform.platform}
+              </Text>
+            </View>
+            
+            {/* Time Slots with Better Design */}
             {Object.entries(platform.times).map(([day, time], idx) => (
               <View
                 key={idx}
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'space-between',
+                  backgroundColor: colorScheme.colorScheme === 'dark' ? '#2a2a2a' : '#f8f8f8',
+                  padding: 12,
+                  borderRadius: 8,
                   marginBottom: 8,
+                  borderLeftWidth: 4,
+                  borderLeftColor: platform.platform === 'TikTok' ? '#00F2EA' : 
+                                 platform.platform === 'Instagram' ? '#E4405F' : 
+                                 '#FF0000',
                 }}
               >
                 <Text
                   style={{
                     fontSize: 16,
-                    fontWeight: 'bold',
+                    fontWeight: '600',
                     color: textColor,
                   }}
                 >
-                  {day}:
+                  {day}
                 </Text>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: textColor,
-                  }}
-                >
-                  {time}
-                </Text>
+                <View style={{ 
+                  backgroundColor: colorScheme.colorScheme === 'dark' ? '#3a3a3a' : '#e8e8e8',
+                  paddingHorizontal: 12,
+                  paddingVertical: 4,
+                  borderRadius: 12,
+                }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: platform.platform === 'TikTok' ? '#00F2EA' : 
+                            platform.platform === 'Instagram' ? '#E4405F' : 
+                            '#FF0000',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {time}
+                  </Text>
+                </View>
               </View>
             ))}
           </View>
