@@ -1,10 +1,11 @@
 import { Text, View } from "@/components/Themed";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
-import { ScrollView, Pressable } from "react-native";
+import { ScrollView, Pressable, Button } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useAuthContext } from "@/services/AuthProvider";
 import { FontAwesome } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function HomeScreen() {
 	const colorScheme = useColorScheme().colorScheme;

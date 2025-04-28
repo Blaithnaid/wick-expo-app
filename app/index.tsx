@@ -1,50 +1,33 @@
-// for onboarding 
+import { useEffect, useState } from "react";
+import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ActivityIndicator, View } from "react-native";
 
-// /app/index.tsx
-import { useEffect, useState } from 'react';
-import { useRouter } from 'expo-router';
-import { useAuthContext } from '@/services/AuthProvider'; // or wherever you keep auth
-import { View, ActivityIndicator } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-export default function StartScreen() {
+export default function Index() {
   const router = useRouter();
-  const { user } = useAuthContext(); // Assuming you have an auth context
-  const [isLoading, setIsLoading] = useState(true);
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    const checkFirstLaunch = async () => {
-      try {
-        const hasLaunched = await AsyncStorage.getItem('hasLaunched');
-        if (!hasLaunched) {
-          await AsyncStorage.setItem('hasLaunched', 'true');
-          router.replace('/(auth)/onboarding');
-        } else if (!user) {
-          router.replace('/(auth)/login');
-        } else {
-          router.replace('/(tabs)/');
-        }
-      } catch (error) {
-        console.error('Error checking first launch:', error);
-      } finally {
-        setIsLoading(false);
+    async function checkOnboarding() {
+      const hasSeenOnboarding = await AsyncStorage.getItem('hasSeenOnboarding');
+      if (!hasSeenOnboarding) {
+        router.replace('/onboarding');
+      } else {
+        router.replace('/(tabs)'); // Or wherever your main screen is
       }
-    };
+      setChecking(false); // important so loading spinner disappears
+    }
 
-    checkFirstLaunch();
-  }, [user]);
+    checkOnboarding();
+  }, []);
 
-  if (isLoading) {
+  if (checking) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" />
       </View>
     );
   }
 
-  return null; // Nothing visible; just waiting for navigation
+  return null;
 }
-
-
-// await AsyncStorage.removeItem('hasLaunched');
-// resets onboarding 
