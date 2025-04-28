@@ -1,7 +1,6 @@
 import {
 	View,
 	Text,
-	Image,
 	Pressable,
 	Linking,
 	ScrollView,
@@ -166,15 +165,19 @@ export default function TikTokFiltersPage() {
 		<>
 			<Stack.Screen
 				options={{
-					headerLeft: () => (
-						<View className="flex-row">
-							<TouchableOpacity onPress={() => router.back()}>
-								<Text className="font-semibold text-lg color-iguana-600 dark:color-iguana-400">
-									Back
-								</Text>
-							</TouchableOpacity>
-						</View>
-					),
+					...(Platform.OS === "ios"
+						? {
+								headerLeft: () => (
+									<View className="flex-row">
+										<Pressable onPress={() => router.back()}>
+											<Text className="color-iguana-400 dark:color-iguana-400">
+												Back
+											</Text>
+										</Pressable>
+									</View>
+								),
+							}
+						: {}),
 				}}
 			/>
 			<ScrollView

@@ -23,13 +23,11 @@ export default function TabLayout() {
 				tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
 				headerShown: useClientOnlyValue(false, true),
 				tabBarStyle: {
-					backgroundColor:
-						Colors[colorScheme ?? "light"].headerBackground,
+					backgroundColor: Colors[colorScheme ?? "light"].headerBackground,
 					...(Platform.OS === "web" && { minHeight: 60 }), // Apply minHeight only on web
 				},
 				headerStyle: {
-					backgroundColor:
-						Colors[colorScheme ?? "light"].headerBackground,
+					backgroundColor: Colors[colorScheme ?? "light"].headerBackground,
 					// Note: This is the header height that nested stacks should match
 					// Default React Navigation header height is applied here
 				},
@@ -45,9 +43,7 @@ export default function TabLayout() {
 				name="(home)"
 				options={{
 					title: "Home",
-					tabBarIcon: ({ color }) => (
-						<TabBarIcon name="home" color={color} />
-					),
+					tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
 					headerShown: false,
 				}}
 			/>
@@ -75,9 +71,7 @@ export default function TabLayout() {
 									<FontAwesome
 										name="info-circle"
 										size={20}
-										color={
-											Colors[colorScheme ?? "light"].text
-										}
+										color={Colors[colorScheme ?? "light"].text}
 										className="mr-4"
 										style={{
 											opacity: pressed ? 0.5 : 1,
@@ -94,29 +88,16 @@ export default function TabLayout() {
 				options={{
 					title: "Profiles",
 					headerShown: false,
-					tabBarIcon: ({ color }) => (
-						<TabBarIcon name="user" color={color} />
-					),
-				}}
-			/>
-			<Tabs.Screen
-				name="tipstricks"
-				options={{
-					title: "tipstricks",
-					tabBarIcon: ({ color }) => <TabBarIcon name="circle" color={color} />,
-					headerShown: false, // Important: hide the tab header since we'll handle it in the nested stack
+					tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
 				}}
 			/>
 			<Tabs.Screen
 				name="settings"
 				options={{
 					title: "Settings",
-					tabBarIcon: ({ color }) => (
-						<TabBarIcon name="gear" color={color} />
-					),
+					tabBarIcon: ({ color }) => <TabBarIcon name="gear" color={color} />,
 				}}
 			/>
-			
 		</Tabs>
 	);
 }

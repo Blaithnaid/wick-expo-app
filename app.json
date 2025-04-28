@@ -41,7 +41,8 @@
         {
           "photosPermission": "Wick uses your gallery exclusively to select profile pictures."
         }
-      ]
+      ],
+      "expo-video"
     ],
     "experiments": {
       "typedRoutes": true

@@ -11,8 +11,7 @@ export default function TabLayout() {
 			screenOptions={{
 				headerShown: false,
 				headerStyle: {
-					backgroundColor:
-						Colors[colorScheme ?? "light"].headerBackground,
+					backgroundColor: Colors[colorScheme ?? "light"].headerBackground,
 					// Note: This is the header height that nested stacks should match
 					// Default React Navigation header height is applied here
 				},
@@ -29,6 +28,13 @@ export default function TabLayout() {
 				name="tiktok"
 				options={{
 					title: "TikTok Filters",
+					headerShown: true,
+				}}
+			/>
+			<Stack.Screen
+				name="tipstricks"
+				options={{
+					title: "🚀 Tips & Tricks",
 					headerShown: true,
 				}}
 			/>

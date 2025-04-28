@@ -24,7 +24,11 @@ export default function HomeScreen() {
 	];
 
 	const recommendedCards = [
-		{ name: "Tips & Tricks", color: "bg-purple-500" },
+		{
+			name: "Tips & Tricks",
+			color: "bg-purple-500",
+			route: "(tabs)/(home)/tipstricks",
+		},
 		{
 			name: "TikTok Filters",
 			color: "bg-indigo-500",
