@@ -39,7 +39,7 @@ export default function HomeScreen() {
 			color: "bg-red-500",
 			route: "(tabs)/(home)/(analytics)",
 		},
-		{ name: "Trends", color: "bg-cyan-500" },
+		{ name: "Trends", color: "bg-cyan-500", route: "(tabs)/(home)/trends" },
 	];
 
 	return (

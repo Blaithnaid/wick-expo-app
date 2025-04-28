@@ -13,10 +13,34 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import Colors from "@/constants/Colors";
 
 export default function AnalyticsScreen() {
-	const colorScheme = useColorScheme().colorScheme;
 	const [accessToken, setAccessToken] = useState<string | null>(null);
 	const [tokenInput, setTokenInput] = useState<string>("");
+	const [overviewFigures, setOverviewFigures] = useState<
+		{ title: string; figure: number; background: string }[]
+	>([
+		{
+			title: "Total views",
+			figure: 1633,
+			background: "bg-red-400 dark:bg-red-600",
+		},
+		{
+			title: "Followers online now",
+			figure: 427,
+			background: "bg-green-400 dark:bg-green-600",
+		},
+		{
+			title: "Comments",
+			figure: 14,
+			background: "bg-sky-400 dark:bg-sky-600",
+		},
+		{
+			title: "Followers +/-",
+			figure: 61,
+			background: "bg-orange-400 dark:bg-orange-600",
+		},
+	]);
 	const { showActionSheetWithOptions } = useActionSheet();
+	const colorScheme = useColorScheme().colorScheme;
 	const options = ["Clear token", "Cancel"];
 	const destructiveButtonIndex = 0;
 	const cancelButtonIndex = 1;
@@ -62,7 +86,9 @@ export default function AnalyticsScreen() {
 		);
 	};
 
-	const barData = [
+	const [selectedWeek, setSelectedWeek] = useState<"this" | "last">("this");
+
+	const barDataThisWeek = [
 		{ value: 283, label: "Mon" },
 		{ value: 240, label: "Tue" },
 		{ value: 350, label: "Wed" },
@@ -72,6 +98,18 @@ export default function AnalyticsScreen() {
 		{ value: 500, label: "Sun" },
 	];
 
+	const barDataLastWeek = [
+		{ value: 180, label: "Mon" },
+		{ value: 210, label: "Tue" },
+		{ value: 220, label: "Wed" },
+		{ value: 300, label: "Thu" },
+		{ value: 320, label: "Fri" },
+		{ value: 200, label: "Sat" },
+		{ value: 350, label: "Sun" },
+	];
+
+	const barData = selectedWeek === "this" ? barDataThisWeek : barDataLastWeek;
+
 	if (!accessToken) {
 		return (
 			<>
@@ -80,24 +118,22 @@ export default function AnalyticsScreen() {
 						<title>Analytics | Wick</title>
 					</Head>
 				) : null}
-				<View>
-					<SafeAreaView className="flex-1 h-full w-full items-center justify-center">
-						<Text className="text-2xl">Enter your access token:</Text>
-						<Input variant="outline" size="md" className="w-3/4 mt-4">
-							<InputField
-								className="dark:text-gray-200"
-								value={tokenInput}
-								onChangeText={setTokenInput}
-							/>
-						</Input>
-						<Button
-							onPress={handleSend}
-							className="bg-iguana-400 dark:bg-iguana-400 mt-4"
-						>
-							<ButtonText className="dark:text-white">Set token</ButtonText>
-						</Button>
-					</SafeAreaView>
-				</View>
+				<SafeAreaView className="flex-1 h-full w-full items-center justify-center">
+					<Text className="text-2xl">Enter your access token:</Text>
+					<Input variant="outline" size="md" className="w-3/4 mt-4">
+						<InputField
+							className="dark:text-gray-200"
+							value={tokenInput}
+							onChangeText={setTokenInput}
+						/>
+					</Input>
+					<Button
+						onPress={handleSend}
+						className="bg-iguana-400 dark:bg-iguana-400 mt-4"
+					>
+						<ButtonText className="dark:text-white">Set token</ButtonText>
+					</Button>
+				</SafeAreaView>
 			</>
 		);
 	}
@@ -112,7 +148,7 @@ export default function AnalyticsScreen() {
 								{({ pressed }) => (
 									<FontAwesome
 										name="key"
-										size={25}
+										size={20}
 										color={Colors[colorScheme ?? "light"].text}
 										className="web:mr-6"
 										style={{
@@ -130,19 +166,19 @@ export default function AnalyticsScreen() {
 					<title>Analytics | Wick</title>
 				</Head>
 			) : null}
-			<View className="flex-1 bg-white dark:bg-oxford-500">
+			<View className="flex-1 w-full items-center justify-center bg-white dark:bg-oxford-500">
 				<ScrollView
-					className="flex-1 h-full web:max-w-3xl web:mx-auto w-full bg-white dark:bg-oxford-500"
+					className="flex-1 h-full w-full bg-white dark:bg-oxford-500 web:mx-auto web:max-w-3xl"
 					contentContainerClassName="items-center justify-center"
 				>
 					<View
 						style={{ alignItems: "center" }}
 						className="w-full px-6 flex flex-col items-center justify-center"
 					>
-						<Text className="text-xl font-bold mt-5 mb-1.5 w-full text-left">
+						<Text className="text-xl font-bold mt-5 mb-1.5 ml-2 w-full text-left">
 							Your reach this week
 						</Text>
-						<View className="w-full flex justify-center items-center pt-4 py-3 border-4 border-gray-300 dark:border-gray-500 rounded-md bg-oxford-50 dark:bg-oxford-600">
+						<View className="w-full flex justify-center items-center pt-4 py-3 border-4 border-gray-300 dark:border-gray-500 rounded-2xl bg-oxford-50 dark:bg-oxford-600">
 							<View
 								style={{ width: 320 }}
 								className="flex justify-center pt-2 items-center bg-transparent dark:bg-transparent"
@@ -176,31 +212,54 @@ export default function AnalyticsScreen() {
 													textAlign: "center",
 													fontSize: 12,
 												}
-											: { color: "black", textAlign: "center", fontSize: 10 }
+											: {
+													color: "black",
+													textAlign: "center",
+													fontSize: 10,
+												}
 									}
 								/>
+								<View className="flex flex-row w-2/3 mt-2 rounded-xl overflow-hidden border border-gray-600 items-center justify-center">
+									<Pressable
+										className={`w-1/2 p-2 rounded-l-lg ${
+											selectedWeek === "last"
+												? "dark:bg-slate-400 bg-slate-200"
+												: "dark:bg-slate-600 bg-slate-400"
+										}`}
+										onPress={() => setSelectedWeek("last")}
+									>
+										<Text className="text-center">Last Week</Text>
+									</Pressable>
+									<Pressable
+										className={`w-1/2 p-2 rounded-r-lg ${
+											selectedWeek === "this"
+												? "dark:bg-slate-400 bg-slate-200"
+												: "dark:bg-slate-600 bg-slate-400"
+										}`}
+										onPress={() => setSelectedWeek("this")}
+									>
+										<Text className="text-center">This Week</Text>
+									</Pressable>
+								</View>
 							</View>
 						</View>
-						<Text className="text-xl font-bold mt-4 mb-1.5 w-full text-left">
+						<Text className="text-xl font-bold mt-4 mb-1.5 ml-2 w-full text-left">
 							Overview
 						</Text>
-						<View className="h-max w-full flex flex-row flex-wrap items-center justify-center gap-2 pt-4 pb-4 px-3 border-4 border-gray-300 dark:border-gray-500 rounded-md bg-oxford-50 dark:bg-oxford-600">
-							<View className="p-6 basis-[48%] rounded-lg flex flex-col items-center justify-center bg-red-400 dark:bg-red-600">
-								<Text className="text-white text-4xl font-bold">one</Text>
-								<Text className="text-white">two</Text>
-							</View>
-							<View className="p-6 basis-[48%] rounded-lg flex items-center justify-center bg-green-400 dark:bg-green-600">
-								<Text className="text-white text-4xl font-bold">one</Text>
-								<Text className="text-white">two</Text>
-							</View>
-							<View className="p-6 basis-[48%] rounded-lg flex items-center justify-center bg-sky-400 dark:bg-sky-600">
-								<Text className="text-white text-4xl font-bold">one</Text>
-								<Text className="text-white">two</Text>
-							</View>
-							<View className="p-6 basis-[48%] rounded-lg flex items-center justify-center bg-orange-400 dark:bg-orange-600">
-								<Text className="text-white text-4xl font-bold">one</Text>
-								<Text className="text-white">two</Text>
-							</View>
+						<View className="h-max w-full flex flex-row flex-wrap items-stretch justify-center gap-2 pt-4 pb-4 px-3 border-4 border-gray-300 dark:border-gray-500 rounded-2xl bg-oxford-50 dark:bg-oxford-600">
+							{overviewFigures.map((figure, index) => (
+								<View
+									key={index}
+									className={`py-6 basis-[48%] rounded-lg flex flex-col items-center justify-center ${figure.background}`}
+								>
+									<Text className="text-white text-4xl font-bold">
+										{figure.figure}
+									</Text>
+									<Text className="text-white text-center text-md">
+										{figure.title}
+									</Text>
+								</View>
+							))}
 						</View>
 					</View>
 				</ScrollView>
