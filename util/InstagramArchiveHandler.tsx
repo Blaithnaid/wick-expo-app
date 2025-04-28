@@ -16,7 +16,9 @@ export class InstagramArchiveHandler {
 
 	constructor() {
 		// Create a unique temp directory for this import
-		this.tempDir = `${FileSystem.cacheDirectory}instagram_import_${Date.now()}`;
+		this.tempDir = `${
+			FileSystem.cacheDirectory
+		}instagram_import_${Date.now()}`;
 	}
 
 	async importArchive(): Promise<ImportResult> {
@@ -102,11 +104,16 @@ export class InstagramArchiveHandler {
 			const followingPath = `${this.tempDir}/connections/followers_and_following/following.json`;
 
 			// check if files exist
-			const personalInfoExists =
-				await FileSystem.getInfoAsync(personalInfoPath);
+			const personalInfoExists = await FileSystem.getInfoAsync(
+				personalInfoPath
+			);
 			const postsExists = await FileSystem.getInfoAsync(postsPath);
-			const followersExists = await FileSystem.getInfoAsync(followersPath);
-			const followingExists = await FileSystem.getInfoAsync(followingPath);
+			const followersExists = await FileSystem.getInfoAsync(
+				followersPath
+			);
+			const followingExists = await FileSystem.getInfoAsync(
+				followingPath
+			);
 			// error if any of the paths we need are missing
 			if (
 				!personalInfoExists.exists ||
@@ -115,7 +122,7 @@ export class InstagramArchiveHandler {
 				!followingExists.exists
 			) {
 				throw new Error(
-					"Required Instagram profile information not found in archive",
+					"Required Instagram profile information not found in archive"
 				);
 			}
 
@@ -124,17 +131,21 @@ export class InstagramArchiveHandler {
 				personalInfoPath,
 				{
 					encoding: FileSystem.EncodingType.UTF8,
-				},
+				}
 			);
 			const personalInfo = JSON.parse(personalInfoJson);
 
 			// Parse followers
-			const followersJson = await FileSystem.readAsStringAsync(followersPath);
+			const followersJson = await FileSystem.readAsStringAsync(
+				followersPath
+			);
 			const followersData = JSON.parse(followersJson);
 			const followers = this.transformFollowers(followersData);
 
 			// Parse following
-			const followingJson = await FileSystem.readAsStringAsync(followingPath);
+			const followingJson = await FileSystem.readAsStringAsync(
+				followingPath
+			);
 			const followingData = JSON.parse(followingJson);
 			const following = this.transformFollowing(followingData);
 
@@ -147,7 +158,10 @@ export class InstagramArchiveHandler {
 			}
 
 			// Transform into our app's format using the new structure
-			if (personalInfo.profile_user && personalInfo.profile_user.length > 0) {
+			if (
+				personalInfo.profile_user &&
+				personalInfo.profile_user.length > 0
+			) {
 				const profileUser = personalInfo.profile_user[0];
 				const stringMap = profileUser.string_map_data || {};
 				const mediaMap = profileUser.media_map_data || {};
@@ -159,40 +173,97 @@ export class InstagramArchiveHandler {
 					const picPath = mediaMap["Profile Photo"].uri;
 					if (picPath) {
 						profilePicUrl = `${this.tempDir}/${picPath}`;
-						// Handle profile picture
-						// Copy to a permanent location if needed
-						const permanentDir = `${FileSystem.documentDirectory}profile_pics/`;
-						const dirExists = await FileSystem.getInfoAsync(permanentDir);
-						if (!dirExists.exists) {
-							await FileSystem.makeDirectoryAsync(permanentDir, {
-								intermediates: true,
-							});
+						const picExists = await FileSystem.getInfoAsync(
+							profilePicUrl
+						);
+						if (!picExists.exists) {
+							// Fallback: search for jpg/jpeg in media/profile recursively
+							const profileMediaDir = `${this.tempDir}/media/profile`;
+							try {
+								const months =
+									await FileSystem.readDirectoryAsync(
+										profileMediaDir
+									);
+								for (const month of months) {
+									const files =
+										await FileSystem.readDirectoryAsync(
+											`${profileMediaDir}/${month}`
+										);
+									const candidate = files.find(
+										(f) =>
+											f.toLowerCase().endsWith(".jpg") ||
+											f.toLowerCase().endsWith(".jpeg")
+									);
+									if (candidate) {
+										profilePicUrl = `${profileMediaDir}/${month}/${candidate}`;
+										break;
+									}
+								}
+							} catch (e) {
+								console.warn(
+									"Could not search for fallback profile picture:",
+									e
+								);
+							}
 						}
+						// Check if the file exists before copying
+						const picExistsFinal = await FileSystem.getInfoAsync(
+							profilePicUrl
+						);
+						if (picExistsFinal.exists) {
+							// Handle profile picture
+							// Copy to a permanent location if needed
+							const permanentDir = `${FileSystem.documentDirectory}profile_pics/`;
+							const dirExists = await FileSystem.getInfoAsync(
+								permanentDir
+							);
+							if (!dirExists.exists) {
+								await FileSystem.makeDirectoryAsync(
+									permanentDir,
+									{
+										intermediates: true,
+									}
+								);
+							}
 
-						const fileName = `profile_${
-							stringMap.Username?.value || "user"
-						}_${Date.now()}.jpg`;
-						const newPath = `${permanentDir}${fileName}`;
+							const fileName = `profile_${
+								stringMap.Username?.value || "user"
+							}_${Date.now()}.jpg`;
+							const newPath = `${permanentDir}${fileName}`;
 
-						try {
-							await FileSystem.copyAsync({
-								from: profilePicUrl,
-								to: newPath,
-							});
-							// Update the path to the permanent location
-							profilePicUrl = newPath;
-						} catch (error) {
-							console.error("Failed to copy profile picture:", error);
-							// If copy fails, keep the temporary path but log the error
+							try {
+								await FileSystem.copyAsync({
+									from: profilePicUrl,
+									to: newPath,
+								});
+								// Update the path to the permanent location
+								profilePicUrl = newPath;
+							} catch (error) {
+								console.error(
+									"Failed to copy profile picture:",
+									error
+								);
+								// If copy fails, keep the temporary path but log the error
+							}
+						} else {
+							console.warn(
+								"Profile picture file not found at:",
+								profilePicUrl
+							);
+							// Optionally: try to find the file by scanning the directory for similar names
 						}
 					}
 				}
 
 				return {
 					id: `profile_${stringMap.Username?.value}_${Date.now()}`,
-					username: this.fixDoubleEncodedEmoji(stringMap.Username?.value),
-					fullName: this.fixDoubleEncodedEmoji(stringMap.Name?.value) || "",
-					biography: this.fixDoubleEncodedEmoji(stringMap.Bio?.value) || "",
+					username: this.fixDoubleEncodedEmoji(
+						stringMap.Username?.value
+					),
+					fullName:
+						this.fixDoubleEncodedEmoji(stringMap.Name?.value) || "",
+					biography:
+						this.fixDoubleEncodedEmoji(stringMap.Bio?.value) || "",
 					profilePicUrl,
 					followers,
 					following,
@@ -224,7 +295,7 @@ export class InstagramArchiveHandler {
 		}
 	}
 	private transformFollowers(
-		followersData: any[],
+		followersData: any[]
 	): { name: string; profileUrl: string }[] {
 		const followers: { name: string; profileUrl: string }[] = [];
 
@@ -234,7 +305,10 @@ export class InstagramArchiveHandler {
 		}
 
 		for (const follower of followersData) {
-			if (follower.string_list_data && follower.string_list_data.length > 0) {
+			if (
+				follower.string_list_data &&
+				follower.string_list_data.length > 0
+			) {
 				const data = follower.string_list_data[0];
 				followers.push({
 					name: data.value || "",
@@ -247,7 +321,7 @@ export class InstagramArchiveHandler {
 	}
 
 	private transformFollowing(
-		followingData: any,
+		followingData: any
 	): { name: string; profileUrl: string }[] {
 		const following: { name: string; profileUrl: string }[] = [];
 
@@ -260,7 +334,10 @@ export class InstagramArchiveHandler {
 		}
 
 		for (const relation of followingData.relationships_following) {
-			if (relation.string_list_data && relation.string_list_data.length > 0) {
+			if (
+				relation.string_list_data &&
+				relation.string_list_data.length > 0
+			) {
 				const data = relation.string_list_data[0];
 				following.push({
 					name: data.value || "",
@@ -303,7 +380,9 @@ export class InstagramArchiveHandler {
 							// Generate a unique filename for the permanent storage
 							const fileName = `media_${Date.now()}_${Math.random()
 								.toString(36)
-								.substring(2, 9)}_${media.uri.split("/").pop()}`;
+								.substring(2, 9)}_${media.uri
+								.split("/")
+								.pop()}`;
 							const permanentPath = `${permanentMediaDir}${fileName}`;
 
 							try {
@@ -316,7 +395,10 @@ export class InstagramArchiveHandler {
 								// Store the permanent path
 								mediaUrls.push(permanentPath);
 							} catch (copyError) {
-								console.error("Failed to copy media file:", copyError);
+								console.error(
+									"Failed to copy media file:",
+									copyError
+								);
 								// If copy fails, don't add this media URL
 							}
 						}
@@ -327,7 +409,9 @@ export class InstagramArchiveHandler {
 				posts.push({
 					id:
 						post.id ||
-						`post_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+						`post_${Date.now()}_${Math.random()
+							.toString(36)
+							.substring(2, 9)}`,
 					timestamp: post.creation_timestamp
 						? new Date(post.creation_timestamp * 1000)
 						: new Date(),
