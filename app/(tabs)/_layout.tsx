@@ -100,6 +100,14 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
+				name="tipstricks"
+				options={{
+					title: "tipstricks",
+					tabBarIcon: ({ color }) => <TabBarIcon name="circle" color={color} />,
+					headerShown: false, // Important: hide the tab header since we'll handle it in the nested stack
+				}}
+			/>
+			<Tabs.Screen
 				name="settings"
 				options={{
 					title: "Settings",
@@ -108,6 +116,7 @@ export default function TabLayout() {
 					),
 				}}
 			/>
+			
 		</Tabs>
 	);
 }
