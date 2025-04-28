@@ -37,6 +37,7 @@ export default function Trends() {
 
 	
 
+
 	const calendarEvents = [
 		{ date: "January 1", title: "New Year's Day", description: "Create content celebrating the new year, using hashtags like #NewYearsDay and #HappyNewYear."},
 		{ date: "January 25", title: "Chinese New Year", description: "Share festive content, traditions, and celebrations."},
