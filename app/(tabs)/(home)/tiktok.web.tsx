@@ -12,7 +12,6 @@ import { Video, ResizeMode } from "expo-av";
 import { Stack, router } from "expo-router";
 import { ref, getDownloadURL } from "firebase/storage";
 import { useFirebaseContext } from "@/services/FirebaseProvider";
-import * as FileSystem from "expo-file-system";
 import QRCode from "react-native-qrcode-svg";
 import { Ionicons } from "@expo/vector-icons";
 import Head from "expo-router/head";
@@ -90,26 +89,9 @@ export default function TikTokFiltersPage() {
 					filters.map(async (filter): Promise<FilterWithVideo> => {
 						if (filter.videoPath) {
 							try {
-								const fileName = filter.videoPath.replace(/\//g, "_");
-								const localUri = `${FileSystem.cacheDirectory}${fileName}`;
-								const fileInfo = await FileSystem.getInfoAsync(localUri);
-
-								if (fileInfo.exists) {
-									return { ...filter, videoUrl: localUri };
-								} else {
-									const videoRef = ref(myStorage, filter.videoPath);
-									const videoUrl = await getDownloadURL(videoRef);
-
-									// Start background download, but return streaming URL immediately
-									FileSystem.downloadAsync(videoUrl, localUri).catch((err) =>
-										console.error(
-											`Background download failed for ${filter.title}:`,
-											err,
-										),
-									);
-
-									return { ...filter, videoUrl: videoUrl };
-								}
+								const videoRef = ref(myStorage, filter.videoPath);
+								const videoUrl = await getDownloadURL(videoRef);
+								return { ...filter, videoUrl: videoUrl };
 							} catch (error) {
 								console.error(
 									`Error getting video for ${filter.title}:`,
