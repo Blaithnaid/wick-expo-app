@@ -15,17 +15,30 @@ export default function Trends() {
 	];
 
 	const platformColors: Record<string, string> = {
-        TikTok: 'bg-pink-500',
-        Instagram: 'bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500',
-        YouTube: 'bg-red-600',
-        Facebook: 'bg-blue-600',
-        X: 'bg-black',
-        Twitch: 'bg-purple-700',
-      };
+		TikTok: 'bg-pink-500',
+		Instagram: 'bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500',
+		YouTube: 'bg-red-600',
+		Facebook: 'bg-blue-600',
+		X: 'bg-black',
+		Twitch: 'bg-purple-700',
+	};
 
-	  const calendarEvents = [
+	const hashtagTrends = [
+		"#ForYouPage",
+		"#TrendingNow",
+		"#ViralMoment",
+		"#PhotoDump",
+		"#POV",
+		"#GRWM",
+		"#AIContent",
+		"#MemeLife",
+		"#DayInTheLife",
+	];
+
 	
-		{ date: "January 1", title: "New Year's Day", description: "Create content celebrating the new year, using hashtags like #NewYearsDay and #HappyNewYear."},	
+
+	const calendarEvents = [
+		{ date: "January 1", title: "New Year's Day", description: "Create content celebrating the new year, using hashtags like #NewYearsDay and #HappyNewYear."},
 		{ date: "January 25", title: "Chinese New Year", description: "Share festive content, traditions, and celebrations."},
 		{ date: "February 1", title: "Lunar New Year", description: "Share festive content, traditions, and celebrations." },
 		{ date: "February 14", title: "Valentine's Day", description: "Share content celebrating love and relationships, using hashtags like #ValentinesDay and #Love."},
@@ -44,32 +57,10 @@ export default function Trends() {
 		{ date: "September 13", title: "International Chocolate Day", description: "Share chocolate recipes, reviews, and fun facts." },
 		{ date: "October 31", title: "Halloween", description: "Share spooky content, costumes, and Halloween-themed memes, using hashtags like #Halloween and #SpookySeason."},
 		{ date: "December 25", title: "Christmas", description: "Share festive content, holiday traditions, and Christmas-themed memes, using hashtags like #Christmas and #MerryChristmas."},
-		
-		
 	];
-
-	
-	const pastelMonthColors = [
-		'bg-rose-200',
-		'bg-sky-200',
-		'bg-lime-200',
-		'bg-orange-200',
-		'bg-indigo-200',
-		'bg-emerald-200',
-		'bg-violet-200',
-		'bg-yellow-200',
-		'bg-teal-200',
-		'bg-pink-200',
-		'bg-blue-200',
-		'bg-green-200',
-	  ];
-	  
-	  
 
 	const isDarkMode = colorScheme === "dark";
 
-
-      // 🔁 Group events by month
 	const calendarEventsGrouped = calendarEvents.reduce((acc, event) => {
 		const month = event.date.split(" ")[0];
 		if (!acc[month]) acc[month] = [];
@@ -81,6 +72,7 @@ export default function Trends() {
 		"January", "February", "March", "April", "May", "June",
 		"July", "August", "September", "October", "November", "December"
 	];
+
 	return (
 		<ScrollView className="flex-1 px-5 pt-5 bg-white dark:bg-oxford-500">
 			<Text className="text-4xl font-extrabold text-center mb-8 text-black dark:text-white">
@@ -88,7 +80,6 @@ export default function Trends() {
 			</Text>
 
 			{trends.map((trend, index) => (
-				
 				<View
 					key={index}
 					className={`rounded-2xl p-5 mb-6 shadow-md ${platformColors[trend.platform] || 'bg-gray-200'}`}
@@ -105,67 +96,53 @@ export default function Trends() {
 					<Text className="text-white text-base">{trend.description}</Text>
 				</View>	
 			))}
-			
-			
 
-<Text className="text-3xl font-extrabold text-white mt-10 mb-4">
+			{/* 🔥 Hashtag Trends Section */}
+			<Text className="text-3xl font-extrabold text-black dark:text-white mt-10 mb-4">
+				#️⃣ Trending Hashtags
+			</Text>
+
+			<View className="flex flex-wrap flex-row mb-10">
+				{hashtagTrends.map((hashtag, index) => (
+					<View key={index} className="bg-gray-200 dark:bg-gray-700 rounded-full px-4 py-2 mr-2 mb-2">
+						<Text className="text-black dark:text-white font-semibold">{hashtag}</Text>
+					</View>
+				))}
+			</View>
+
+			{/* 📅 Calendar Events Section */}
+			<Text className="text-3xl font-extrabold text-black dark:text-white mb-4">
 				📅 Monthly Viral Events
 			</Text>
 
 			<View className="h-[500px] mb-10">
-			<ScrollView
-				horizontal
-				pagingEnabled
-				showsHorizontalScrollIndicator={false}
-				//className="mb-10"
-			>
-				{monthOrder.map((month) => {
-					const events = calendarEventsGrouped[month];
-					if (!events) return null;
+				<ScrollView
+					horizontal
+					pagingEnabled
+					showsHorizontalScrollIndicator={false}
+				>
+					{monthOrder.map((month) => {
+						const events = calendarEventsGrouped[month];
+						if (!events) return null;
 
-					return (
-						<View key={month} 
-						style={{ width : 300 }} 
-						className="px-3">
+						return (
+							<View key={month} style={{ width : 300 }} className="px-3">
+								<Text className="text-2xl font-bold text-black dark:text-white mb-4">{month}</Text>
 
-							<Text className="text-2xl text-black font-bold mb-4">{
-							month}
-
-							</Text>
-
-							<ScrollView showsVerticalScrollIndicator={false}>
-							{events.map((event, index) => (
-								<View 
-								key={index} 
-								className={`mb-4 p-4 rounded-2xl shadow-sm ${
-									pastelMonthColors[monthOrder.indexOf(month)] || 'bg-oxford-400'
-								  }`}
-								  
-
-
-							  >
-							  
-									<Text className="text-sm text-white mb-1 font-medium">
-										{event.date}
-									</Text>
-									<Text className="text-lg text-white font-bold">
-										{event.title}
-									</Text>
-									<Text className="text-white">{event.description}</Text>
-								</View>
-							))}
-							</ScrollView>
-						</View>
-					);
-				}
-				)}
-
-
+								<ScrollView showsVerticalScrollIndicator={false}>
+									{events.map((event, index) => (
+										<View key={index} className="mb-4 p-4 rounded-2xl bg-gray-100 dark:bg-gray-800 shadow-sm">
+											<Text className="text-sm text-black dark:text-white mb-1 font-medium">{event.date}</Text>
+											<Text className="text-lg text-black dark:text-white font-bold">{event.title}</Text>
+											<Text className="text-black dark:text-white">{event.description}</Text>
+										</View>
+									))}
+								</ScrollView>
+							</View>
+						);
+					})}
+				</ScrollView>
+			</View>
 		</ScrollView>
-		</View>
-		</ScrollView>
-		
 	);
 }
-
-
