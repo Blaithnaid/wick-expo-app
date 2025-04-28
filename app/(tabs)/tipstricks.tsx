@@ -1,5 +1,4 @@
 import { ScrollView, Image, Pressable, Linking, Animated, Dimensions } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEffect, useRef } from 'react';
 import { useColorScheme } from '@/hooks/useColorScheme'; // Import the color scheme hook
 import { Text, View } from "@/components/Themed";
@@ -168,290 +167,296 @@ export default function TipsAndTricks() {
     }).start();
   };
 
-  const backgroundColor = colorScheme.colorScheme === 'dark' ? '#1e1e1e' : '#ffffff'; // Match dark mode grayish color
   const textColor = colorScheme.colorScheme === 'dark' ? '#ffffff' : '#000000';
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor }}>
-      <ScrollView contentContainerStyle={{ padding: 16, flexGrow: 1 }}>
-        {/* Header */}
-        <Text
+    <ScrollView 
+      className="w-full py-4 bg-white dark:bg-oxford-500"
+      contentContainerStyle={{ padding: 16, flexGrow: 1 }}
+    >
+      {/* Header */}
+      <Text
+        style={{
+          fontSize: 24,
+          fontWeight: 'bold',
+          textAlign: 'center',
+          marginBottom: 16,
+          color: textColor,
+        }}
+      >
+        🚀 Social Media Tips & Tricks
+      </Text>
+
+      {/* Grouped Tips */}
+      {groupedTips.map((group, index) => (
+        <View
+          key={index}
           style={{
-            fontSize: 24,
-            fontWeight: 'bold',
-            textAlign: 'center',
-            marginBottom: 16,
-            color: textColor,
+            marginBottom: 24,
+            width: '100%',
           }}
         >
-          🚀 Social Media Tips & Tricks
-        </Text>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: 'bold',
+              textAlign: 'center',
+              marginBottom: 12,
+              color: textColor,
+            }}
+          >
+            {group.platform}
+          </Text>
+          <ScrollView
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{
+              flexDirection: 'row',
+              alignItems: 'flex-start', // Ensure proper alignment
+              paddingHorizontal: 16,
+            }}
+          >
+            {group.videos.map((video, idx) => (
+              <Animated.View
+                key={idx}
+                style={{
+                  transform: [{ translateY: animations[index].translateY }],
+                  opacity: animations[index].opacity,
+                  marginRight: idx === group.videos.length - 1 ? 0 : 16, // Remove margin for the last video
+                  alignItems: 'center',
+                  backgroundColor: colorScheme.colorScheme === 'dark' ? '#1a1a1a' : '#f0f0f0', // Darker background in dark mode
+                  borderRadius: 12, // Increased from 8
+                  overflow: 'hidden',
+                  width: 200,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 4,
+                  elevation: 5,
+                }}
+              >
+                <Image
+                  source={{ uri: video.thumbnail }}
+                  style={{
+                    width: 192,
+                    height: 112,
+                    resizeMode: 'cover',
+                  }}
+                />
+                <View
+                  style={{
+                    padding: 12,
+                    flex: 1,
+                    justifyContent: 'space-between', // Distribute space between title and button
+                  }}
+                >
+                  {/* Title Container with Fixed Height */}
+                  <View
+                    style={{
+                      minHeight: 40, // Ensure consistent height for all titles
+                      justifyContent: 'center', // Center the text vertically
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                        marginBottom: 8,
+                        color: textColor,
+                      }}
+                    >
+                      {video.tip}
+                    </Text>
+                  </View>
+                  <Pressable
+                    onPress={() => Linking.openURL(video.videoUrl)}
+                    style={{
+                      backgroundColor: '#6F6DB2', // Changed button color to #6F6DB2
+                      borderRadius: 8,
+                      paddingVertical: 8,
+                      paddingHorizontal: 16,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                      }}
+                    >
+                      🎥 Watch Video
+                    </Text>
+                  </Pressable>
+                </View>
+              </Animated.View>
+            ))}
+          </ScrollView>
+        </View>
+      ))}
 
-        {/* Best Times to Post Carousel */}
-        <Text
-          style={{
-            fontSize: 20,
-            fontWeight: 'bold',
-            textAlign: 'center',
-            marginBottom: 16,
-            color: textColor,
-          }}
-        >
-        
+      {/* Recommended Blogs */}
+      <Text
+        style={{
+          fontSize: 20,
+          fontWeight: 'bold',
+          textAlign: 'center',
+          marginTop: 24,
+          marginBottom: 16,
+          color: textColor,
+        }}
+      >
+        📝 Recommended Blogs
+      </Text>
 
-        {/* Grouped Tips */}
-        {groupedTips.map((group, index) => (
+      <View style={{ width: '100%', alignItems: 'center', marginBottom: 24 }}>
+        {/* Blog 1 */}
+        <Animated.View style={{ transform: [{ scale: blogAnimations[0] }] }}>
+          <Pressable
+            onPress={() =>
+              Linking.openURL('https://www.sprinklr.com/blog/how-to-drive-organic-growth-on-social-media/')
+            }
+            onPressIn={() => handlePressIn(0)}
+            onPressOut={() => handlePressOut(0)}
+            style={{
+              backgroundColor: '#007bff', // Original blue color
+              borderRadius: 8,
+              padding: 16,
+              marginBottom: 16,
+              width: width * 0.9,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>
+              📈 How to Drive Organic Growth on Social Media
+            </Text>
+          </Pressable>
+        </Animated.View>
+
+        {/* Blog 2 */}
+        <Animated.View style={{ transform: [{ scale: blogAnimations[1] }] }}>
+          <Pressable
+            onPress={() =>
+              Linking.openURL('https://www.forbes.com/sites/nicolesmith/2024/08/19/the-art-of-engagement-key-to-rapidly-growing-social-media-following/')
+            }
+            onPressIn={() => handlePressIn(1)}
+            onPressOut={() => handlePressOut(1)}
+            style={{
+              backgroundColor: '#28a745', // Original green color
+              borderRadius: 8,
+              padding: 16,
+              marginBottom: 16,
+              width: width * 0.9,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>
+              🔥 The Art of Engagement for Social Media Growth
+            </Text>
+          </Pressable>
+        </Animated.View>
+
+        {/* Blog 3 */}
+        <Animated.View style={{ transform: [{ scale: blogAnimations[2] }] }}>
+          <Pressable
+            onPress={() => Linking.openURL('https://buffer.com/resources/')}
+            onPressIn={() => handlePressIn(2)}
+            onPressOut={() => handlePressOut(2)}
+            style={{
+              backgroundColor: '#6f42c1', // Original purple color
+              borderRadius: 8,
+              padding: 16,
+              width: width * 0.9,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>
+              📊 Buffer Resources for Social Media Growth
+            </Text>
+          </Pressable>
+        </Animated.View>
+      </View>
+
+      {/* Best Times to Post Carousel */}
+      <Text
+        style={{
+          fontSize: 20,
+          fontWeight: 'bold',
+          textAlign: 'center',
+          marginTop: 24,
+          marginBottom: 16,
+          color: textColor,
+        }}
+      >
+        📅 Best Times to Post
+      </Text>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{
+          flexDirection: 'row',
+          paddingHorizontal: 16,
+          marginBottom: 24,
+        }}
+      >
+        {bestTimesToPost.map((platform, index) => (
           <View
             key={index}
             style={{
-              marginBottom: 24,
-              width: '100%',
+              backgroundColor: colorScheme.colorScheme === 'dark' ? '#1a1a1a' : '#f0f0f0', // Darker background for contrast
+              borderRadius: 12,
+              padding: 16,
+              marginRight: 16,
+              width: width * 0.8,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.3,
+              shadowRadius: 4,
+              elevation: 5,
             }}
           >
             <Text
               style={{
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: 'bold',
                 textAlign: 'center',
                 marginBottom: 12,
                 color: textColor,
               }}
             >
-              {group.platform}
+              {platform.platform}
             </Text>
-            <ScrollView
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{
-                flexDirection: 'row',
-                alignItems: 'flex-start', // Ensure proper alignment
-                paddingHorizontal: 16,
-              }}
-            >
-              {group.videos.map((video, idx) => (
-                <Animated.View
-                  key={idx}
-                  style={{
-                    transform: [{ translateY: animations[index].translateY }],
-                    opacity: animations[index].opacity,
-                    marginRight: idx === group.videos.length - 1 ? 0 : 16, // Remove margin for the last video
-                    alignItems: 'center',
-                    backgroundColor: colorScheme.colorScheme === 'dark' ? '#2c2c2c' : '#f0f0f0',
-                    borderRadius: 8,
-                    overflow: 'hidden',
-                    width: 200,
-                  }}
-                >
-                  <Image
-                    source={{ uri: video.thumbnail }}
-                    style={{
-                      width: 192,
-                      height: 112,
-                      resizeMode: 'cover',
-                    }}
-                  />
-                  <View
-                    style={{
-                      padding: 12,
-                      flex: 1,
-                      justifyContent: 'space-between', // Distribute space between title and button
-                    }}
-                  >
-                    {/* Title Container with Fixed Height */}
-                    <View
-                      style={{
-                        minHeight: 40, // Ensure consistent height for all titles
-                        justifyContent: 'center', // Center the text vertically
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: 'bold',
-                          textAlign: 'center',
-                          marginBottom: 8,
-                          color: textColor,
-                        }}
-                      >
-                        {video.tip}
-                      </Text>
-                    </View>
-                    <Pressable
-                      onPress={() => Linking.openURL(video.videoUrl)}
-                      style={{
-                        backgroundColor: '#007bff',
-                        borderRadius: 8,
-                        paddingVertical: 8,
-                        paddingHorizontal: 16,
-                      }}
-                    >
-                      <Text
-                        style={{
-                          color: 'white',
-                          fontWeight: 'bold',
-                          textAlign: 'center',
-                        }}
-                      >
-                        🎥 Watch Video
-                      </Text>
-                    </Pressable>
-                  </View>
-                </Animated.View>
-              ))}
-            </ScrollView>
-          </View>
-        ))}
-
-        {/* Recommended Blogs */}
-        <Text
-          style={{
-            fontSize: 20,
-            fontWeight: 'bold',
-            textAlign: 'center',
-            marginTop: 24,
-            marginBottom: 16,
-            color: textColor,
-          }}
-        >
-          📝 Recommended Blogs
-        </Text>
-
-        <View style={{ width: '100%', alignItems: 'center', marginBottom: 24 }}>
-          {/* Blog 1 */}
-          <Animated.View style={{ transform: [{ scale: blogAnimations[0] }] }}>
-            <Pressable
-              onPress={() =>
-                Linking.openURL('https://www.sprinklr.com/blog/how-to-drive-organic-growth-on-social-media/')
-              }
-              onPressIn={() => handlePressIn(0)}
-              onPressOut={() => handlePressOut(0)}
-              style={{
-                backgroundColor: '#007bff',
-                borderRadius: 8,
-                padding: 16,
-                marginBottom: 16,
-                width: width * 0.9,
-                alignItems: 'center',
-              }}
-            >
-              <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>
-                📈 How to Drive Organic Growth on Social Media
-              </Text>
-            </Pressable>
-          </Animated.View>
-
-          {/* Blog 2 */}
-          <Animated.View style={{ transform: [{ scale: blogAnimations[1] }] }}>
-            <Pressable
-              onPress={() =>
-                Linking.openURL('https://www.forbes.com/sites/nicolesmith/2024/08/19/the-art-of-engagement-key-to-rapidly-growing-social-media-following/')
-              }
-              onPressIn={() => handlePressIn(1)}
-              onPressOut={() => handlePressOut(1)}
-              style={{
-                backgroundColor: '#28a745',
-                borderRadius: 8,
-                padding: 16,
-                marginBottom: 16,
-                width: width * 0.9,
-                alignItems: 'center',
-              }}
-            >
-              <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>
-                🔥 The Art of Engagement for Social Media Growth
-              </Text>
-            </Pressable>
-          </Animated.View>
-
-          {/* Blog 3 */}
-          <Animated.View style={{ transform: [{ scale: blogAnimations[2] }] }}>
-            <Pressable
-              onPress={() => Linking.openURL('https://buffer.com/resources/')}
-              onPressIn={() => handlePressIn(2)}
-              onPressOut={() => handlePressOut(2)}
-              style={{
-                backgroundColor: '#6f42c1',
-                borderRadius: 8,
-                padding: 16,
-                width: width * 0.9,
-                alignItems: 'center',
-              }}
-            >
-              <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>
-                📊 Buffer Resources for Social Media Growth
-              </Text>
-            </Pressable>
-          </Animated.View>
-        </View>
-
-        📅 Best Times to Post
-        </Text>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            flexDirection: 'row',
-            paddingHorizontal: 16,
-          }}
-        >
-          {bestTimesToPost.map((platform, index) => (
-            <View
-              key={index}
-              style={{
-                backgroundColor: colorScheme.colorScheme === 'dark' ? '#2c2c2c' : '#f0f0f0',
-                borderRadius: 12,
-                padding: 16,
-                marginRight: 16,
-                width: width * 0.8, // Responsive width
-                shadowColor: '#000',
-                shadowOpacity: 0.1,
-                shadowRadius: 4,
-                elevation: 5,
-              }}
-            >
-              <Text
+            {Object.entries(platform.times).map(([day, time], idx) => (
+              <View
+                key={idx}
                 style={{
-                  fontSize: 18,
-                  fontWeight: 'bold',
-                  textAlign: 'center',
-                  marginBottom: 12,
-                  color: textColor,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginBottom: 8,
                 }}
               >
-                {platform.platform}
-              </Text>
-              {Object.entries(platform.times).map(([day, time], idx) => (
-                <View
-                  key={idx}
+                <Text
                   style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginBottom: 8,
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    color: textColor,
                   }}
                 >
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontWeight: 'bold',
-                      color: textColor,
-                    }}
-                  >
-                    {day}:
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      color: textColor,
-                    }}
-                  >
-                    {time}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          ))}
-        </ScrollView>
+                  {day}:
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: textColor,
+                  }}
+                >
+                  {time}
+                </Text>
+              </View>
+            ))}
+          </View>
+        ))}
       </ScrollView>
-    </SafeAreaView>
+    </ScrollView>
   );
 }
