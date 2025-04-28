@@ -44,3 +44,4 @@ android/
 # example files for importing ig profiles
 test.json
 test.zip
+.vercel

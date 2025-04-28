@@ -216,7 +216,7 @@ export default function Trends() {
 						className={`rounded-2xl p-5 mb-6 shadow-md ${platformColors[trend.platform] || "bg-gray-200"}`}
 						style={{ elevation: 6 }}
 					>
-						<View className="bg-gray-200 dark:bg-black/50 p-2 rounded-2xl flex-row items-center mb-2">
+						<View className="bg-black/50 dark:bg-black/50 p-2 rounded-2xl flex-row items-center mb-2">
 							<Text className="text-sm font-bold text-white bg-black px-3 py-1 rounded-full mr-3">
 								{trend.platform}
 							</Text>
