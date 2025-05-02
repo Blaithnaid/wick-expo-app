@@ -6,89 +6,22 @@ import {
 	Animated,
 	Dimensions,
 } from "react-native";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useColorScheme } from "@/hooks/useColorScheme"; // Import the color scheme hook
 import { Text, View } from "@/components/Themed";
+import { collection, getDocs } from "firebase/firestore";
+import { useFirebaseContext } from "@/services/FirebaseProvider";
 
 const { width } = Dimensions.get("window"); // Get screen width for responsive design
 
-const groupedTips = [
-	{
-		platform: "Instagram",
-		videos: [
-			{
-				tip: "Use Reels & optimize hashtags.",
-				videoUrl: "https://youtu.be/rGJGmTIS5L0?si=pGrEQN5i4JD6djb1",
-				thumbnail: "https://img.youtube.com/vi/rGJGmTIS5L0/0.jpg",
-			},
-			{
-				tip: "Making Aesthetic Posts.",
-				videoUrl: "https://youtu.be/EDS9sJFFBS8?si=RnjR0lbr2SqmpGrS",
-				thumbnail: "https://img.youtube.com/vi/EDS9sJFFBS8/0.jpg",
-			},
-			{
-				tip: "How to Gain Followers.",
-				videoUrl: "https://youtu.be/7Eiqe_sShQg?si=mNDqMzT6Rz5d1c-v",
-				thumbnail: "https://img.youtube.com/vi/7Eiqe_sShQg/0.jpg",
-			},
-			{
-				tip: "Learning the Instagram Algorithm.",
-				videoUrl: "https://youtu.be/aZH3c9NNqGs?si=3eyyFPyDRa6T9cyt",
-				thumbnail: "https://img.youtube.com/vi/aZH3c9NNqGs/0.jpg",
-			},
-		],
-	},
-	{
-		platform: "TikTok",
-		videos: [
-			{
-				tip: "Grow your TikTok account.",
-				videoUrl: "https://youtu.be/ZyJsH9X0MXY?si=PZo47XODleIqf2iU",
-				thumbnail: "https://img.youtube.com/vi/ZyJsH9X0MXY/0.jpg",
-			},
-			{
-				tip: "19 TIps Before Starting TikTok.",
-				videoUrl: "https://youtu.be/ICU-j1pItlA?si=NOY-OgKfMMi9Spqm",
-				thumbnail: "https://img.youtube.com/vi/ICU-j1pItlA/0.jpg",
-			},
-			{
-				tip: "Gaining Followers on TikTok.",
-				videoUrl: "https://youtu.be/xbWFG_ECUhc?si=tD9uM2Bp6xIuYAnF",
-				thumbnail: "https://img.youtube.com/vi/xbWFG_ECUhc/0.jpg",
-			},
-			{
-				tip: "How to Monitise your TikTok account.",
-				videoUrl: "https://youtu.be/YyLsCYBjUzI?si=zD_N8eF5GGHiEpfJ",
-				thumbnail: "https://img.youtube.com/vi/YyLsCYBjUzI/0.jpg",
-			},
-		],
-	},
-	{
-		platform: "YouTube",
-		videos: [
-			{
-				tip: "10 Youtube Short Hacks!",
-				videoUrl: "https://youtu.be/agC7mcC7WoQ?si=1epj-7yXJQR9tXp7",
-				thumbnail: "https://img.youtube.com/vi/agC7mcC7WoQ/0.jpg",
-			},
-			{
-				tip: "Youtube Gear Checklist.",
-				videoUrl: "https://youtu.be/zH3eaMHVZs4?si=zfcy8C0VLq4LRUmd",
-				thumbnail: "https://img.youtube.com/vi/zH3eaMHVZs4/0.jpg",
-			},
-			{
-				tip: "End screens/cards to promote other videos.",
-				videoUrl: "https://youtu.be/2Te4-B1wHAI?si=v63-TUIg34T2CoHw",
-				thumbnail: "https://img.youtube.com/vi/2Te4-B1wHAI/0.jpg",
-			},
-			{
-				tip: "Optimize video titles & descriptions for SEO.",
-				videoUrl: "https://youtu.be/-uE4WxFX5XY?si=F4gOcUQz-EGa1E2r",
-				thumbnail: "https://img.youtube.com/vi/-uE4WxFX5XY/0.jpg",
-			},
-		],
-	},
-];
+function getYouTubeThumbnail(url: string): string {
+	// Extract the video ID from the YouTube URL
+	const match = url.match(
+		/(?:youtu.be\/|youtube.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([\w-]{11})/
+	);
+	const videoId = match ? match[1] : null;
+	return videoId ? `https://img.youtube.com/vi/${videoId}/0.jpg` : "";
+}
 
 const bestTimesToPost = [
 	{
@@ -130,13 +63,6 @@ const bestTimesToPost = [
 ];
 
 export default function TipsAndTricks() {
-	const animations = useRef(
-		groupedTips.map(() => ({
-			translateY: new Animated.Value(50),
-			opacity: new Animated.Value(0),
-		})),
-	).current;
-
 	const blogAnimations = useRef([
 		new Animated.Value(1),
 		new Animated.Value(1),
@@ -145,7 +71,70 @@ export default function TipsAndTricks() {
 
 	const colorScheme = useColorScheme(); // Detect system theme (light or dark)
 
+	type Video = {
+		tip: string;
+		videoUrl: string;
+		thumbnail: string;
+	};
+
+	type GroupedTip = {
+		platform: string;
+		videos: Video[];
+	};
+
+	const [groupedTips, setGroupedTips] = useState<GroupedTip[]>([]);
+	const [loadingTips, setLoadingTips] = useState(true);
+	const { myFS } = useFirebaseContext();
+	const [animations, setAnimations] = useState<any[]>([]);
+
 	useEffect(() => {
+		const fetchTips = async () => {
+			if (!myFS) return;
+			setLoadingTips(true);
+			try {
+				const tipsCol = collection(myFS, "tips");
+				const tipsSnap = await getDocs(tipsCol);
+				const tipsArr = tipsSnap.docs.map((doc) => {
+					const data = doc.data();
+					return {
+						tip: data.title,
+						videoUrl: data.youtubeUrl,
+						thumbnail: getYouTubeThumbnail(data.youtubeUrl),
+						platform: data.platform,
+					};
+				});
+				// Group by platform
+				const grouped: Record<string, any[]> = {};
+				tipsArr.forEach((tip) => {
+					if (!grouped[tip.platform]) grouped[tip.platform] = [];
+					grouped[tip.platform].push({
+						tip: tip.tip,
+						videoUrl: tip.videoUrl,
+						thumbnail: tip.thumbnail,
+					});
+				});
+				const groupedArr = Object.entries(grouped).map(([platform, videos]) => ({
+					platform,
+					videos,
+				}));
+				setGroupedTips(groupedArr);
+				setAnimations(
+					groupedArr.map(() => ({
+						translateY: new Animated.Value(50),
+						opacity: new Animated.Value(0),
+					}))
+				);
+			} catch (e) {
+				setGroupedTips([]);
+				setAnimations([]);
+			}
+			setLoadingTips(false);
+		};
+		fetchTips();
+	}, [myFS]);
+
+	useEffect(() => {
+		if (!animations.length) return;
 		const animationsList = animations.map((anim, index) =>
 			Animated.parallel([
 				Animated.timing(anim.translateY, {
@@ -160,11 +149,11 @@ export default function TipsAndTricks() {
 					delay: index * 200,
 					useNativeDriver: true,
 				}),
-			]),
+			])
 		);
 
 		Animated.stagger(150, animationsList).start();
-	}, [animations.map]);
+	}, [animations]);
 
 	const handlePressIn = (index: number) => {
 		Animated.spring(blogAnimations[index], {
@@ -180,7 +169,18 @@ export default function TipsAndTricks() {
 		}).start();
 	};
 
-	const textColor = colorScheme.colorScheme === "dark" ? "#ffffff" : "#000000";
+	const textColor =
+		colorScheme.colorScheme === "dark" ? "#ffffff" : "#000000";
+
+	if (loadingTips) {
+		return (
+			<View className="flex-1 w-full items-center justify-center bg-white dark:bg-oxford-500">
+				<Text className="text-lg text-gray-900 dark:text-white">
+					Loading tips...
+				</Text>
+			</View>
+		);
+	}
 
 	return (
 		<View className="flex-1 w-full items-center justify-center bg-white dark:bg-oxford-500">
@@ -208,9 +208,17 @@ export default function TipsAndTricks() {
 									className="bg-gray-200 dark:bg-oxford-600 overflow-hidden"
 									key={idx}
 									style={{
-										transform: [{ translateY: animations[index].translateY }],
-										opacity: animations[index].opacity,
-										marginRight: idx === group.videos.length - 1 ? 0 : 16, // Remove margin for the last video
+										transform: [
+											{
+												translateY:
+													animations[index]?.translateY || 0,
+											},
+										],
+										opacity: animations[index]?.opacity || 1,
+										marginRight:
+											idx === group.videos.length - 1
+												? 0
+												: 16, // Remove margin for the last video
 										alignItems: "center",
 										borderRadius: 12, // Increased from 8
 										width: 200,
@@ -245,7 +253,9 @@ export default function TipsAndTricks() {
 											</Text>
 										</View>
 										<Pressable
-											onPress={() => Linking.openURL(video.videoUrl)}
+											onPress={() =>
+												Linking.openURL(video.videoUrl)
+											}
 											style={{
 												backgroundColor: "#6F6DB2", // Changed button color to #6F6DB2
 												borderRadius: 8,
@@ -284,13 +294,21 @@ export default function TipsAndTricks() {
 					📝 Recommended Blogs
 				</Text>
 
-				<View style={{ width: "100%", alignItems: "center", marginBottom: 24 }}>
+				<View
+					style={{
+						width: "100%",
+						alignItems: "center",
+						marginBottom: 24,
+					}}
+				>
 					{/* Blog 1 */}
-					<Animated.View style={{ transform: [{ scale: blogAnimations[0] }] }}>
+					<Animated.View
+						style={{ transform: [{ scale: blogAnimations[0] }] }}
+					>
 						<Pressable
 							onPress={() =>
 								Linking.openURL(
-									"https://www.sprinklr.com/blog/how-to-drive-organic-growth-on-social-media/",
+									"https://www.sprinklr.com/blog/how-to-drive-organic-growth-on-social-media/"
 								)
 							}
 							onPressIn={() => handlePressIn(0)}
@@ -305,7 +323,11 @@ export default function TipsAndTricks() {
 							}}
 						>
 							<Text
-								style={{ color: "white", fontWeight: "bold", fontSize: 16 }}
+								style={{
+									color: "white",
+									fontWeight: "bold",
+									fontSize: 16,
+								}}
 							>
 								📈 How to Drive Organic Growth on Social Media
 							</Text>
@@ -313,11 +335,13 @@ export default function TipsAndTricks() {
 					</Animated.View>
 
 					{/* Blog 2 */}
-					<Animated.View style={{ transform: [{ scale: blogAnimations[1] }] }}>
+					<Animated.View
+						style={{ transform: [{ scale: blogAnimations[1] }] }}
+					>
 						<Pressable
 							onPress={() =>
 								Linking.openURL(
-									"https://www.forbes.com/sites/nicolesmith/2024/08/19/the-art-of-engagement-key-to-rapidly-growing-social-media-following/",
+									"https://www.forbes.com/sites/nicolesmith/2024/08/19/the-art-of-engagement-key-to-rapidly-growing-social-media-following/"
 								)
 							}
 							onPressIn={() => handlePressIn(1)}
@@ -332,7 +356,11 @@ export default function TipsAndTricks() {
 							}}
 						>
 							<Text
-								style={{ color: "white", fontWeight: "bold", fontSize: 16 }}
+								style={{
+									color: "white",
+									fontWeight: "bold",
+									fontSize: 16,
+								}}
 							>
 								🔥 The Art of Engagement for Social Media Growth
 							</Text>
@@ -340,9 +368,13 @@ export default function TipsAndTricks() {
 					</Animated.View>
 
 					{/* Blog 3 */}
-					<Animated.View style={{ transform: [{ scale: blogAnimations[2] }] }}>
+					<Animated.View
+						style={{ transform: [{ scale: blogAnimations[2] }] }}
+					>
 						<Pressable
-							onPress={() => Linking.openURL("https://buffer.com/resources/")}
+							onPress={() =>
+								Linking.openURL("https://buffer.com/resources/")
+							}
 							onPressIn={() => handlePressIn(2)}
 							onPressOut={() => handlePressOut(2)}
 							style={{
@@ -354,7 +386,11 @@ export default function TipsAndTricks() {
 							}}
 						>
 							<Text
-								style={{ color: "white", fontWeight: "bold", fontSize: 16 }}
+								style={{
+									color: "white",
+									fontWeight: "bold",
+									fontSize: 16,
+								}}
 							>
 								📊 Buffer Resources for Social Media Growth
 							</Text>
@@ -390,7 +426,9 @@ export default function TipsAndTricks() {
 							key={index}
 							style={{
 								backgroundColor:
-									colorScheme.colorScheme === "dark" ? "#1a1a1a" : "#ffffff",
+									colorScheme.colorScheme === "dark"
+										? "#1a1a1a"
+										: "#ffffff",
 								borderRadius: 16,
 								padding: 20,
 								marginRight: 16,
@@ -402,7 +440,9 @@ export default function TipsAndTricks() {
 								elevation: 8,
 								borderWidth: 1,
 								borderColor:
-									colorScheme.colorScheme === "dark" ? "#333" : "#eee",
+									colorScheme.colorScheme === "dark"
+										? "#333"
+										: "#eee",
 							}}
 						>
 							{/* Platform Header with Icon */}
@@ -416,8 +456,8 @@ export default function TipsAndTricks() {
 										platform.platform === "TikTok"
 											? "#00F2EA"
 											: platform.platform === "Instagram"
-												? "#E4405F"
-												: "#FF0000",
+											? "#E4405F"
+											: "#FF0000",
 									padding: 12,
 									borderRadius: 12,
 								}}
@@ -428,79 +468,89 @@ export default function TipsAndTricks() {
 										fontWeight: "bold",
 										color: "white",
 										textShadowColor: "rgba(0, 0, 0, 0.3)",
-										textShadowOffset: { width: 1, height: 1 },
+										textShadowOffset: {
+											width: 1,
+											height: 1,
+										},
 										textShadowRadius: 3,
 									}}
 								>
 									{platform.platform === "TikTok"
 										? "🎵 "
 										: platform.platform === "Instagram"
-											? "📸 "
-											: "▶ "}
+										? "📸 "
+										: "▶ "}
 									{platform.platform}
 								</Text>
 							</View>
 
 							{/* Time Slots with Better Design */}
-							{Object.entries(platform.times).map(([day, time], idx) => (
-								<View
-									key={idx}
-									style={{
-										flexDirection: "row",
-										justifyContent: "space-between",
-										backgroundColor:
-											colorScheme.colorScheme === "dark"
-												? "#2a2a2a"
-												: "#f8f8f8",
-										padding: 12,
-										borderRadius: 8,
-										marginBottom: 8,
-										borderLeftWidth: 4,
-										borderLeftColor:
-											platform.platform === "TikTok"
-												? "#00F2EA"
-												: platform.platform === "Instagram"
+							{Object.entries(platform.times).map(
+								([day, time], idx) => (
+									<View
+										key={idx}
+										style={{
+											flexDirection: "row",
+											justifyContent: "space-between",
+											backgroundColor:
+												colorScheme.colorScheme ===
+												"dark"
+													? "#2a2a2a"
+													: "#f8f8f8",
+											padding: 12,
+											borderRadius: 8,
+											marginBottom: 8,
+											borderLeftWidth: 4,
+											borderLeftColor:
+												platform.platform === "TikTok"
+													? "#00F2EA"
+													: platform.platform ===
+													  "Instagram"
 													? "#E4405F"
 													: "#FF0000",
-									}}
-								>
-									<Text
-										style={{
-											fontSize: 16,
-											fontWeight: "600",
-											color: textColor,
-										}}
-									>
-										{day}
-									</Text>
-									<View
-										style={{
-											backgroundColor:
-												colorScheme.colorScheme === "dark"
-													? "#3a3a3a"
-													: "#e8e8e8",
-											paddingHorizontal: 12,
-											paddingVertical: 4,
-											borderRadius: 12,
 										}}
 									>
 										<Text
 											style={{
-												fontSize: 14,
-												color:
-													platform.platform === "TikTok"
-														? "#00F2EA"
-														: platform.platform === "Instagram"
-															? "#E4405F"
-															: "#FF0000",
+												fontSize: 16,
 												fontWeight: "600",
+												color: textColor,
 											}}
 										>
-											{time}
+											{day}
 										</Text>
+										<View
+											style={{
+												backgroundColor:
+													colorScheme.colorScheme ===
+													"dark"
+														? "#3a3a3a"
+														: "#e8e8e8",
+												paddingHorizontal: 12,
+												paddingVertical: 4,
+												borderRadius: 12,
+											}}
+										>
+											<Text
+												style={{
+													fontSize: 14,
+													color:
+														platform.platform ===
+														"TikTok"
+															? "#00F2EA"
+															: platform.platform ===
+															  "Instagram"
+															? "#E4405F"
+															: "#FF0000",
+													fontWeight: "600",
+												}}
+											>
+												{time}
+											</Text>
+										</View>
 									</View>
-								</View>
-							))}
+								)
+							)}
 						</View>
 					))}
 				</ScrollView>
@@ -508,4 +558,3 @@ export default function TipsAndTricks() {
 		</View>
 	);
 }
-
