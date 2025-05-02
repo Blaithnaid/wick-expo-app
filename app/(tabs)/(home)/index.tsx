@@ -75,12 +75,20 @@ export default function HomeScreen() {
 									/>
 								)}
 							</View>
-							<View className="ml-3 flex flex-row">
-								<Text className="text-gray-500 text-xl">Hello, </Text>
-								<Text className="text-xl font-semibold text-indigo-600">
-									{auth.profile?.displayName || "Username"}!
-								</Text>
-							</View>
+							{auth.user ? (
+								<View className="ml-3 flex flex-row">
+									<Text className="text-gray-500 text-xl">Hello, </Text>
+									<Text className="text-xl font-semibold text-indigo-600">
+										{auth.profile?.displayName || "Username"}!
+									</Text>
+								</View>
+							) : (
+								<View className="ml-3 flex flex-row">
+									<Text className="text-gray-500 text-xl">
+										Welcome to Wick!
+									</Text>
+								</View>
+							)}
 						</View>
 						<FontAwesome
 							size={24}

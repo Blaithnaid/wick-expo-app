@@ -19,7 +19,6 @@ import Head from "expo-router/head";
 
 interface Filter {
 	title: string;
-	thumbnail: string;
 	videoPath: string;
 	tiktokLink: string;
 }
@@ -32,37 +31,31 @@ interface FilterWithVideo extends Filter {
 const filters: Filter[] = [
 	{
 		title: "Guess The Country",
-		thumbnail: "",
 		videoPath: "filters/guesscountrydemodemo.mp4",
 		tiktokLink: "https://vm.tiktok.com/ZNd29DgSQ/",
 	},
 	{
 		title: "Anime Tournament",
-		thumbnail: "",
 		videoPath: "filters/thisorthatdemodemo.mp4",
 		tiktokLink: "https://vm.tiktok.com/ZNd29J6yk/",
 	},
 	{
 		title: "Colourful Hair",
-		thumbnail: "",
 		videoPath: "filters/colourfulhairdemo.mp4",
 		tiktokLink: "https://vm.tiktok.com/ZNd29LT32/",
 	},
 	{
 		title: "Blind Ranking",
-		thumbnail: "",
 		videoPath: "filters/songpickdemodemo.mp4",
 		tiktokLink: "https://vm.tiktok.com/ZNd2qFFyQ/",
 	},
 	{
 		title: "Beard Removal Filter",
-		thumbnail: "",
 		videoPath: "filters/beardremovaldemo.mp4",
 		tiktokLink: "https://vm.tiktok.com/ZNd2VobJC/", // Fixed the double 'h' at the beginning
 	},
 	{
 		title: "Gradient Hair Filter",
-		thumbnail: "",
 		videoPath: "filters/gradienthaircolourdemo.mp4",
 		tiktokLink: "https://vm.tiktok.com/ZNd29Fyg7/",
 	},

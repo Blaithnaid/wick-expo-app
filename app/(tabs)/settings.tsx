@@ -84,8 +84,8 @@ export default function SettingsScreen() {
 								<Image
 									source={{ uri: auth.user.photoURL }}
 									style={{
-										width: 70,
-										height: 70,
+										width: 80,
+										height: 80,
 										borderRadius: 64,
 									}}
 								/>
