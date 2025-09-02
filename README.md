@@ -1,6 +1,14 @@
-# instructions for setup
+# Wick
 
-to start developing:
+Wick is a comprehensive Social Media Management (SMM) platform, consisting primarily of an app and associated promotional website. Various other media have been produced for the platform, namely a set of TikTok filters — AR experiences hosted on the video platform. Wick is intended to be tailored in particular towards small businesses, up-and-coming influencers, and other social media users. It provides a wide range of tools to streamline content creation, track performance analytics, and more efficiently engage with followers and customers across various social media platforms. 
+
+## links
+
+- [official website](https://getwick.live/home)
+- [website repository](https://github.com/Blaithnaid/wick-vite-site)
+- [archived first attempt](https://github.com/Blaithnaid/wick-ionic) (built in Ionic)
+
+## to start developing:
 
 - clone the repo
 - run `npm install`
